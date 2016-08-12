@@ -1,20 +1,29 @@
-use bcrypt::{hash, DEFAULT_COST};
-use diesel::ExpressionMethods;
+use std::str::FromStr;
 
-use models::schema::users;
+use bcrypt::{self, hash, DEFAULT_COST};
+use diesel::{self, ExpressionMethods};
+use iron_login;
+use iron::Request;
+
+use models::schema::{users, sessions};
+//use models::session;
 use database;
 use models;
 use error;
 
-#[derive(Queryable)]
+#[derive(Queryable, Identifiable)]
+#[has_many(sessions)]
 pub struct User {
     pub id: i64,
     pub email: String,
     pub password_hash: String,
     pub name: String,
+    pub created_at: diesel::data_types::PgTimestamp,
+    pub updated_at: diesel::data_types::PgTimestamp,
 }
 
 impl User {
+
     fn verify_name(name: &str) -> Vec<&'static str> {
         let mut ue = vec![];
         if name.is_empty() {
@@ -53,6 +62,33 @@ impl User {
         use models::schema::users::dsl::*;
         diesel::delete(users.filter(id.eq(self.id)))
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
+    }
+}
+
+impl iron_login::User for User {
+    fn from_user_id(_req: &mut Request, user_id: &str) -> Option<User> {
+        let id = match i64::from_str(user_id) {
+            Ok(i) => i,
+            Err(_) => return None,
+        };
+
+        // TODO: Add proper session management
+        // let sess = match session::find(id) {
+        //     Ok(Some(u)) => u,
+        //     _ =>  return None,
+        // };
+
+        // TODO: Add error logging here
+        let user = match find(id) {
+            Ok(Some(u)) => Some(u),
+            _ => return None,
+        };
+
+        return user;
+    }
+
+    fn get_user_id(&self) -> String {
+        self.id.to_string()
     }
 }
 
@@ -169,6 +205,32 @@ pub fn find(uid: i64) -> Result<Option<User>, error::DatabaseError> {
 
     users.limit(1).filter(id.eq(uid))
          .get_result::<models::user::User>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
+}
+
+pub fn find_by_email(email_addr: &str) -> Result<Option<User>, error::DatabaseError> {
+    use diesel::prelude::*;
+    use models::schema::users::dsl::*;
+
+    users.limit(1).filter(email.eq(email_addr))
+         .get_result::<models::user::User>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
+}
+
+pub fn with_email_password(email: &str, password: &str) -> Result<Option<User>, error::LoginError> {
+    let user = try!(find_by_email(email));
+
+    if let None = user {
+        return Ok(None);
+    }
+
+    let user = user.unwrap();
+
+    let correct = try!(bcrypt::verify(password, &user.password_hash));
+
+    if correct {
+        Ok(Some(user))
+    } else  {
+        Ok(None)
+    }
 }
 
 

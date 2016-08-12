@@ -2,6 +2,7 @@
 
 use iron::prelude::*;
 use iron::status;
+use bcrypt::BcryptError;
 
 use diesel;
 use std::error::Error;
@@ -139,5 +140,59 @@ impl From<diesel::result::Error> for BadFormattingError {
 impl From<BadFormattingError> for IronError {
     fn from(e: BadFormattingError) -> IronError {
         IronError::new(Box::new(e), status::InternalServerError)
+    }
+}
+
+#[derive(Debug)]
+pub struct LoginError {
+    cause: Option<Box<Error + Send>>,
+}
+
+impl LoginError {
+    pub fn new() -> LoginError {
+        LoginError {
+            cause: None,
+        }
+    }
+}
+
+impl fmt::Display for LoginError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        Debug::fmt(self, f)
+    }
+}
+
+impl Error for LoginError {
+    fn description(&self) -> &str { "Login error." }
+}
+
+impl From<diesel::result::Error> for LoginError {
+    fn from(other: diesel::result::Error) -> Self {
+        LoginError {
+            cause: Some(Box::new(other)),
+        }
+    }
+}
+
+impl From<LoginError> for IronError {
+    fn from(e: LoginError) -> IronError {
+        IronError::new(Box::new(e), status::InternalServerError)
+    }
+}
+
+impl From<BcryptError> for LoginError {
+    fn from(_other: BcryptError) -> Self {
+        LoginError {
+            // FIXME: We shouldn't  just discard it...
+            cause: None,
+        }
+    }
+}
+
+impl From<DatabaseError> for LoginError {
+    fn from(other: DatabaseError) -> Self {
+        LoginError {
+            cause: Some(Box::new(other)),
+        }
     }
 }
