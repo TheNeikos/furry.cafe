@@ -38,3 +38,18 @@ pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<String, ::s
     Ok(buffer)
 }
 
+pub fn logout(data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+    let mut buffer = String::new();
+    let mut partial = String::new();
+
+    try!(html!(partial,
+        h1 "Logout"
+
+        form method="post" action="/logout" {
+            input type="submit" value="Logout" /
+        }
+    ));
+
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("Logout"), Cow::Owned(partial), data));
+    Ok(buffer)
+}

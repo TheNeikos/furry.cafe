@@ -47,10 +47,15 @@ fn main() {
     login_router.get("/", controllers::login::new);
     login_router.post("/", controllers::login::create);
 
+    let mut logout_router = Router::new();
+    logout_router.get("/", controllers::login::delete);
+    logout_router.post("/", controllers::login::destroy);
+
     let mut mount = Mount::new();
     mount.mount("/", index_router)
          .mount("/users", user_router)
-         .mount("/login", login_router);
+         .mount("/login", login_router)
+         .mount("/logout", logout_router);
 
 
     let cookie_secret= env::var("COOKIE_SECRET")

@@ -64,3 +64,17 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     // TODO: Add config for url?
     return Ok(Response::with((login, (status::SeeOther, Redirect(Url::parse("http://localhost:3000/").unwrap())))))
 }
+
+pub fn delete(req: &mut Request) -> IronResult<Response> {
+    let data = LayoutData::from_request(req);
+    let mut resp = Response::with((status::Ok, template!(views::login::logout(&data))));
+    resp.headers.set(ContentType::html());
+    Ok(resp)
+}
+
+pub fn destroy(req: &mut Request) -> IronResult<Response> {
+    let logout = User::get_login(req).log_out();
+
+    // TODO: Add config for url?
+    return Ok(Response::with((logout, (status::SeeOther, Redirect(Url::parse("http://localhost:3000/").unwrap())))))
+}
