@@ -15,6 +15,7 @@ extern crate dotenv;
 extern crate r2d2;
 extern crate r2d2_diesel;
 extern crate bcrypt;
+extern crate iron_login;
 
 use iron::prelude::*;
 use router::Router;

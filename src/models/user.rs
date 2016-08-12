@@ -1,17 +1,24 @@
-use bcrypt::{hash, DEFAULT_COST};
-use diesel::ExpressionMethods;
+use std::str::FromStr;
 
-use models::schema::users;
+use bcrypt::{hash, DEFAULT_COST};
+use diesel::{self, ExpressionMethods};
+use iron_login;
+use iron::Request;
+
+use models::schema::{users, sessions};
 use database;
 use models;
 use error;
 
-#[derive(Queryable)]
+#[derive(Queryable, Identifiable)]
+#[has_many(sessions)]
 pub struct User {
     pub id: i64,
     pub email: String,
     pub password_hash: String,
     pub name: String,
+    pub created_at: diesel::data_types::PgTimestamp,
+    pub updated_at: diesel::data_types::PgTimestamp,
 }
 
 impl User {
@@ -53,6 +60,26 @@ impl User {
         use models::schema::users::dsl::*;
         diesel::delete(users.filter(id.eq(self.id)))
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
+    }
+}
+
+impl iron_login::User for User {
+    fn from_user_id(_req: &mut Request, user_id: &str) -> Option<User> {
+        let id = match i64::from_str(user_id) {
+            Ok(i) => i,
+            Err(_) => return None,
+        };
+
+        let user = match find(id) {
+            Ok(Some(u)) => Some(u),
+            _ =>  None,
+        };
+
+        return user;
+    }
+
+    fn get_user_id(&self) -> String {
+        self.id.to_string()
     }
 }
 
