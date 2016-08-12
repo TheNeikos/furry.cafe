@@ -10,17 +10,20 @@ use error::{self};
 use views;
 use models;
 use database;
+use views::layout::LayoutData;
 
-pub fn index(_req: &mut Request) -> IronResult<Response> {
+pub fn index(req: &mut Request) -> IronResult<Response> {
     let user_list = try!(models::user::find_all());
 
-    let mut resp = Response::with((status::Ok, template!(views::user::index(&user_list))));
+    let data = LayoutData::from_request(req);
+    let mut resp = Response::with((status::Ok, template!(views::user::index(&user_list, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
 
-pub fn new(_req: &mut Request) -> IronResult<Response> {
-    let mut resp = Response::with((status::Ok, template!(views::user::new(None))));
+pub fn new(req: &mut Request) -> IronResult<Response> {
+    let data = LayoutData::from_request(req);
+    let mut resp = Response::with((status::Ok, template!(views::user::new(None, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -28,6 +31,9 @@ pub fn new(_req: &mut Request) -> IronResult<Response> {
 pub fn create(req: &mut Request) -> IronResult<Response> {
     use params::{Params, Value};
     use models::schema::users;
+
+    // TODO: Replace with custom data object
+    let data = LayoutData::from_request(req);
 
     let map = req.get_ref::<Params>().unwrap();
 
@@ -49,7 +55,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     let new_user = match models::user::NewUser::new(username, email, password) {
         Ok(new_user) => new_user,
         Err(err) => {
-            let mut resp = Response::with((status::Ok, template!(views::user::new(Some(err)))));
+            let mut resp = Response::with((status::Ok, template!(views::user::new(Some(err), &data))));
             resp.headers.set(ContentType::html());
             return Ok(resp);
         }
@@ -86,7 +92,8 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
         }
     };
 
-    let mut resp = Response::with((status::Ok, template!(views::user::show(&user))));
+    let data = LayoutData::from_request(req);
+    let mut resp = Response::with((status::Ok, template!(views::user::show(&user, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -114,7 +121,8 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
         }
     };
 
-    let mut resp = Response::with((status::Ok, template!(views::user::edit(&user, None))));
+    let data = LayoutData::from_request(req);
+    let mut resp = Response::with((status::Ok, template!(views::user::edit(&user, None, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -123,6 +131,9 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
     use params::{Params, Value};
     use router::Router;
 
+    // TODO: Replace with custom data object
+
+    let data = LayoutData::from_request(req);
 
     let id = match req.extensions.get::<Router>().unwrap().find("id") {
         Some(t) => {
@@ -159,7 +170,7 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
     let update_user = match models::user::UpdateUser::new(username, password) {
         Ok(update_user) => update_user,
         Err(err) => {
-            let mut resp = Response::with((status::Ok, template!(views::user::edit(&user, Some(err)))));
+            let mut resp = Response::with((status::Ok, template!(views::user::edit(&user, Some(err), &data))));
             resp.headers.set(ContentType::html());
             return Ok(resp);
         }

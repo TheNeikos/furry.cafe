@@ -2,9 +2,10 @@
 use std::borrow::Cow;
 
 use views;
+use views::layout::LayoutData;
 use models::user::{UserError, User};
 
-pub fn new(errors: Option<UserError>) -> Result<String, ::std::fmt::Error> {
+pub fn new(errors: Option<UserError>, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -42,12 +43,12 @@ pub fn new(errors: Option<UserError>) -> Result<String, ::std::fmt::Error> {
         }
     ));
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("Register"), Cow::Borrowed(&partial[..])));
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("Register"), Cow::Owned(partial), data));
 
     Ok(buffer)
 }
 
-pub fn index(users: &[User]) -> Result<String, ::std::fmt::Error> {
+pub fn index(users: &[User], data: &LayoutData) -> Result<String, ::std::fmt::Error> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -62,12 +63,12 @@ pub fn index(users: &[User]) -> Result<String, ::std::fmt::Error> {
         }
     ));
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("Users"), Cow::Borrowed(&partial[..])));
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("Users"), Cow::Owned(partial), data));
 
     Ok(buffer)
 }
 
-pub fn show(user: &User) -> Result<String, ::std::fmt::Error> {
+pub fn show(user: &User, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -86,12 +87,12 @@ pub fn show(user: &User) -> Result<String, ::std::fmt::Error> {
         }
     ));
 
-    try!(views::layout::application(&mut buffer, Cow::Owned(format!("User: {}", user.name)), Cow::Borrowed(&partial[..])));
+    try!(views::layout::application(&mut buffer, Cow::Owned(format!("User: {}", user.name)), Cow::Owned(partial), data));
 
     Ok(buffer)
 }
 
-pub fn edit(user: &User, errors: Option<UserError>) -> Result<String, ::std::fmt::Error> {
+pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -124,7 +125,7 @@ pub fn edit(user: &User, errors: Option<UserError>) -> Result<String, ::std::fmt
         }
     ));
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("Register"), Cow::Borrowed(&partial[..])));
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("Register"), Cow::Owned(partial), data));
 
     Ok(buffer)
 }

@@ -1,10 +1,33 @@
 
-use maud::PreEscaped;
-
 use std::borrow::Cow;
 use std::fmt;
 
-pub fn application(mut data: &mut fmt::Write, title: Cow<str>, partial: Cow<str>) -> Result<(), fmt::Error> {
+use maud::PreEscaped;
+use iron::Url;
+use iron::Request;
+use mount::OriginalUrl;
+
+use views::components::Navbar;
+
+pub struct LayoutData {
+    url: Url,
+}
+
+impl LayoutData {
+    pub fn from_request(req: &Request) -> LayoutData {
+        LayoutData {
+            url: req.extensions.get::<OriginalUrl>().unwrap().clone(),
+        }
+    }
+}
+
+
+pub fn application(mut data: &mut fmt::Write,
+                   title: Cow<str>,
+                   partial: Cow<str>,
+                   layout_data: &LayoutData,
+                   ) -> Result<(), fmt::Error>
+{
     html!(data, {
         html {
             head {
@@ -15,14 +38,7 @@ pub fn application(mut data: &mut fmt::Write, title: Cow<str>, partial: Cow<str>
 
             body {
                 div.container-fluid {
-                    nav.navbar.navbar-static-top.navbar-light.bg-faded {
-                        a.navbar-brand href="/" "ArtMoe"
-                        ul.nav.navbar-nav {
-                            li.nav-item {
-                                a.nav-link href="/" "Home"
-                            }
-                        }
-                    }
+                    ^PreEscaped(Navbar::new(&layout_data.url))
 
                     ^PreEscaped(partial)
 
