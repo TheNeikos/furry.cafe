@@ -6,6 +6,7 @@ use iron_login;
 use iron::Request;
 
 use models::schema::{users, sessions};
+use models::session;
 use database;
 use models;
 use error;
@@ -70,9 +71,16 @@ impl iron_login::User for User {
             Err(_) => return None,
         };
 
-        let user = match find(id) {
+        // TODO: Add error logging here
+        let sess = match session::find(id) {
+            Ok(Some(u)) => u,
+            _ =>  return None,
+        };
+
+        // TODO: Add error logging here
+        let user = match find(sess.user_id) {
             Ok(Some(u)) => Some(u),
-            _ =>  None,
+            _ => return None,
         };
 
         return user;
