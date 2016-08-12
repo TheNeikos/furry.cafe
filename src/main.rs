@@ -43,9 +43,15 @@ fn main() {
 
     let user_router = resource![user];
 
+    let mut login_router = Router::new();
+    login_router.get("/", controllers::login::new);
+    login_router.post("/", controllers::login::create);
+
     let mut mount = Mount::new();
     mount.mount("/", index_router)
-         .mount("/users", user_router);
+         .mount("/users", user_router)
+         .mount("/login", login_router);
+
 
     let cookie_secret= env::var("COOKIE_SECRET")
         .expect("COOKIE_SECRET must be set").into_bytes();

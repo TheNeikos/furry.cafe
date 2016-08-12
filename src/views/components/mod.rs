@@ -1,8 +1,6 @@
 
 use std::fmt::{self, Display, Formatter};
 
-use iron::Url;
-
 use models::user::User;
 use views::layout::LayoutData;
 

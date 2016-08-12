@@ -1,12 +1,12 @@
 use std::str::FromStr;
 
-use bcrypt::{hash, DEFAULT_COST};
+use bcrypt::{self, hash, DEFAULT_COST};
 use diesel::{self, ExpressionMethods};
 use iron_login;
 use iron::Request;
 
 use models::schema::{users, sessions};
-use models::session;
+//use models::session;
 use database;
 use models;
 use error;
@@ -23,6 +23,7 @@ pub struct User {
 }
 
 impl User {
+
     fn verify_name(name: &str) -> Vec<&'static str> {
         let mut ue = vec![];
         if name.is_empty() {
@@ -71,14 +72,14 @@ impl iron_login::User for User {
             Err(_) => return None,
         };
 
-        // TODO: Add error logging here
-        let sess = match session::find(id) {
-            Ok(Some(u)) => u,
-            _ =>  return None,
-        };
+        // TODO: Add proper session management
+        // let sess = match session::find(id) {
+        //     Ok(Some(u)) => u,
+        //     _ =>  return None,
+        // };
 
         // TODO: Add error logging here
-        let user = match find(sess.user_id) {
+        let user = match find(id) {
             Ok(Some(u)) => Some(u),
             _ => return None,
         };
@@ -204,6 +205,32 @@ pub fn find(uid: i64) -> Result<Option<User>, error::DatabaseError> {
 
     users.limit(1).filter(id.eq(uid))
          .get_result::<models::user::User>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
+}
+
+pub fn find_by_email(email_addr: &str) -> Result<Option<User>, error::DatabaseError> {
+    use diesel::prelude::*;
+    use models::schema::users::dsl::*;
+
+    users.limit(1).filter(email.eq(email_addr))
+         .get_result::<models::user::User>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
+}
+
+pub fn with_email_password(email: &str, password: &str) -> Result<Option<User>, error::LoginError> {
+    let user = try!(find_by_email(email));
+
+    if let None = user {
+        return Ok(None);
+    }
+
+    let user = user.unwrap();
+
+    let correct = try!(bcrypt::verify(password, &user.password_hash));
+
+    if correct {
+        Ok(Some(user))
+    } else  {
+        Ok(None)
+    }
 }
 
 
