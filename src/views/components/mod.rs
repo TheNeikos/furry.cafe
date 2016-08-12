@@ -58,10 +58,10 @@ impl<'a> Display for Navbar<'a> {
                     }
                 }
 
-                ul.pull-xs-right {
+                ul.nav.navbar-nav.pull-xs-right {
                     li.nav-item.active {
                         @if let &Some(ref user) = self.user {
-                            a.nav-link href="/adasd" ^user.name
+                            a.nav-link href=^(format!("/users/{}", user.id)) ^user.name
                         } @else {
                             a.nav-link href="/login" "Login"
                         }
