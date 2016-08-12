@@ -58,11 +58,20 @@ impl<'a> Display for Navbar<'a> {
                     }
                 }
 
-                ul.nav.navbar-nav.pull-xs-right {
-                    li.nav-item.active {
-                        @if let &Some(ref user) = self.user {
-                            a.nav-link href=^(format!("/users/{}", user.id)) ^user.name
-                        } @else {
+                @if let &Some(ref user) = self.user {
+                    ul.nav.navbar-nav.pull-xs-right {
+                        div.dropdown {
+                            li.nav-item.active {
+                                a.nav-link href="/profile" ^user.name
+                            }
+                            li.nav-item {
+                                a.nav-link.small href="/logout" "Logout"
+                            }
+                        }
+                    }
+                } @else {
+                    ul.nav.navbar-nav.pull-xs-right {
+                        li.nav-item.active {
                             a.nav-link href="/login" "Login"
                         }
                     }
