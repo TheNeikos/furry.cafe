@@ -1,0 +1,26 @@
+[package]
+authors = ["Marcel Müller <neikos@neikos.email>"]
+name = "art_neikos_moe"
+version = "0.1.0"
+
+[dependencies]
+bcrypt = "0.1.1"
+diesel = "0.7"
+dotenv = "0.8.0"
+dotenv_macros = "0.9.0"
+iron = "0.4"
+lazy_static = "0.2.1"
+logger = "0.0.3"
+maud = "0.9"
+maud_macros = "0.9"
+mount = "0.2"
+params = "0.3"
+r2d2 = "0.7.0"
+r2d2-diesel = "0.7.0"
+router = "0.2"
+time = "0.1.35"
+
+[dependencies.diesel_codegen]
+default-features = false
+features = ["postgres"]
+version = "0.7"
