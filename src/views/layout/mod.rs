@@ -14,12 +14,22 @@ pub fn application(mut data: &mut fmt::Write, title: Cow<str>, partial: Cow<str>
             }
 
             body {
-                div.content {
-                    ^PreEscaped(partial)
-                }
+                div.container-fluid {
+                    nav.navbar.navbar-static-top.navbar-light.bg-faded {
+                        a.navbar-brand href="/" "ArtMoe"
+                        ul.nav.navbar-nav {
+                            li.nav-item {
+                                a.nav-link href="/" "Home"
+                            }
+                        }
+                    }
 
-                div.footer {
-                    ^PreEscaped("ArtNeikos 2016 &copy; Neikos")
+                    ^PreEscaped(partial)
+
+                    hr /
+                    footer {
+                        p ^PreEscaped("ArtMoe 2016 &copy; Neikos")
+                    }
                 }
             }
         }
