@@ -17,9 +17,12 @@ extern crate r2d2_diesel;
 extern crate bcrypt;
 extern crate iron_login;
 
+use std::env;
+
 use iron::prelude::*;
 use router::Router;
 use mount::Mount;
+use dotenv::dotenv;
 
 #[macro_use]
 mod macros;
@@ -32,6 +35,7 @@ mod logger;
 mod middleware;
 
 fn main() {
+    dotenv().ok();
     use controllers::user;
     let mut index_router = Router::new();
     index_router.get("/", controllers::root::handler);
@@ -43,9 +47,14 @@ fn main() {
     mount.mount("/", index_router)
          .mount("/users", user_router);
 
+    let cookie_secret= env::var("COOKIE_SECRET")
+        .expect("COOKIE_SECRET must be set").into_bytes();
+
     let mut log_chain = Chain::new(mount);
     log_chain.link_before(logger::Logger);
     log_chain.link_before(middleware::MethodOverride);
+
+    log_chain.link_around(iron_login::LoginManager::new(cookie_secret));
 
     log_chain.link_after(logger::Logger);
     Iron::new(log_chain).http("0.0.0.0:3000").unwrap();

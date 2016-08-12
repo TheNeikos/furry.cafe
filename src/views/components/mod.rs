@@ -3,6 +3,9 @@ use std::fmt::{self, Display, Formatter};
 
 use iron::Url;
 
+use models::user::User;
+use views::layout::LayoutData;
+
 struct NavbarEntry<'a, 'b> {
     name: &'a str,
     path: &'b str,
@@ -19,23 +22,25 @@ static NAVBAR_ENTRIES: &'static [NavbarEntry<'static, 'static>] = &[
     },
 ];
 
-pub struct Navbar {
+pub struct Navbar<'a> {
     path: String,
+    user: &'a Option<User>,
 }
 
-impl Navbar {
-    pub fn new(u: &Url) -> Navbar {
-        let mut p = u.path().join("/");
+impl<'a> Navbar<'a> {
+    pub fn new(ld: &'a LayoutData) -> Navbar<'a> {
+        let mut p = ld.url.path().join("/");
 
         p.insert(0, '/');
 
         Navbar {
             path: p,
+            user: &ld.user,
         }
     }
 }
 
-impl Display for Navbar {
+impl<'a> Display for Navbar<'a> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
 
         html!(f,
@@ -51,6 +56,16 @@ impl Display for Navbar {
                             li.nav-item {
                                 a.nav-link href=^item.path ^item.name
                             }
+                        }
+                    }
+                }
+
+                ul.pull-xs-right {
+                    li.nav-item.active {
+                        @if let &Some(ref user) = self.user {
+                            a.nav-link href="/adasd" ^user.name
+                        } @else {
+                            a.nav-link href="/login" "Login"
                         }
                     }
                 }

@@ -6,17 +6,21 @@ use maud::PreEscaped;
 use iron::Url;
 use iron::Request;
 use mount::OriginalUrl;
+use iron_login::User as UserTrait;
 
 use views::components::Navbar;
+use models::user::User;
 
 pub struct LayoutData {
-    url: Url,
+    pub url: Url,
+    pub user: Option<User>,
 }
 
 impl LayoutData {
-    pub fn from_request(req: &Request) -> LayoutData {
+    pub fn from_request(req: &mut Request) -> LayoutData {
         LayoutData {
             url: req.extensions.get::<OriginalUrl>().unwrap().clone(),
+            user: User::get_login(req).get_user(),
         }
     }
 }
@@ -38,7 +42,7 @@ pub fn application(mut data: &mut fmt::Write,
 
             body {
                 div.container-fluid {
-                    ^PreEscaped(Navbar::new(&layout_data.url))
+                    ^PreEscaped(Navbar::new(&layout_data))
 
                     ^PreEscaped(partial)
 
