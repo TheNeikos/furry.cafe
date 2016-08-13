@@ -18,6 +18,7 @@ dependencies = [
  "r2d2 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2-diesel 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "router 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "staticfile 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "time 0.1.35 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -719,6 +720,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "staticfile"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "iron 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "mount 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "time 0.1.35 (registry+https://github.com/rust-lang/crates.io-index)",
+ "url 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "tempdir"
 version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -979,6 +992,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum serde 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7720ad510b91c19de6a1728077821d9407c625018250c8a24a66716022a8a172"
 "checksum serde_json 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)" = "0e10f8a9d94b06cf5d3bef66475f04c8ff90950f1be7004c357ff9472ccbaebc"
 "checksum solicit 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)" = "172382bac9424588d7840732b250faeeef88942e37b6e35317dce98cafdd75b2"
+"checksum staticfile 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "7638ee7543e08b10d13f9e6c4488534d47c2269b258bf76a6fb998bfd7f54937"
 "checksum tempdir 0.3.5 (registry+https://github.com/rust-lang/crates.io-index)" = "87974a6f5c1dfb344d733055601650059a3363de2a6104819293baff662132d6"
 "checksum term 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)" = "3deff8a2b3b6607d6d7cc32ac25c0b33709453ca9cceac006caac51e963cf94a"
 "checksum thread-id 2.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "a9539db560102d1cef46b8b78ce737ff0bb64e7e18d35b2a5688f7d097d0ff03"
