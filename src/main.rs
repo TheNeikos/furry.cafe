@@ -16,8 +16,10 @@ extern crate r2d2;
 extern crate r2d2_diesel;
 extern crate bcrypt;
 extern crate iron_login;
+extern crate staticfile;
 
 use std::env;
+use std::path::Path;
 
 use iron::prelude::*;
 use router::Router;
@@ -55,7 +57,8 @@ fn main() {
     mount.mount("/", index_router)
          .mount("/users", user_router)
          .mount("/login", login_router)
-         .mount("/logout", logout_router);
+         .mount("/logout", logout_router)
+         .mount("/assets/", staticfile::Static::new(Path::new("external/")));
 
 
     let cookie_secret= env::var("COOKIE_SECRET")
