@@ -14,7 +14,6 @@ pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<String, ::s
         div.row div class="col-sm-6 offset-sm-3" {
             h1 "Login"
 
-
             ^(PreEscaped(Form::new(FormMethod::Post, "/login")
               .with_fields(&[
                    &Input::new("Email", "user_email")
@@ -42,9 +41,13 @@ pub fn logout(data: &LayoutData) -> Result<String, ::std::fmt::Error> {
         div.row div class="col-sm-6 offset-sm-3" {
             h1 "Logout"
 
-            form method="post" action="/logout" {
-                input.btn.btn-primary type="submit" value="Logout" /
-            }
+            ^(PreEscaped(Form::new(FormMethod::Post, "/logout")
+              .with_fields(&[
+                    &Input::new("", "")
+                        .with_value("Logout")
+                        .with_type("Submit")
+                        .with_class("btn btn-primary")
+             ])))
         }
     ));
 
