@@ -11,7 +11,7 @@ use database;
 use models;
 use error;
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Debug)]
 #[has_many(sessions)]
 pub struct User {
     pub id: i64,
