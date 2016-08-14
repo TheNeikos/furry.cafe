@@ -9,37 +9,39 @@ pub fn new(errors: Option<UserError>, data: &LayoutData) -> Result<String, ::std
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
-        h1 { "Create new User" }
-        form method="post" action="./" {
-            div {
-                label for="user_name" "Name:"
-                input type="text" id="user_name" name="user_name" ""
-                @if let &Some(ref errors) = &errors {
-                    @for err in &errors.name {
-                        p class="error" ^err
+        div.row div class="col-sm-6 offset-sm-3" {
+            h1 { "Register" }
+            form method="post" action="./" {
+                div.form-group {
+                    label for="user_name" "Name:"
+                    input.form-control type="text" id="user_name" name="user_name" ""
+                    @if let &Some(ref errors) = &errors {
+                        @for err in &errors.name {
+                            p.error.form-text ^err
+                        }
                     }
                 }
-            }
-            div {
-                label for="user_email" "Email:"
-                input type="text" id="user_email" name="user_email" ""
-                @if let &Some(ref errors) = &errors {
-                    @for err in &errors.email {
-                        p class="error" ^err
+                div.form-group {
+                    label for="user_email" "Email:"
+                    input.form-control type="text" id="user_email" name="user_email" ""
+                    @if let &Some(ref errors) = &errors {
+                        @for err in &errors.email {
+                            p.error.form-text ^err
+                        }
                     }
                 }
-            }
-            div {
-                label for="user_password" "Password:"
-                input type="password" id="user_password" name="user_password" ""
-                @if let &Some(ref errors) = &errors {
-                    @for err in &errors.password {
-                        p class="error" ^err
+                div.form-group {
+                    label for="user_password" "Password:"
+                    input.form-control type="password" id="user_password" name="user_password" ""
+                    @if let &Some(ref errors) = &errors {
+                        @for err in &errors.password {
+                            p.error.form-text ^err
+                        }
                     }
                 }
-            }
 
-            input type="submit" /
+                input.btn.btn-primary type="submit" /
+            }
         }
     ));
 
@@ -80,11 +82,6 @@ pub fn show(user: &User, data: &LayoutData) -> Result<String, ::std::fmt::Error>
         }
 
         a href=^(url!(format!("/users/{}/edit", user.id))) "Edit"
-
-        form method="post" action=^(format!("/users/{}", user.id)) {
-            input type="hidden" value="DELETE" name="_method" /
-            input type="submit" value="Delete" /
-        }
     ));
 
     try!(views::layout::application(&mut buffer, Cow::Owned(format!("User: {}", user.name)), Cow::Owned(partial), data));
@@ -98,30 +95,30 @@ pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result
     try!(html!(partial,
         h1 { "Edit User " ^(user.name) }
         form method="post" action=^(format!("/users/{}", user.id)) {
-            div {
+            div.form-group {
                 label for="user_name" "Name:"
-                input type="text" id="user_name" name="user_name" value=^user.name /
+                input.form-control type="text" id="user_name" name="user_name" value=^user.name /
                 @if let &Some(ref errors) = &errors {
                     @for err in &errors.name {
-                        p class="error" ^err
+                        p.error.form-text ^err
                     }
                 }
             }
-            div {
+            div.form-group {
                 label "Email:"
-                input type="text"  disabled="disabled" value=^user.email /
+                input.form-control type="text"  disabled="disabled" value=^user.email /
             }
-            div {
+            div.form-group {
                 label for="password" "Password:"
-                input type="password" id="password" name="user_password" /
+                input.form-control type="password" id="password" name="user_password" /
                 @if let &Some(ref errors) = &errors {
                     @for err in &errors.password {
-                        p class="error" ^err
+                        p.error.form-text ^err
                     }
                 }
             }
 
-            input type="submit" /
+            input.btn.btn-primary type="submit" /
         }
     ));
 
