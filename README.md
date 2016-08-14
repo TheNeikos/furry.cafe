@@ -7,25 +7,25 @@ It is also very [Furry](https://en.wikipedia.org/wiki/Furry_fandom) oriented.
 Roadmap (vaguely):
 ==================
 
--[] Better User Controls
-    -[] User Profile Editing
-    -[] Banner Choosing (from a submitter artwork)
-    -[] Profile Picture
--[] Artwork Hosting (that doesn't suck (tm))
-    -[] Support different level of visibility
+- [ ] Better User Controls
+    - [ ] User Profile Editing
+    - [ ] Banner Choosing (from a submitter artwork)
+    - [ ] Profile Picture
+- [ ] Artwork Hosting (that doesn't suck (tm))
+    - [ ] Support different level of visibility
         - Public
         - Registered
         - Private (Direct link only with ability to reset link)
         - Friends Only?
-    -[] Support levels of Safeness
+    - [ ] Support levels of Safeness
         - General Public
         - Mature
         - Extreme
-    -[] Support Categories
-    -[] Support Tagging
--[] Messaging
-    -[] Support simple messaging
-    -[] Support templates
+    - [ ] Support Categories
+    - [ ] Support Tagging
+- [ ] Messaging
+    - [ ] Support simple messaging
+    - [ ] Support templates
 
 ## Suggestions
 
