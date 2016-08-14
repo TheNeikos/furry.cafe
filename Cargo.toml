@@ -1,6 +1,6 @@
 [package]
 authors = ["Marcel Müller <neikos@neikos.email>"]
-name = "art_neikos_moe"
+name = "neikos_moe"
 version = "0.1.0"
 
 [dependencies]
