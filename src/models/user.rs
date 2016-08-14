@@ -45,6 +45,11 @@ impl User {
         if email.find('@').is_none() {
             ue.push("A valid Email contains an @");
         }
+
+        if let Ok(Some(_)) = find_by_email(email) {
+            ue.push("E-Mail is already in use")
+        }
+
         return ue;
     }
 
@@ -130,14 +135,14 @@ impl<'a> UpdateUser<'a> {
 
 #[insertable_into(users)]
 pub struct NewUser<'a> {
-    email: &'a str,
-    password_hash: String,
-    name: &'a str,
+    pub email: &'a str,
+    pub password_hash: String,
+    pub name: &'a str,
 }
 
 impl<'a> NewUser<'a> {
     pub fn new<'b>(name: Option<&'b str>, email: Option<&'b str>, password: Option<&'b str>)
-        -> Result<NewUser<'b>, UserError>
+        -> Result<NewUser<'b>, (UserError, NewUser<'b>)>
     {
         let mut ue = UserError::new();
 
@@ -161,17 +166,21 @@ impl<'a> NewUser<'a> {
             ue.password.push("Password cannot be empty.");
         }
 
+        let mut nu = NewUser {
+            email: email.unwrap(),
+            name: name.unwrap(),
+            password_hash: String::new(),
+        };
+
         if ue.has_any_errors() {
-            return Err(ue);
+            return Err((ue, nu));
         }
 
         let password_hash = hash(password.unwrap(), DEFAULT_COST).expect("Could not hash password!");
 
-        Ok(NewUser {
-            email: email.unwrap(),
-            name: name.unwrap(),
-            password_hash: password_hash,
-        })
+        nu.password_hash = password_hash;
+
+        Ok(nu)
     }
 }
 
