@@ -1,8 +1,10 @@
 
 use std::borrow::Cow;
+use maud::PreEscaped;
 
 use views;
 use views::layout::LayoutData;
+use views::components::form::*;
 use models::user::{UserError, User};
 
 pub fn new(errors: Option<UserError>, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
@@ -11,37 +13,21 @@ pub fn new(errors: Option<UserError>, data: &LayoutData) -> Result<String, ::std
     try!(html!(partial,
         div.row div class="col-sm-6 offset-sm-3" {
             h1 { "Register" }
-            form method="post" action="./" {
-                div.form-group {
-                    label for="user_name" "Name:"
-                    input.form-control type="text" id="user_name" name="user_name" ""
-                    @if let &Some(ref errors) = &errors {
-                        @for err in &errors.name {
-                            p.error.form-text ^err
-                        }
-                    }
-                }
-                div.form-group {
-                    label for="user_email" "Email:"
-                    input.form-control type="text" id="user_email" name="user_email" ""
-                    @if let &Some(ref errors) = &errors {
-                        @for err in &errors.email {
-                            p.error.form-text ^err
-                        }
-                    }
-                }
-                div.form-group {
-                    label for="user_password" "Password:"
-                    input.form-control type="password" id="user_password" name="user_password" ""
-                    @if let &Some(ref errors) = &errors {
-                        @for err in &errors.password {
-                            p.error.form-text ^err
-                        }
-                    }
-                }
 
-                input.btn.btn-primary type="submit" /
-            }
+            ^(PreEscaped(Form::new(FormMethod::Post, "/users/")
+              .with_fields(&[
+                   &Input::new("Name", "user_name")
+                        .with_errors(errors.as_ref().map(|x| &x.email)),
+                   &Input::new("Email", "user_email")
+                        .with_errors(errors.as_ref().map(|x| &x.email)),
+                   &Input::new("Password", "user_password")
+                        .with_type("password")
+                        .with_errors(errors.as_ref().map(|x| &x.password)),
+                   &Input::new("", "")
+                        .with_value("Register")
+                        .with_type("submit")
+                        .with_class("btn btn-primary")
+              ])))
         }
     ));
 
@@ -94,32 +80,22 @@ pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result
     let mut partial = String::new();
     try!(html!(partial,
         h1 { "Edit User " ^(user.name) }
-        form method="post" action=^(format!("/users/{}", user.id)) {
-            div.form-group {
-                label for="user_name" "Name:"
-                input.form-control type="text" id="user_name" name="user_name" value=^user.name /
-                @if let &Some(ref errors) = &errors {
-                    @for err in &errors.name {
-                        p.error.form-text ^err
-                    }
-                }
-            }
-            div.form-group {
-                label "Email:"
-                input.form-control type="text"  disabled="disabled" value=^user.email /
-            }
-            div.form-group {
-                label for="password" "Password:"
-                input.form-control type="password" id="password" name="user_password" /
-                @if let &Some(ref errors) = &errors {
-                    @for err in &errors.password {
-                        p.error.form-text ^err
-                    }
-                }
-            }
-
-            input.btn.btn-primary type="submit" /
-        }
+        ^(PreEscaped(Form::new(FormMethod::Post, &format!("/users/{}", user.id))
+          .with_fields(&[
+               &Input::new("Name", "user_name")
+                    .with_value(&user.name)
+                    .with_errors(errors.as_ref().map(|x| &x.email)),
+               &Input::new("Email", "user_email")
+                    .with_value(&user.email)
+                    .with_errors(errors.as_ref().map(|x| &x.email)),
+               &Input::new("Password", "user_password")
+                    .with_type("password")
+                    .with_errors(errors.as_ref().map(|x| &x.password)),
+               &Input::new("", "")
+                    .with_value("Update")
+                    .with_type("submit")
+                    .with_class("btn btn-primary")
+          ])))
     ));
 
     try!(views::layout::application(&mut buffer, Cow::Borrowed("Register"), Cow::Owned(partial), data));
