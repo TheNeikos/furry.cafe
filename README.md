@@ -4,9 +4,11 @@ neikos.moe
 The idea of this website is to be a playground. Just sit back and relax.
 It is also very [Furry](https://en.wikipedia.org/wiki/Furry_fandom) oriented.
 
-Roadmap (vaguely):
+Roadmap:
 ==================
 
+- [ ] User Control
+    - [ ] Add Classic User Roles (Admin, Mod, User)
 - [ ] Better User Controls
     - [ ] User Profile Editing
     - [ ] Banner Choosing (from a submitter artwork)
