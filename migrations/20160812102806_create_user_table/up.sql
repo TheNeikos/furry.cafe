@@ -6,3 +6,5 @@ CREATE TABLE users (
     created_at      timestamp NOT NULL default now(),
     updated_at      timestamp NOT NULL default now()
 );
+
+CREATE UNIQUE INDEX user_email_unique_index on users (lower(email));

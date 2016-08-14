@@ -22,7 +22,7 @@ pub fn index(req: &mut Request) -> IronResult<Response> {
 
 pub fn new(req: &mut Request) -> IronResult<Response> {
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::user::new(None, &data))));
+    let mut resp = Response::with((status::Ok, template!(views::user::new(None, &data, None))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -53,15 +53,15 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 
     let new_user = match models::user::NewUser::new(username, email, password) {
         Ok(new_user) => new_user,
-        Err(err) => {
-            let mut resp = Response::with((status::Ok, template!(views::user::new(Some(err), &data))));
+        Err((err, new_user)) => {
+            let mut resp = Response::with((status::Ok, template!(views::user::new(Some(err), &data, Some(&new_user)))));
             resp.headers.set(ContentType::html());
             return Ok(resp);
         }
     };
 
-    diesel::insert(&new_user).into(users::table)
-        .execute(&*database::connection().get().unwrap()).expect("Error saving new user");
+    try!(database_try!(diesel::insert(&new_user).into(users::table)
+        .execute(&*database::connection().get().unwrap())));
 
     // TODO: Add config for url?
     return Ok(Response::with((status::SeeOther, Redirect(Url::parse("http://localhost:3000/users/").unwrap()))))

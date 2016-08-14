@@ -5,9 +5,9 @@ use maud::PreEscaped;
 use views;
 use views::layout::LayoutData;
 use views::components::form::*;
-use models::user::{UserError, User};
+use models::user::{UserError, User, NewUser};
 
-pub fn new(errors: Option<UserError>, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>) -> Result<String, ::std::fmt::Error> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -17,8 +17,10 @@ pub fn new(errors: Option<UserError>, data: &LayoutData) -> Result<String, ::std
             ^(PreEscaped(Form::new(FormMethod::Post, "/users/")
               .with_fields(&[
                    &Input::new("Name", "user_name")
-                        .with_errors(errors.as_ref().map(|x| &x.email)),
+                        .with_value(user.as_ref().map(|x| &x.name).unwrap_or(&""))
+                        .with_errors(errors.as_ref().map(|x| &x.name)),
                    &Input::new("Email", "user_email")
+                        .with_value(user.as_ref().map(|x| &x.email).unwrap_or(&""))
                         .with_errors(errors.as_ref().map(|x| &x.email)),
                    &Input::new("Password", "user_password")
                         .with_type("password")
@@ -84,7 +86,7 @@ pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result
           .with_fields(&[
                &Input::new("Name", "user_name")
                     .with_value(&user.name)
-                    .with_errors(errors.as_ref().map(|x| &x.email)),
+                    .with_errors(errors.as_ref().map(|x| &x.name)),
                &Input::new("Email", "user_email")
                     .with_value(&user.email)
                     .with_errors(errors.as_ref().map(|x| &x.email)),
