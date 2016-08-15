@@ -1,6 +1,5 @@
 use iron::prelude::*;
 use iron::AfterMiddleware;
-use iron::status::Status;
 use iron::headers::ContentType;
 use router::NoRoute;
 
@@ -13,9 +12,6 @@ pub struct ErrorHandler;
 
 impl AfterMiddleware for ErrorHandler {
     fn catch(&self, req: &mut Request, mut err: IronError) -> IronResult<Response> {
-
-        println!("{:#?}", &err);
-
         let data = LayoutData::from_request(req);
 
         if let Some(_) = err.error.downcast::<UnauthorizedError>() {

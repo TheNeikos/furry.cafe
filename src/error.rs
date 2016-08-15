@@ -182,9 +182,9 @@ impl From<LoginError> for IronError {
 }
 
 impl From<BcryptError> for LoginError {
-    fn from(_other: BcryptError) -> Self {
+    fn from(other: BcryptError) -> Self {
+        error!("Could not run BCrypt: {:?}", other);
         LoginError {
-            // FIXME: We shouldn't  just discard it...
             cause: None,
         }
     }

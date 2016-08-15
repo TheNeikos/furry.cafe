@@ -77,16 +77,14 @@ impl iron_login::User for User {
             Err(_) => return None,
         };
 
-        // TODO: Add proper session management
-        // let sess = match session::find(id) {
-        //     Ok(Some(u)) => u,
-        //     _ =>  return None,
-        // };
 
-        // TODO: Add error logging here
         let user = match find(id) {
             Ok(Some(u)) => Some(u),
-            _ => return None,
+            Ok(None) => return None,
+            Err(e) => {
+                error!("Could not find user: {}", e);
+                return None;
+            }
         };
 
         return user;

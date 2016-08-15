@@ -4,6 +4,7 @@ use iron::{IronResult, Request, Response, IronError};
 use iron::method::Method;
 use iron::typemap::Key;
 
+use std::fmt::Write;
 use std::time::Instant;
 
 
@@ -21,30 +22,32 @@ impl Logger {
         let elapsed = req.extensions.get::<TimeLog>().unwrap().elapsed();
         let elapsed_ms = (elapsed.subsec_nanos() as u64 * 1000 + elapsed.as_secs() / 1000) as f64 / 1_000_000_000.0;
 
-        print!("total_time={:.6} ", elapsed_ms);
+        let mut out = String::new();
 
-        print!("resp_status=");
+        itry!(write!(&mut out, "total_time={:.6} ", elapsed_ms));
+
+        itry!(write!(&mut out, "resp_status="));
         if let Some(status) = res.status {
-            print!("'{}'", status);
+            itry!(write!(&mut out, "'{}'", status));
         } else {
-            print!("'?'");
+            itry!(write!(&mut out, "'?'"));
         }
-        print!(" ");
+        itry!(write!(&mut out, " "));
 
-        print!("method='");
+        itry!(write!(&mut out, "method='"));
         match &req.method {
-            &Method::Extension(_) => print!("EXTENSION"),
-            t => print!("{}", t),
-        }
-        print!("' ");
+            &Method::Extension(_) => itry!(write!(&mut out, "EXTENSION")),
+            t => itry!(write!(&mut out, "{}", t)),
+        };
+        itry!(write!(&mut out, "' "));
 
-        print!("path='/{}' ", req.url.path().join("/"));
+        itry!(write!(&mut out, "path='/{}' ", req.url.path().join("/")));
 
         if let Some(err) = err {
-            print!("error='{}' ", err)
+            itry!(write!(&mut out, "error='{}' ", err));
         }
 
-        print!("\n");
+        info!("{}", out);
         Ok(())
     }
 }

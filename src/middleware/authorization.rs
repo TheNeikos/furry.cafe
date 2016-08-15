@@ -6,7 +6,7 @@ use iron_login::User as U;
 use error::UnauthorizedError;
 use models::user::{self, User};
 
-#[debug(Copy, Clone)]
+#[derive(Clone, Debug)]
 pub struct Authorizer<T: Send + Sync> {
     reqs: Vec<T>
 }
@@ -37,6 +37,7 @@ pub trait UserRequirement {
     fn check(&self, user: Option<&User>, req: &mut Request) -> bool;
 }
 
+#[derive(Clone, Debug)]
 pub struct SameUserAuth;
 
 impl UserRequirement for SameUserAuth {
@@ -56,7 +57,10 @@ impl UserRequirement for SameUserAuth {
             };
             match user::find(id) {
                 Ok(t) => t,
-                Err(_) => return false,
+                Err(e) => {
+                    error!("Could not find user: {}", e);
+                    return false;
+                }
             }
         };
 
