@@ -7,6 +7,7 @@ use bcrypt::BcryptError;
 use diesel;
 use std::error::Error;
 use std::fmt::{self, Debug};
+use models::user::User;
 
 #[derive(Debug)]
 pub struct NotImplemented {
@@ -196,3 +197,27 @@ impl From<DatabaseError> for LoginError {
         }
     }
 }
+
+#[derive(Debug)]
+pub struct UnauthorizedError {
+    pub user: Option<User>
+}
+
+impl UnauthorizedError {
+    pub fn new(u: Option<User>) -> UnauthorizedError {
+        UnauthorizedError {
+            user: u
+        }
+    }
+}
+
+impl fmt::Display for UnauthorizedError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        Debug::fmt(self, f)
+    }
+}
+
+impl Error for UnauthorizedError {
+    fn description(&self) -> &str { "Unauthorized" }
+}
+

@@ -19,7 +19,7 @@ pub struct LayoutData {
 impl LayoutData {
     pub fn from_request(req: &mut Request) -> LayoutData {
         LayoutData {
-            url: req.extensions.get::<OriginalUrl>().unwrap().clone(),
+            url: req.extensions.get::<OriginalUrl>().unwrap_or(&url!("")).clone(),
             user: User::get_login(req).get_user(),
         }
     }
