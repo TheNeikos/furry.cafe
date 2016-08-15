@@ -11,6 +11,7 @@ dotenv_macros = "0.9.0"
 iron = "0.4"
 iron-login = "0.5.0"
 lazy_static = "0.2.1"
+log = "0.3.6"
 logger = "0.0.3"
 maud = "0.9"
 maud_macros = "0.9"
@@ -26,3 +27,7 @@ time = "0.1.35"
 default-features = false
 features = ["postgres"]
 version = "0.7"
+
+[dependencies.log4rs]
+version = "0.4.8"
+features = ["yaml"]

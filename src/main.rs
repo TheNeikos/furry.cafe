@@ -4,7 +4,7 @@
 #![plugin(diesel_codegen, dotenv_macros)]
 
 
-extern crate iron;
+#[macro_use] extern crate iron;
 extern crate router;
 extern crate mount;
 extern crate maud;
@@ -17,6 +17,8 @@ extern crate r2d2_diesel;
 extern crate bcrypt;
 extern crate iron_login;
 extern crate staticfile;
+#[macro_use] extern crate log;
+extern crate log4rs;
 
 use std::env;
 use std::path::Path;
@@ -38,6 +40,7 @@ mod middleware;
 
 fn main() {
     dotenv().ok();
+    log4rs::init_file("config/log4rs.yaml", Default::default()).unwrap();
     let mut index_router = Router::new();
     index_router.get("/", controllers::root::handler);
     index_router.get("/about", controllers::about::handler);
@@ -49,24 +52,21 @@ fn main() {
         router.post("/",        controllers::user::create);
         router.get("/:id",      controllers::user::show);
 
-        let mut chain = Chain::new(controllers::user::edit);
-        chain.link_before(middleware::authorization::Authorizer::new(vec![
+        let auth = middleware::authorization::Authorizer::new(vec![
             middleware::authorization::SameUserAuth
-        ]));
+        ]);
+        let mut chain = Chain::new(controllers::user::edit);
+        chain.link_before(auth.clone());
 
         router.get("/:id/edit", chain);
 
         let mut chain = Chain::new(controllers::user::update);
-        chain.link_before(middleware::authorization::Authorizer::new(vec![
-            middleware::authorization::SameUserAuth
-        ]));
+        chain.link_before(auth.clone());
 
         router.put("/:id",      chain);
 
         let mut chain = Chain::new(controllers::user::update);
-        chain.link_before(middleware::authorization::Authorizer::new(vec![
-            middleware::authorization::SameUserAuth
-        ]));
+        chain.link_before(auth.clone());
         router.post("/:id",     chain);
 
         // FIXME: Disable accounts rather than deleting them
