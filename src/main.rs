@@ -99,6 +99,7 @@ fn main() {
 
     log_chain.link_around(iron_login::LoginManager::new(cookie_secret));
 
+    log_chain.link_after(middleware::ErrorHandler);
     log_chain.link_after(logger::Logger);
     Iron::new(log_chain).http("0.0.0.0:3000").unwrap();
 }
