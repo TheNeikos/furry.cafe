@@ -57,7 +57,10 @@ impl UserRequirement for SameUserAuth {
             };
             match user::find(id) {
                 Ok(t) => t,
-                Err(_) => return false,
+                Err(e) => {
+                    error!("Could not find user: {}", e);
+                    return false;
+                }
             }
         };
 
