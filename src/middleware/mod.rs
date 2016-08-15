@@ -1,4 +1,4 @@
 mod methodoverride;
-mod authentication;
+pub mod authorization;
 
 pub use self::methodoverride::MethodOverride;

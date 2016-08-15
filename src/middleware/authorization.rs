@@ -6,8 +6,17 @@ use iron_login::User as U;
 use error::UnauthorizedError;
 use models::user::{self, User};
 
+#[debug(Copy, Clone)]
 pub struct Authorizer<T: Send + Sync> {
     reqs: Vec<T>
+}
+
+impl<T: Send + Sync> Authorizer<T> {
+    pub fn new(r: Vec<T>) -> Authorizer<T> {
+        Authorizer {
+            reqs: r
+        }
+    }
 }
 
 impl<T: UserRequirement + Send + Sync + 'static> BeforeMiddleware for Authorizer<T> {

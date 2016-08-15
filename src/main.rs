@@ -38,12 +38,41 @@ mod middleware;
 
 fn main() {
     dotenv().ok();
-    use controllers::user;
     let mut index_router = Router::new();
     index_router.get("/", controllers::root::handler);
     index_router.get("/about", controllers::about::handler);
 
-    let user_router = resource![user];
+    let user_router = {
+        let mut router = Router::new();
+        router.get("/",         controllers::user::index);
+        router.get("/new",      controllers::user::new);
+        router.post("/",        controllers::user::create);
+        router.get("/:id",      controllers::user::show);
+
+        let mut chain = Chain::new(controllers::user::edit);
+        chain.link_before(middleware::authorization::Authorizer::new(vec![
+            middleware::authorization::SameUserAuth
+        ]));
+
+        router.get("/:id/edit", chain);
+
+        let mut chain = Chain::new(controllers::user::update);
+        chain.link_before(middleware::authorization::Authorizer::new(vec![
+            middleware::authorization::SameUserAuth
+        ]));
+
+        router.put("/:id",      chain);
+
+        let mut chain = Chain::new(controllers::user::update);
+        chain.link_before(middleware::authorization::Authorizer::new(vec![
+            middleware::authorization::SameUserAuth
+        ]));
+        router.post("/:id",     chain);
+
+        // FIXME: Disable accounts rather than deleting them
+        // router.delete("/:id",   controllers::user::delete);
+        router
+    };
 
     let mut login_router = Router::new();
     login_router.get("/", controllers::login::new);
