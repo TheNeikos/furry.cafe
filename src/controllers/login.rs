@@ -22,7 +22,6 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 
     let login = User::get_login(req);
 
-    // TODO: Replace with custom data object
     let data = LayoutData::from_request(req);
 
     let map = req.get_ref::<Params>().unwrap();

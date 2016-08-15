@@ -31,7 +31,6 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     use params::{Params, Value};
     use models::schema::users;
 
-    // TODO: Replace with custom data object
     let data = LayoutData::from_request(req);
 
     let map = req.get_ref::<Params>().unwrap();
@@ -129,8 +128,6 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
 pub fn update(req: &mut Request) -> IronResult<Response> {
     use params::{Params, Value};
     use router::Router;
-
-    // TODO: Replace with custom data object
 
     let data = LayoutData::from_request(req);
 
