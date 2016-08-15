@@ -38,3 +38,26 @@ pub fn unauthorized(data: &LayoutData) -> Result<String, ::std::fmt::Error> {
 
     Ok(buffer)
 }
+
+pub fn notfound(data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+    let mut buffer = String::new();
+    let mut partial = String::new();
+    try!(html!(partial,
+        h1 { "Nope, can't see what you're looking for" }
+
+        div.alert.alert-warning {
+            strong "I can't seem to find what you are looking for :C"
+            hr /
+            p {
+                "If you want you can try going "
+                a href="javascript:history.go(-1)" "back"
+                " or go to a "
+                a href="/" "safe page"
+            }
+        }
+    ));
+
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("root"), Cow::Owned(partial), data));
+
+    Ok(buffer)
+}
