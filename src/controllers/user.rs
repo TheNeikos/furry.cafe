@@ -88,8 +88,9 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
     };
 
     let role = try!(user.get_role());
+    let profile = try!(user.get_profile());
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::user::show(&user, role, &data))));
+    let mut resp = Response::with((status::Ok, template!(views::user::show(&user, role, &profile, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }

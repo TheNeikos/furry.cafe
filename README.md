@@ -10,7 +10,7 @@ Roadmap:
 - [x] User Control
     - [x] Add Classic User Roles (Admin, Mod, User)
 - [ ] Better User Controls
-    - [ ] User Profile Editing
+    - [x] User Profile Editing
     - [ ] Banner Choosing (from a submitter artwork)
     - [ ] Profile Picture
 - [ ] Artwork Hosting (that doesn't suck (tm))

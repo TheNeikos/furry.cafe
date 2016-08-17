@@ -46,6 +46,9 @@ fn main() {
     index_router.get("/about", controllers::about::handler);
 
     let user_router = {
+        //---------------------------------
+        //---- Normal Usage ---------------
+        //---------------------------------
         let mut router = Router::new();
         router.get("/",         controllers::user::index);
         router.get("/new",      controllers::user::new);
@@ -69,6 +72,25 @@ fn main() {
         chain.link_before(auth.clone());
         router.post("/:id",     chain);
 
+
+        //---------------------------------
+        //---- Profile --------------------
+        //---------------------------------
+
+        let mut chain = Chain::new(controllers::user_profile::edit);
+        chain.link_before(auth.clone());
+
+        router.get("/:id/profile/edit", chain);
+
+        let mut chain = Chain::new(controllers::user_profile::update);
+        chain.link_before(auth.clone());
+
+        router.put("/:id/profile",      chain);
+
+        let mut chain = Chain::new(controllers::user_profile::update);
+        chain.link_before(auth.clone());
+        router.post("/:id/profile",     chain);
+
         // FIXME: Disable accounts rather than deleting them
         // router.delete("/:id",   controllers::user::delete);
         router
@@ -87,7 +109,7 @@ fn main() {
          .mount("/users", user_router)
          .mount("/login", login_router)
          .mount("/logout", logout_router)
-         .mount("/assets/", staticfile::Static::new(Path::new("external/")));
+         .mount("/assets/", staticfile::Static::new(Path::new("assets/")));
 
 
     let cookie_secret= env::var("COOKIE_SECRET")

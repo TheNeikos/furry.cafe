@@ -115,6 +115,64 @@ impl<'a, 'b, 'c, 'd, 'e, 'f> Display for Input<'a, 'b, 'c, 'd, 'e, 'f> {
     }
 }
 
+#[derive(Copy, Clone)]
+pub struct Textarea<'a, 'b, 'c, 'e, 'f> {
+    label: &'a str,
+    name: &'b str,
+    errors: Option<&'c Vec<&'c str>>,
+    class: &'e str,
+    value: &'f str,
+}
+
+impl<'a, 'b, 'c, 'e, 'f> Textarea<'a, 'b, 'c, 'e, 'f> {
+    pub fn new(label: &'a str, name: &'b str) -> Textarea<'a, 'b, 'c, 'e, 'f> {
+        Textarea {
+            label: label,
+            name: name,
+            errors: None,
+            class: "",
+            value: "",
+        }
+    }
+
+    pub fn with_errors(mut self, errors: Option<&'c Vec<&'c str>>) -> Textarea<'a, 'b, 'c, 'e, 'f> {
+        self.errors = errors;
+        self
+    }
+
+    pub fn with_class(mut self, class: &'e str) -> Textarea<'a, 'b, 'c, 'e, 'f> {
+        self.class = class;
+        self
+    }
+
+    pub fn with_value(mut self, value: &'f str) -> Textarea<'a, 'b, 'c, 'e, 'f> {
+        self.value = value;
+        self
+    }
+}
+
+impl<'a, 'b, 'c, 'e, 'f> Display for Textarea<'a, 'b, 'c, 'e, 'f> {
+    fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
+
+        html!(f,
+            div.form-group {
+                @if self.label != "" {
+                    label for=^(self.name) ^(self.label)
+                }
+                textarea id=^(self.name) name=^(self.name) class=^(format!("form-control {}", self.class)) {
+                    ^self.value
+                }
+                @if let Some(errors) = self.errors {
+                    @for err in errors {
+                        p.error.error-text ^err
+                    }
+                }
+            }
+        )
+    }
+}
+
+
 trait FormError {
     fn get_errors(&self) -> &Vec<&str>;
 }
