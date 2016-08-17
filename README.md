@@ -7,8 +7,8 @@ It is also very [Furry](https://en.wikipedia.org/wiki/Furry_fandom) oriented.
 Roadmap:
 ==================
 
-- [ ] User Control
-    - [ ] Add Classic User Roles (Admin, Mod, User)
+- [x] User Control
+    - [x] Add Classic User Roles (Admin, Mod, User)
 - [ ] Better User Controls
     - [ ] User Profile Editing
     - [ ] Banner Choosing (from a submitter artwork)
