@@ -11,6 +11,7 @@ use database;
 use models;
 use error;
 use models::user_role::{self, Role, UserRole, NewUserRole};
+use models::user_profile::{self, UserProfile, NewUserProfile};
 
 #[derive(Queryable, Identifiable, Debug)]
 pub struct User {
@@ -102,6 +103,24 @@ impl User {
                 error!("Could not find role for user, adding...: {}", self.id);
                 try!(self.set_role(Role::Member));
                 return Ok(Role::Member);
+            }
+        }
+    }
+
+    pub fn set_profile(&self, profile: NewUserProfile) -> Result<(), error::DatabaseError> {
+        UserProfile::create_from(profile)
+    }
+
+    pub fn get_profile(&self) -> Result<UserProfile, error::DatabaseError> {
+        match try!(user_profile::find_by_user_id(self.id)) {
+            Some(x) => Ok(x),
+            None => {
+                error!("Could not find profile for user, adding...: {}", self.id);
+                let profile = try!(self.set_profile(NewUserProfile {
+                    user_id: self.id,
+                    bio: "",
+                }));
+                return self.get_profile(); // TODO: Is this safe??
             }
         }
     }
