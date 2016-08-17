@@ -6,6 +6,7 @@ use views;
 use views::layout::LayoutData;
 use views::components::form::*;
 use models::user::{UserError, User, NewUser};
+use models::user_role::Role;
 
 pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>) -> Result<String, ::std::fmt::Error> {
     let mut buffer = String::new();
@@ -58,7 +59,7 @@ pub fn index(users: &[User], data: &LayoutData) -> Result<String, ::std::fmt::Er
     Ok(buffer)
 }
 
-pub fn show(user: &User, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn show(user: &User, role: Role, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -67,6 +68,11 @@ pub fn show(user: &User, data: &LayoutData) -> Result<String, ::std::fmt::Error>
         div.email {
             "Email: "
             ^user.email
+        }
+
+        div.role {
+            "Role: "
+            ^role.as_str()
         }
 
         a href=^(url!(format!("/users/{}/edit", user.id))) "Edit"

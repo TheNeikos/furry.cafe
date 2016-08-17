@@ -10,6 +10,7 @@ use models::schema::{users, sessions};
 use database;
 use models;
 use error;
+use models::user_role::{self, Role, UserRole, NewUserRole};
 
 #[derive(Queryable, Identifiable, Debug)]
 #[has_many(sessions)]
@@ -67,6 +68,43 @@ impl User {
         use models::schema::users::dsl::*;
         diesel::delete(users.filter(id.eq(self.id)))
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
+    }
+
+    pub fn create_from(nu: NewUser) -> Result<(), error::DatabaseError> {
+        use diesel;
+        use diesel::prelude::*;
+        use models::schema::users::dsl::*;
+        let user_id = try!(database_try!(diesel::insert(&nu)
+                                    .into(users)
+                                    .returning(id)
+                                    .get_result(&*database::connection().get().unwrap())
+                                    ));
+        let user = try!(find(user_id)).unwrap();
+        user.set_role(Role::Member)
+    }
+
+    pub fn set_role(&self, role: Role) -> Result<(), error::DatabaseError> {
+        match try!(user_role::find_by_user_id(self.id)) {
+            Some(mut x) => {
+                if x.role == role as i32 { return Ok(()); }
+
+                x.update(role)
+            }
+            None => {
+                UserRole::create_from(NewUserRole::new(self, role))
+            }
+        }
+    }
+
+    pub fn get_role(&self) -> Result<Role, error::DatabaseError> {
+        match try!(user_role::find_by_user_id(self.id)) {
+            Some(x) => Ok(Role::from(x.role)),
+            None => {
+                error!("Could not find role for user, adding...: {}", self.id);
+                try!(self.set_role(Role::Member));
+                return Ok(Role::Member);
+            }
+        }
     }
 }
 
