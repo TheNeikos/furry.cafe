@@ -1,6 +1,6 @@
 
 use std::borrow::Cow;
-use maud::PreEscaped;
+use maud::{PreEscaped, RenderOnce};
 
 use views;
 use views::layout::LayoutData;
@@ -77,7 +77,7 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -
         }
 
         div.user_profile {
-            ^profile.bio
+            ^(views::markdown::parse(&profile.bio))
         }
 
         a href=^(url!(format!("/users/{}/edit", user.id))) "Edit"

@@ -34,7 +34,6 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
     let data = LayoutData::from_request(req);
     let profile = try!(user.get_profile());
     let new_profile = models::user_profile::NewUserProfile::from(&profile);
-    println!("{:#?}", new_profile);
     let mut resp = Response::with((status::Ok, template!(views::user_profile::edit(&user, &new_profile, None, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)

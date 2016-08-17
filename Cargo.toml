@@ -14,9 +14,11 @@ lazy_static = "0.2.1"
 log = "0.3.6"
 logger = "0.0.3"
 maud = "0.9"
+maud-pulldown-cmark = { path = "../maud-pulldown-cmark" }
 maud_macros = "0.9"
 mount = "0.2"
 params = "0.3"
+pulldown-cmark = "0.0.8"
 r2d2 = "0.7.0"
 r2d2-diesel = "0.7.0"
 router = "0.2"
@@ -29,5 +31,5 @@ features = ["postgres"]
 version = "0.7"
 
 [dependencies.log4rs]
-version = "0.4.8"
 features = ["yaml"]
+version = "0.4.8"
