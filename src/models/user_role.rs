@@ -23,7 +23,17 @@ impl Role {
             _ => panic!("Got {} for role, only 0..3 is accepted", u)
         }
     }
+
+    pub fn as_str(&self) -> &'static str {
+        match *self {
+            Role::Banned => "Banned",
+            Role::Member => "Member",
+            Role::Moderator => "Moderator",
+            Role::Admin => "Admin"
+        }
+    }
 }
+
 
 #[derive(Queryable, Identifiable)]
 #[belongs_to(User)]
