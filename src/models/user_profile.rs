@@ -1,5 +1,4 @@
 use diesel;
-use diesel::ExpressionMethods;
 
 use models::schema::user_profiles;
 use models::user::User;
@@ -48,14 +47,6 @@ impl<'a> NewUserProfile<'a> {
             bio: &profile.bio,
         }
     }
-}
-
-pub fn find(uid: i64) -> Result<Option<UserProfile>, error::DatabaseError> {
-    use diesel::prelude::*;
-    use models::schema::user_profiles::dsl::*;
-
-    user_profiles.limit(1).filter(id.eq(uid))
-         .get_result::<models::user_profile::UserProfile>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
 pub fn find_by_user_id(uid: i64) -> Result<Option<UserProfile>, error::DatabaseError> {

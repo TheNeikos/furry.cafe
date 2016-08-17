@@ -5,7 +5,7 @@ use diesel::{self, ExpressionMethods};
 use iron_login;
 use iron::Request;
 
-use models::schema::{users, sessions};
+use models::schema::users;
 //use models::session;
 use database;
 use models;
@@ -116,7 +116,7 @@ impl User {
             Some(x) => Ok(x),
             None => {
                 error!("Could not find profile for user, adding...: {}", self.id);
-                let profile = try!(self.set_profile(NewUserProfile {
+                try!(self.set_profile(NewUserProfile {
                     user_id: self.id,
                     bio: "",
                 }));

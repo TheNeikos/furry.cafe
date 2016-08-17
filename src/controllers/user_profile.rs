@@ -2,7 +2,6 @@ use iron::prelude::*;
 use iron::status;
 use iron::headers::ContentType;
 use iron::modifiers::Redirect;
-use iron::Url;
 
 use error::{self};
 use views;
@@ -81,7 +80,8 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
         Ok(()) => {
            Ok(Response::with((status::SeeOther, Redirect(url!(format!("/users/{}", user.id))))))
         }
-        Err(err) => {
+        Err(_) => {
+            // TODO: This is a DATABASE ERROR! Don't just ignore it!!!!
             let mut resp = Response::with((status::Ok, template!(views::user_profile::edit(&user, &new, None, &data))));
             resp.headers.set(ContentType::html());
             Ok(resp)
