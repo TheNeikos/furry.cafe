@@ -87,7 +87,7 @@ fn main() {
          .mount("/users", user_router)
          .mount("/login", login_router)
          .mount("/logout", logout_router)
-         .mount("/assets/", staticfile::Static::new(Path::new("external/")));
+         .mount("/assets/", staticfile::Static::new(Path::new("assets/")));
 
 
     let cookie_secret= env::var("COOKIE_SECRET")

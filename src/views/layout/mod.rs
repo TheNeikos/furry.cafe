@@ -36,10 +36,11 @@ pub fn application(mut data: &mut fmt::Write,
         html {
             head {
                 title ^title
-                link rel="stylesheet" href="/assets/css/bootstrap.min.css" integrity="sha384-MIwDKRSSImVFAZCVLtU0LMDdON6KVCrZHyVQQj6e8wIEJkW4tvwqXrbMIya1vriY" crossorigin="anonymous" /
-                script src="/assets/js/jquery-3.1.0.min.js" ""
-                script src="/assets/js/tether.min.js" ""
-                script src="/assets/js/bootstrap.min.js" integrity="sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD" crossorigin="anonymous" ""
+                link rel="stylesheet" href="/assets/external/css/bootstrap.min.css" integrity="sha384-MIwDKRSSImVFAZCVLtU0LMDdON6KVCrZHyVQQj6e8wIEJkW4tvwqXrbMIya1vriY" crossorigin="anonymous" /
+                link rel="stylesheet" href="/assets/application.css" /
+                script src="/assets/external/js/jquery-3.1.0.min.js" ""
+                script src="/assets/external/js/tether.min.js" ""
+                script src="/assets/external/js/bootstrap.min.js" integrity="sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD" crossorigin="anonymous" ""
             }
 
             body {
