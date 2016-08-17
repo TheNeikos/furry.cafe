@@ -115,7 +115,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "byteorder 0.3.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)",
- "pq-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pq-sys 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -529,13 +529,13 @@ dependencies = [
  "gcc 0.3.32 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)",
- "openssl-sys 0.7.15 (registry+https://github.com/rust-lang/crates.io-index)",
+ "openssl-sys 0.7.16 (registry+https://github.com/rust-lang/crates.io-index)",
  "openssl-sys-extras 0.7.14 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "openssl-sys"
-version = "0.7.15"
+version = "0.7.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "gdi32-sys 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -552,7 +552,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "gcc 0.3.32 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)",
- "openssl-sys 0.7.15 (registry+https://github.com/rust-lang/crates.io-index)",
+ "openssl-sys 0.7.16 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -653,7 +653,7 @@ dependencies = [
 
 [[package]]
 name = "pq-sys"
-version = "0.2.2"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "libc 0.2.15 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1058,7 +1058,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum num-traits 0.1.34 (registry+https://github.com/rust-lang/crates.io-index)" = "95e58eac34596aac30ab134c8a8da9aa2dc99caa4b4b4838e6fc6e298016278f"
 "checksum num_cpus 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)" = "cee7e88156f3f9e19bdd598f8d6c9db7bf4078f99f8381f43a55b09648d1a6e3"
 "checksum openssl 0.7.14 (registry+https://github.com/rust-lang/crates.io-index)" = "c4117b6244aac42ed0150a6019b4d953d28247c5dd6ae6f46ae469b5f2318733"
-"checksum openssl-sys 0.7.15 (registry+https://github.com/rust-lang/crates.io-index)" = "91a3921c122ca08e611f10a024a1c9186d0d7bd048afb83ab7bc9ec2576801fd"
+"checksum openssl-sys 0.7.16 (registry+https://github.com/rust-lang/crates.io-index)" = "ba741fce7aaf2d114772a95908c2fc9da658aeb906b84e54103c4227e23eb41e"
 "checksum openssl-sys-extras 0.7.14 (registry+https://github.com/rust-lang/crates.io-index)" = "11c5e1dba7d3d03d80f045bf0d60111dc69213b67651e7c889527a3badabb9fa"
 "checksum ordered-float 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "4d961410be0435ccb80048a6516d95a4b91becde403a957d162f3fba4943b7e3"
 "checksum oven 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "25ea9e91ef848019cdaf55f224fea6e534087cc9c6a7569b0444d9f0be6abf7b"
@@ -1071,7 +1071,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum pkg-config 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)" = "8cee804ecc7eaf201a4a207241472cc870e825206f6c031e3ee2a72fa425f2fa"
 "checksum plugin 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "1a6a0dc3910bc8db877ffed8e457763b317cf880df4ae19109b9f77d277cf6e0"
 "checksum pnacl-build-helper 1.4.10 (registry+https://github.com/rust-lang/crates.io-index)" = "61c9231d31aea845007443d62fcbb58bb6949ab9c18081ee1e09920e0cf1118b"
-"checksum pq-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "215bef7197faeecd28e6662e6c3f16fe7b2a1c9e6d084de50157c0e6c7c557cf"
+"checksum pq-sys 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "d50c9cdaa6f0e09c7ddc29cfcf573ba18e00bb29bbfd7c2d49e4196d9851436b"
 "checksum quick-error 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "0aad603e8d7fb67da22dbdf1f4b826ce8829e406124109e73cf1b2454b93a71c"
 "checksum r2d2 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "a63c7dd6655b3165145c5c140e8548ba2176a263682c07aaead2fe79eedd97bc"
 "checksum r2d2-diesel 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)" = "1a280682e7f406dc989f4b710b2a8d864fbaba9f94342a302272f413f554e39b"
