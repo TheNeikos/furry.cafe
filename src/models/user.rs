@@ -13,7 +13,6 @@ use error;
 use models::user_role::{self, Role, UserRole, NewUserRole};
 
 #[derive(Queryable, Identifiable, Debug)]
-#[has_many(sessions)]
 pub struct User {
     pub id: i64,
     pub email: String,
