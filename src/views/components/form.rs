@@ -159,7 +159,7 @@ impl<'a, 'b, 'c, 'e, 'f> Display for Textarea<'a, 'b, 'c, 'e, 'f> {
                 @if self.label != "" {
                     label for=^(self.name) ^(self.label)
                 }
-                textarea id=^(self.name) name=^(self.name) class=^(format!("form-control {}", self.class)) {
+                textarea id=^(self.name) name=^(self.name) class=^(format!("form-control {}", self.class)) rows=15 {
                     ^self.value
                 }
                 @if let Some(errors) = self.errors {
