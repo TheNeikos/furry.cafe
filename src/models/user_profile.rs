@@ -27,6 +27,7 @@ impl UserProfile {
     }
 }
 
+#[derive(Clone, Debug)]
 #[insertable_into(user_profiles)]
 pub struct NewUserProfile<'a> {
     pub user_id: i64,
@@ -38,6 +39,13 @@ impl<'a> NewUserProfile<'a> {
         NewUserProfile {
             user_id: user.id,
             bio: bio,
+        }
+    }
+
+    pub fn from(profile: &'a UserProfile) -> NewUserProfile<'a> {
+        NewUserProfile {
+            user_id: profile.user_id,
+            bio: &profile.bio,
         }
     }
 }
@@ -54,6 +62,6 @@ pub fn find_by_user_id(uid: i64) -> Result<Option<UserProfile>, error::DatabaseE
     use diesel::prelude::*;
     use models::schema::user_profiles::dsl::*;
 
-    user_profiles.limit(1).filter(user_id.eq(uid)).order(created_at.asc())
+    user_profiles.limit(1).filter(user_id.eq(uid)).order(created_at.desc())
          .get_result::<models::user_profile::UserProfile>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }

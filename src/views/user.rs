@@ -81,6 +81,8 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -
         }
 
         a href=^(url!(format!("/users/{}/edit", user.id))) "Edit"
+        br /
+        a href=^(url!(format!("/users/{}/profile/edit", user.id))) "Edit Profile"
     ));
 
     try!(views::layout::application(&mut buffer, Cow::Owned(format!("User: {}", user.name)), Cow::Owned(partial), data));

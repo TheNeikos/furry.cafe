@@ -46,6 +46,9 @@ fn main() {
     index_router.get("/about", controllers::about::handler);
 
     let user_router = {
+        //---------------------------------
+        //---- Normal Usage ---------------
+        //---------------------------------
         let mut router = Router::new();
         router.get("/",         controllers::user::index);
         router.get("/new",      controllers::user::new);
@@ -68,6 +71,25 @@ fn main() {
         let mut chain = Chain::new(controllers::user::update);
         chain.link_before(auth.clone());
         router.post("/:id",     chain);
+
+
+        //---------------------------------
+        //---- Profile --------------------
+        //---------------------------------
+
+        let mut chain = Chain::new(controllers::user_profile::edit);
+        chain.link_before(auth.clone());
+
+        router.get("/:id/profile/edit", chain);
+
+        let mut chain = Chain::new(controllers::user_profile::update);
+        chain.link_before(auth.clone());
+
+        router.put("/:id/profile",      chain);
+
+        let mut chain = Chain::new(controllers::user_profile::update);
+        chain.link_before(auth.clone());
+        router.post("/:id/profile",     chain);
 
         // FIXME: Disable accounts rather than deleting them
         // router.delete("/:id",   controllers::user::delete);

@@ -1,0 +1,32 @@
+use std::borrow::Cow;
+use maud::PreEscaped;
+
+use views;
+use views::layout::LayoutData;
+use views::components::form::*;
+use models::user::{UserError, User, NewUser};
+use models::user_role::Role;
+use models::user_profile::{NewUserProfile, UserProfile};
+
+// TODO: Add profile errors
+pub fn edit(user: &User, profile: &NewUserProfile, errors: Option<()>, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+    let mut buffer = String::new();
+    let mut partial = String::new();
+    try!(html!(partial,
+        h1 { "Edit User Profile: " ^(user.name) }
+        ^(PreEscaped(Form::new(FormMethod::Post, &format!("/users/{}/profile", user.id))
+          .with_fields(&[
+               &Textarea::new("Profile", "user_bio")
+                    .with_value(&profile.bio)
+                    .with_errors(None),
+               &Input::new("", "")
+                    .with_value("Update")
+                    .with_type("submit")
+                    .with_class("btn btn-primary")
+          ])))
+    ));
+
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("Register"), Cow::Owned(partial), data));
+
+    Ok(buffer)
+}
