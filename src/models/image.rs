@@ -31,7 +31,11 @@ impl Image {
         use diesel::prelude::*;
         use models::schema::images::dsl::*;
         diesel::insert(&new).into(images)
-            .returning(id).execute(&*database::connection().get().unwrap()).map_err(|e| e.into()).map(|i| i as i64)
+            .returning(id).get_result(&*database::connection().get().unwrap()).map_err(|e| e.into())
+    }
+
+    pub fn get_path(&self) -> String {
+        format!("{}", self.path)
     }
 }
 
@@ -53,13 +57,13 @@ impl NewImage {
     // TODO: Better Error handling
     pub fn create_from_dynamic_image(img: &DynamicImage, suffix: &str) -> Result<NewImage, ::std::io::Error> {
         let dims = img.dimensions();
-        let path = format!("./uploads/{}_{}-{}-{}.png", dims.0, dims.1, SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix);
+        let path = format!("./assets/uploads/{}_{}-{}-{}.png", dims.0, dims.1, SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix);
         let mut file = try!(File::create(&path));
         if let Err(e) = img.save(&mut file, ImageFormat::PNG) {
             error!("Could not save image...");
         };
         Ok(NewImage {
-            path: path,
+            path: String::from(&path[1..]),
             host_type: ImageType::Local as i32,
         })
     }

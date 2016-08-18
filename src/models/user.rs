@@ -128,6 +128,13 @@ impl User {
             }
         }
     }
+
+    pub fn get_avatar(&self) -> Result<Option<Image>, error::DatabaseError> {
+        match self.profile_image {
+            Some(id) => models::image::find_by_id(id),
+            None => Ok(None)
+        }
+    }
 }
 
 impl iron_login::User for User {
@@ -217,18 +224,22 @@ impl<'a> UpdateUser<'a> {
 
             let new_image = match NewImage::create_from_dynamic_image(&img, "avatar") {
                 Ok(t) => t,
-                Err(_) => {
+                Err(e) => {
+                    error!("Could not create from dynamic image {}", e);
                     return None;
                 }
             };
 
             match Image::create_from(new_image) {
                 Ok(t) => Some(t),
-                Err(_) => {
+                Err(e) => {
+                    error!("Could not save image {}", e);
                     return None;
                 }
             }
         });
+
+        info!("{:#?}", img);
 
         Ok(UpdateUser {
             name: name,
