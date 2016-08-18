@@ -21,6 +21,7 @@ pub struct User {
     pub name: String,
     pub created_at: diesel::data_types::PgTimestamp,
     pub updated_at: diesel::data_types::PgTimestamp,
+    profile_image: Option<i64>
 }
 
 impl User {
@@ -155,6 +156,7 @@ impl iron_login::User for User {
 pub struct UpdateUser<'a> {
     name: Option<&'a str>,
     password_hash: Option<String>,
+    profile_image: Option<i64>
 }
 
 impl<'a> UpdateUser<'a> {
@@ -183,6 +185,7 @@ impl<'a> UpdateUser<'a> {
         Ok(UpdateUser {
             name: name,
             password_hash: password_hash,
+            profile_image: None,
         })
     }
 }
