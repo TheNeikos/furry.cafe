@@ -72,26 +72,34 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -
     };
 
     try!(html!(partial,
-        img src=^(avatar) alt=^(format!("{}'s Avatar", user.name))
-        h1 { ^user.name }
-
-        div.email {
-            "Email: "
-            ^user.email
-        }
-
-        div.role {
-            "Role: "
-            ^role.as_str()
-        }
-
         div.user_profile {
-            ^(views::markdown::parse(&profile.bio))
-        }
+            div.row div class="col-md-10 offset-md-1" {
+                div.user_info.clearfix {
+                    img.user_avatar src=^(avatar) alt=^(format!("{}'s Avatar", user.name))
+                    h1.user_name { ^user.name }
+                    div.user_role {
+                        strong "Role: "
+                        ^role.as_str()
+                    }
+                }
+            }
 
-        a href=^(url!(format!("/users/{}/edit", user.id))) "Edit"
-        br /
-        a href=^(url!(format!("/users/{}/profile/edit", user.id))) "Edit Profile"
+            div.row div class="col-md-10 offset-md-1" {
+                div.user_actions {
+                    a.btn.btn-info href=^(url!(format!("/users/{}/edit", user.id))) "Edit"
+                    " "
+                    a.btn.btn-info href=^(url!(format!("/users/{}/profile/edit", user.id))) "Edit Profile"
+                }
+            }
+
+            div.row div class="col-md-10 offset-md-1" {
+                div.user_bio {
+                    ^(views::markdown::parse(&profile.bio))
+                }
+            }
+
+
+        }
     ));
 
     try!(views::layout::application(&mut buffer, Cow::Owned(format!("User: {}", user.name)), Cow::Owned(partial), data));
