@@ -162,7 +162,12 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
         _ => None
     };
 
-    let update_user = match models::user::UpdateUser::new(username, password) {
+    let avatar = match map.get("user_avatar") {
+        Some(&Value::File(ref file)) => Some(file),
+        _ => None
+    };
+
+    let update_user = match models::user::UpdateUser::new(username, password, avatar) {
         Ok(update_user) => update_user,
         Err(err) => {
             let mut resp = Response::with((status::Ok, template!(views::user::edit(&user, Some(err), &data))));

@@ -1,4 +1,9 @@
+use std::time::{SystemTime, UNIX_EPOCH};
+use std::fs::File;
+use std::path::Path;
+
 use diesel;
+use image::{DynamicImage, GenericImage, ImageFormat};
 
 use models::schema::images;
 use database;
@@ -21,28 +26,42 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn create_from(new: NewImage) -> Result<(), error::DatabaseError> {
+    pub fn create_from(new: NewImage) -> Result<i64, error::DatabaseError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::images::dsl::*;
-        diesel::insert(&new)
-            .into(images).execute(&*database::connection().get().unwrap()).map_err(|e| e.into()).map(|_| ())
+        diesel::insert(&new).into(images)
+            .returning(id).execute(&*database::connection().get().unwrap()).map_err(|e| e.into()).map(|i| i as i64)
     }
 }
 
 #[derive(Clone, Debug)]
 #[insertable_into(images)]
-pub struct NewImage<'a> {
+pub struct NewImage {
     host_type: i32,
-    path: &'a str
+    path: String,
 }
 
-impl<'a> NewImage<'a> {
-    pub fn new(typ: ImageType, path: &'a str) -> NewImage<'a> {
+impl NewImage {
+    pub fn new(typ: ImageType, path: &str) -> NewImage {
         NewImage {
             host_type: typ as i32,
-            path: path,
+            path: path.to_string(),
         }
+    }
+
+    // TODO: Better Error handling
+    pub fn create_from_dynamic_image(img: &DynamicImage, suffix: &str) -> Result<NewImage, ::std::io::Error> {
+        let dims = img.dimensions();
+        let path = format!("./uploads/{}_{}-{}-{}.png", dims.0, dims.1, SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix);
+        let mut file = try!(File::create(&path));
+        if let Err(e) = img.save(&mut file, ImageFormat::PNG) {
+            error!("Could not save image...");
+        };
+        Ok(NewImage {
+            path: path,
+            host_type: ImageType::Local as i32,
+        })
     }
 }
 
@@ -53,3 +72,4 @@ pub fn find_by_id(uid: i64) -> Result<Option<Image>, error::DatabaseError> {
     images.limit(1).filter(id.eq(uid))
          .get_result::<models::image::Image>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
+

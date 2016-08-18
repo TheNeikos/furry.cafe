@@ -21,6 +21,7 @@ extern crate staticfile;
 extern crate log4rs;
 extern crate pulldown_cmark;
 extern crate maud_pulldown_cmark;
+extern crate image;
 
 use std::env;
 use std::path::Path;
