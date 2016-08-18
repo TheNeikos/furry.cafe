@@ -19,32 +19,39 @@ impl Display for FormMethod {
 }
 
 #[derive(Copy, Clone)]
-pub struct Form<'a, 'b> {
+pub struct Form<'a, 'b, 'c> {
     method: FormMethod,
     path: &'a str,
     fields: &'b[&'b (Display + Sync)],
+    encoding: &'c str,
 }
 
-impl<'a, 'b> Form<'a, 'b> {
-    pub fn new(method: FormMethod, path: &'a str) -> Form<'a, 'b> {
+impl<'a, 'b, 'c> Form<'a, 'b, 'c> {
+    pub fn new(method: FormMethod, path: &'a str) -> Form<'a, 'b, 'c> {
         Form {
             method: method,
             path: path,
             fields: EMPTY_FIELDS,
+            encoding: ""
         }
     }
 
-    pub fn with_fields(mut self, others: &'b[&'b (Display + Sync)]) -> Form<'a, 'b> {
+    pub fn with_fields(mut self, others: &'b[&'b (Display + Sync)]) -> Form<'a, 'b, 'c> {
         self.fields = others;
+        self
+    }
+
+    pub fn with_encoding(mut self, others: &'c str) -> Form<'a, 'b, 'c> {
+        self.encoding = others;
         self
     }
 }
 
-impl<'a, 'b> Display for Form<'a, 'b> {
+impl<'a, 'b, 'c> Display for Form<'a, 'b, 'c> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
 
         html!(f,
-            form method=^(self.method) action=^(self.path) {
+            form method=^(self.method) action=^(self.path) enctype=^(self.encoding) {
                 @for field in self.fields {
                     ^(PreEscaped(field))
                 }

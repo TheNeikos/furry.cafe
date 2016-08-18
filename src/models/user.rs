@@ -4,6 +4,8 @@ use bcrypt::{self, hash, DEFAULT_COST};
 use diesel::{self, ExpressionMethods};
 use iron_login;
 use iron::Request;
+use params::File;
+use image;
 
 use models::schema::users;
 //use models::session;
@@ -12,6 +14,7 @@ use models;
 use error;
 use models::user_role::{self, Role, UserRole, NewUserRole};
 use models::user_profile::{self, UserProfile, NewUserProfile};
+use models::image::{Image, NewImage};
 
 #[derive(Queryable, Identifiable, Debug)]
 pub struct User {
@@ -21,6 +24,7 @@ pub struct User {
     pub name: String,
     pub created_at: diesel::data_types::PgTimestamp,
     pub updated_at: diesel::data_types::PgTimestamp,
+    profile_image: Option<i64>
 }
 
 impl User {
@@ -124,6 +128,13 @@ impl User {
             }
         }
     }
+
+    pub fn get_avatar(&self) -> Result<Option<Image>, error::DatabaseError> {
+        match self.profile_image {
+            Some(id) => models::image::find_by_id(id),
+            None => Ok(None)
+        }
+    }
 }
 
 impl iron_login::User for User {
@@ -155,10 +166,13 @@ impl iron_login::User for User {
 pub struct UpdateUser<'a> {
     name: Option<&'a str>,
     password_hash: Option<String>,
+    profile_image: Option<i64>
 }
 
 impl<'a> UpdateUser<'a> {
-    pub fn new<'b>(name: Option<&'b str>, mut password: Option<&'b str>) -> Result<UpdateUser<'b>, UserError> {
+    pub fn new<'b>(name: Option<&'b str>, mut password: Option<&'b str>, file: Option<&File>)
+        -> Result<UpdateUser<'b>, UserError>
+{
         let mut ue = UserError::new();
 
         if let Some(name) = name {
@@ -171,18 +185,66 @@ impl<'a> UpdateUser<'a> {
             }
         }
 
+        let mut to_be_converted = None;
+
+        if let Some(f) = file {
+            if f.size() > 300 * 1024 { // 300 Kilobytes
+                ue.profile_image.push("Image is too big (limit is 300KiB)");
+            }
+
+            if let Ok(mut f) = f.open() {
+                use std::io::Read;
+                let mut buffer = Vec::new();
+                f.read_to_end(&mut buffer);
+                to_be_converted = match image::load_from_memory(&buffer) {
+                    Ok(t) => {
+                        Some(t)
+                    }
+                    Err(e) => {
+                        ue.profile_image.push("Image is not in a valid format");
+                        None
+                    }
+                };
+            } else {
+                ue.profile_image.push("Could not use this image")
+            }
+        }
+
         if ue.has_any_errors() {
             return Err(ue);
         }
-
 
         let password_hash = password.map(|password| {
             hash(password, DEFAULT_COST).expect("Could not hash password!")
         });
 
+        let img = to_be_converted.and_then(|img| {
+            use image::FilterType;
+            let img = img.resize(350, 350, FilterType::CatmullRom);
+
+            let new_image = match NewImage::create_from_dynamic_image(&img, "avatar") {
+                Ok(t) => t,
+                Err(e) => {
+                    error!("Could not create from dynamic image {}", e);
+                    return None;
+                }
+            };
+
+            match Image::create_from(new_image) {
+                Ok(t) => Some(t),
+                Err(e) => {
+                    error!("Could not save image {}", e);
+                    return None;
+                }
+            }
+        });
+
+        info!("{:#?}", img);
+
         Ok(UpdateUser {
             name: name,
             password_hash: password_hash,
+            profile_image: img,
         })
     }
 }
@@ -243,14 +305,18 @@ pub struct UserError {
     pub email: Vec<&'static str>,
     pub password: Vec<&'static str>,
     pub name: Vec<&'static str>,
+    pub profile_image: Vec<&'static str>,
 }
 
 impl UserError {
     pub fn new() -> UserError {
-        UserError { email: vec![], password: vec![], name: vec![] }
+        UserError { email: vec![], password: vec![], name: vec![], profile_image: vec![] }
     }
     fn has_any_errors(&self) -> bool {
-        !(self.email.is_empty() && self.name.is_empty() && self.password.is_empty())
+        !(self.email.is_empty()
+          && self.name.is_empty()
+          && self.password.is_empty()
+          && self.profile_image.is_empty())
     }
 }
 

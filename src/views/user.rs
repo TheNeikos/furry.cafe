@@ -60,29 +60,46 @@ pub fn index(users: &[User], data: &LayoutData) -> Result<String, ::std::fmt::Er
     Ok(buffer)
 }
 
+static DEFAULT_AVATAR : &'static str = "/assets/imgs/default_avatar.png";
+
 pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
     let mut buffer = String::new();
     let mut partial = String::new();
+
+    let avatar = match user.get_avatar() {
+            Ok(Some(t)) => t.get_path(),
+            _ => String::from(DEFAULT_AVATAR),
+    };
+
     try!(html!(partial,
-        h1 { ^user.name }
-
-        div.email {
-            "Email: "
-            ^user.email
-        }
-
-        div.role {
-            "Role: "
-            ^role.as_str()
-        }
-
         div.user_profile {
-            ^(views::markdown::parse(&profile.bio))
-        }
+            div.row div class="col-md-10 offset-md-1" {
+                div.user_info.clearfix {
+                    img.user_avatar src=^(avatar) alt=^(format!("{}'s Avatar", user.name))
+                    h1.user_name { ^user.name }
+                    div.user_role {
+                        strong "Role: "
+                        ^role.as_str()
+                    }
+                }
+            }
 
-        a href=^(url!(format!("/users/{}/edit", user.id))) "Edit"
-        br /
-        a href=^(url!(format!("/users/{}/profile/edit", user.id))) "Edit Profile"
+            div.row div class="col-md-10 offset-md-1" {
+                div.user_actions {
+                    a.btn.btn-info href=^(url!(format!("/users/{}/edit", user.id))) "Edit"
+                    " "
+                    a.btn.btn-info href=^(url!(format!("/users/{}/profile/edit", user.id))) "Edit Profile"
+                }
+            }
+
+            div.row div class="col-md-10 offset-md-1" {
+                div.user_bio {
+                    ^(views::markdown::parse(&profile.bio))
+                }
+            }
+
+
+        }
     ));
 
     try!(views::layout::application(&mut buffer, Cow::Owned(format!("User: {}", user.name)), Cow::Owned(partial), data));
@@ -96,6 +113,7 @@ pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result
     try!(html!(partial,
         h1 { "Edit User " ^(user.name) }
         ^(PreEscaped(Form::new(FormMethod::Post, &format!("/users/{}", user.id))
+          .with_encoding("multipart/form-data")
           .with_fields(&[
                &Input::new("Name", "user_name")
                     .with_value(&user.name)
@@ -105,6 +123,9 @@ pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result
                     .with_errors(errors.as_ref().map(|x| &x.email)),
                &Input::new("Password", "user_password")
                     .with_type("password")
+                    .with_errors(errors.as_ref().map(|x| &x.password)),
+               &Input::new("Avatar", "user_avatar")
+                    .with_type("file")
                     .with_errors(errors.as_ref().map(|x| &x.password)),
                &Input::new("", "")
                     .with_value("Update")

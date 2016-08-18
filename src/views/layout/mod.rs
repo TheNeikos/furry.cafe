@@ -51,7 +51,7 @@ pub fn application(mut data: &mut fmt::Write,
 
                     hr /
                     footer {
-                        p ^PreEscaped("neikos.moe 2016 &copy; Neikos")
+                        p ^PreEscaped("Furratoria 2016 &copy; Neikos")
                     }
                 }
             }
