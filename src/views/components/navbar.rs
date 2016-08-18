@@ -43,7 +43,7 @@ impl<'a> Display for Navbar<'a> {
 
         html!(f,
             nav.navbar.navbar-static-top.navbar-light.bg-faded {
-                a.navbar-brand href="/" "neikos.moe"
+                a.navbar-brand href="/" "Furratoria"
                 ul.nav.navbar-nav {
                     @for item in NAVBAR_ENTRIES {
                         @if item.path == self.path {
