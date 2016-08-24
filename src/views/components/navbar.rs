@@ -14,6 +14,10 @@ static NAVBAR_ENTRIES: &'static [NavbarEntry<'static, 'static>] = &[
         path: "/"
     },
     NavbarEntry {
+        name: "Submissions",
+        path: "/submissions/"
+    },
+    NavbarEntry {
         name: "Members",
         path: "/users/"
     },
