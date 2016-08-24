@@ -56,3 +56,11 @@ pub fn find_by_user_id(uid: i64) -> Result<Option<Submission>, error::DatabaseEr
     submissions.limit(1).filter(user_id.eq(uid)).order(created_at.desc())
          .get_result::<models::submission::Submission>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
+
+pub fn last(amt: i64) -> Result<Vec<Submission>, error::DatabaseError> {
+    use diesel::prelude::*;
+    use models::schema::submissions::dsl::*;
+
+    submissions.limit(amt).order(created_at.desc())
+         .get_results::<models::submission::Submission>(&*database::connection().get().unwrap()).map_err(|e| e.into())
+}
