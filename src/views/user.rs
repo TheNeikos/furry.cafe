@@ -126,7 +126,7 @@ pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result
                     .with_errors(errors.as_ref().map(|x| &x.password)),
                &Input::new("Avatar", "user_avatar")
                     .with_type("file")
-                    .with_errors(errors.as_ref().map(|x| &x.password)),
+                    .with_errors(errors.as_ref().map(|x| &x.profile_image)),
                &Input::new("", "")
                     .with_value("Update")
                     .with_type("submit")
