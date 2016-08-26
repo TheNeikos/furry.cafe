@@ -49,6 +49,25 @@ impl<'a, 'b> NewSubmission<'a, 'b> {
     }
 }
 
+#[derive(Debug)]
+pub struct SubmissionError {
+    pub title: Vec<&'static str>,
+    pub description: Vec<&'static str>,
+    pub image: Vec<&'static str>,
+}
+
+impl SubmissionError {
+    pub fn new() -> SubmissionError {
+        SubmissionError { title: vec![], description: vec![], image: vec![]}
+    }
+    fn has_any_errors(&self) -> bool {
+        !(self.title.is_empty()
+          && self.description.is_empty()
+          && self.image.is_empty())
+    }
+}
+
+
 pub fn find_by_user_id(uid: i64) -> Result<Option<Submission>, error::DatabaseError> {
     use diesel::prelude::*;
     use models::schema::submissions::dsl::*;
@@ -64,3 +83,5 @@ pub fn last(amt: i64) -> Result<Vec<Submission>, error::DatabaseError> {
     submissions.limit(amt).order(created_at.desc())
          .get_results::<models::submission::Submission>(&*database::connection().get().unwrap()).map_err(|e| e.into())
 }
+
+

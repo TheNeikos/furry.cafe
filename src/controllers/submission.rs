@@ -19,7 +19,10 @@ pub fn index(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn new(req: &mut Request) -> IronResult<Response> {
-    unimplemented!()
+    let data = LayoutData::from_request(req);
+    let mut resp = Response::with((status::Ok, template!(views::submission::new(None, &data, None))));
+    resp.headers.set(ContentType::html());
+    Ok(resp)
 }
 
 pub fn create(req: &mut Request) -> IronResult<Response> {
