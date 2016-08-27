@@ -2,7 +2,6 @@ use iron::prelude::*;
 use iron::status;
 use iron::headers::ContentType;
 use iron::modifiers::Redirect;
-use iron::Url;
 use iron_login::User as UserTrait;
 
 use error::{self};
@@ -97,15 +96,15 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
     Ok(resp)
 }
 
-pub fn edit(req: &mut Request) -> IronResult<Response> {
+pub fn edit(_req: &mut Request) -> IronResult<Response> {
     unimplemented!()
 }
 
-pub fn update(req: &mut Request) -> IronResult<Response> {
+pub fn update(_req: &mut Request) -> IronResult<Response> {
     unimplemented!()
 }
 
-pub fn delete(req: &mut Request) -> IronResult<Response> {
+pub fn delete(_req: &mut Request) -> IronResult<Response> {
     unimplemented!()
 }
 

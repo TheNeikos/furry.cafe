@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use maud::{PreEscaped, RenderOnce};
+use maud::PreEscaped;
 
 use views;
 use views::layout::LayoutData;

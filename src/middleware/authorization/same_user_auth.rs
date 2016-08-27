@@ -1,8 +1,5 @@
 use iron::prelude::*;
-use iron::status::Status;
-use iron_login::User as U;
 
-use error::UnauthorizedError;
 use models::user::{self, User};
 use middleware::authorization::UserRequirement;
 

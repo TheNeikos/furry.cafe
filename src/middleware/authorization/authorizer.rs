@@ -4,7 +4,7 @@ use iron_login::User as U;
 use iron::BeforeMiddleware;
 
 use error::UnauthorizedError;
-use models::user::{self, User};
+use models::user::User;
 use middleware::authorization::UserRequirement;
 
 #[derive(Clone, Debug)]

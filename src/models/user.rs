@@ -195,16 +195,21 @@ impl<'a> UpdateUser<'a> {
             if let Ok(mut f) = f.open() {
                 use std::io::Read;
                 let mut buffer = Vec::new();
-                f.read_to_end(&mut buffer);
-                to_be_converted = match image::load_from_memory(&buffer) {
-                    Ok(t) => {
-                        Some(t)
+                if f.read_to_end(&mut buffer).is_err() {
+                    ue.profile_image.push("Image is not in a valid format");
+
+                } else {
+                    to_be_converted = match image::load_from_memory(&buffer) {
+                        Ok(t) => {
+                            Some(t)
+                        }
+                        Err(e) => {
+                            info!("Could not load image: {}", e);
+                            ue.profile_image.push("Image is not in a valid format");
+                            None
+                       }
                     }
-                    Err(e) => {
-                        ue.profile_image.push("Image is not in a valid format");
-                        None
-                    }
-                };
+                }
             } else {
                 ue.profile_image.push("Could not use this image")
             }

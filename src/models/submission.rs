@@ -84,16 +84,20 @@ impl<'a, 'b> NewSubmission<'a, 'b> {
             if let Ok(mut f) = image.open() {
                 use std::io::Read;
                 let mut buffer = Vec::new();
-                f.read_to_end(&mut buffer);
-                to_be_converted = match image::load_from_memory(&buffer) {
-                    Ok(t) => {
-                        Some(t)
+                if f.read_to_end(&mut buffer).is_err() {
+                    se.image.push("Image is not in a valid format");
+                } else {
+                    to_be_converted = match image::load_from_memory(&buffer) {
+                        Ok(t) => {
+                            Some(t)
+                        }
+                        Err(e) => {
+                            info!("Could not load image {}", e);
+                            se.image.push("Image is not in a valid format");
+                            None
+                        }
                     }
-                    Err(e) => {
-                        se.image.push("Image is not in a valid format");
-                        None
-                    }
-                };
+                }
             } else {
                 se.image.push("Could not use this image, please try again")
             }

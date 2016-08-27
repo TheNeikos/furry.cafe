@@ -3,6 +3,8 @@
 #![feature(custom_derive, custom_attribute)]
 #![plugin(diesel_codegen, dotenv_macros)]
 
+#![allow(dead_code)]
+
 
 #[macro_use] extern crate iron;
 extern crate router;

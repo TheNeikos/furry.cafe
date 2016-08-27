@@ -1,10 +1,10 @@
 
 use std::borrow::Cow;
-use maud::{PreEscaped, RenderOnce};
+use maud::PreEscaped;
 
 use views;
 use views::layout::LayoutData;
-use views::components::user::{UserLink, UserAvatar};
+use views::components::user::UserAvatar;
 use views::components::form::*;
 use models::user::{UserError, User, NewUser};
 use models::user_role::Role;
