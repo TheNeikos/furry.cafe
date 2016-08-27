@@ -3,6 +3,7 @@ use maud::{PreEscaped, RenderOnce};
 
 use views;
 use views::layout::LayoutData;
+use views::components::user::UserLink;
 use views::components::form::*;
 use models::submission::{Submission, SubmissionError, NewSubmission};
 
@@ -32,6 +33,7 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
             h1 { "Upload new Submission" }
 
             ^(PreEscaped(Form::new(FormMethod::Post, "/submissions/")
+              .with_encoding("multipart/form-data")
               .with_fields(&[
                    &Input::new("Image", "sub_image")
                         .with_type("file")
@@ -51,6 +53,71 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
     ));
 
     try!(views::layout::application(&mut buffer, Cow::Borrowed("Register"), Cow::Owned(partial), data));
+
+    Ok(buffer)
+}
+
+pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+    let mut buffer = String::new();
+    let mut partial = String::new();
+
+    let image = match sub.get_image() {
+        Ok(Some(t)) => t.get_path(),
+        Ok(None) => return Err(::std::fmt::Error),
+        Err(e) => {
+            error!("Could not load image for {} {}", sub.id, e);
+            return Err(::std::fmt::Error); // TODO: ...? Really!? This sucks lol
+        }
+    };
+
+    let user = match sub.get_submitter() {
+        Ok(Some(t)) => t,
+        Ok(None) => return Err(::std::fmt::Error),
+        Err(e) => {
+            error!("Could not load submitter for {} {}", sub.id, e);
+            return Err(::std::fmt::Error); // TODO: ...? Really!? This sucks lol
+        }
+    };
+
+    try!(html!(partial,
+        div.submission {
+            div.row div class="col-md-10 offset-md-1" {
+                div.submission.clearfix {
+                    img src=^(image) alt=^(format!("{}'s Submission", user.name)) /
+                }
+
+                div {
+                    h1.title { ^sub.title }
+                    span.author {
+                        "by "
+                        ^(PreEscaped(UserLink(&user)))
+                    }
+                }
+            }
+
+            div.row div class="col-md-10 offset-md-1" {
+                div.sub_actions {
+                    a.btn.btn-primary href=^(url!(format!("/users/{}/edit", user.id))) "Favorit"
+                    " "
+                    a.btn.btn-secondary href=^(image) "Full Size"
+                    " "
+                    a.btn.btn-info href=^(url!(format!("/users/{}/edit", user.id))) "Edit"
+                    " "
+                    a.btn.btn-danger href=^(url!(format!("/users/{}/profile/edit", user.id))) "Signal"
+                }
+            }
+
+            div.row div class="col-md-10 offset-md-1" {
+                div.submission_description {
+                    ^(views::markdown::parse(&sub.description))
+                }
+            }
+
+
+        }
+    ));
+
+    try!(views::layout::application(&mut buffer, Cow::Owned(format!("{}", sub.title)), Cow::Owned(partial), data));
 
     Ok(buffer)
 }

@@ -131,7 +131,7 @@ impl User {
 
     pub fn get_avatar(&self) -> Result<Option<Image>, error::DatabaseError> {
         match self.profile_image {
-            Some(id) => models::image::find_by_id(id),
+            Some(id) => models::image::find(id),
             None => Ok(None)
         }
     }

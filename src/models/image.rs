@@ -69,7 +69,7 @@ impl NewImage {
     }
 }
 
-pub fn find_by_id(uid: i64) -> Result<Option<Image>, error::DatabaseError> {
+pub fn find(uid: i64) -> Result<Option<Image>, error::DatabaseError> {
     use diesel::prelude::*;
     use models::schema::images::dsl::*;
 

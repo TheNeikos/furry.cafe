@@ -4,6 +4,7 @@ use maud::{PreEscaped, RenderOnce};
 
 use views;
 use views::layout::LayoutData;
+use views::components::user::{UserLink, UserAvatar};
 use views::components::form::*;
 use models::user::{UserError, User, NewUser};
 use models::user_role::Role;
@@ -60,22 +61,15 @@ pub fn index(users: &[User], data: &LayoutData) -> Result<String, ::std::fmt::Er
     Ok(buffer)
 }
 
-static DEFAULT_AVATAR : &'static str = "/assets/imgs/default_avatar.png";
-
 pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
     let mut buffer = String::new();
     let mut partial = String::new();
-
-    let avatar = match user.get_avatar() {
-            Ok(Some(t)) => t.get_path(),
-            _ => String::from(DEFAULT_AVATAR),
-    };
 
     try!(html!(partial,
         div.user_profile {
             div.row div class="col-md-10 offset-md-1" {
                 div.user_info.clearfix {
-                    img.user_avatar src=^(avatar) alt=^(format!("{}'s Avatar", user.name))
+                    ^PreEscaped(UserAvatar(&user))
                     h1.user_name { ^user.name }
                     div.user_role {
                         strong "Role: "
