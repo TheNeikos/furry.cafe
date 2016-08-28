@@ -244,8 +244,6 @@ impl<'a> UpdateUser<'a> {
             }
         });
 
-        info!("{:#?}", img);
-
         Ok(UpdateUser {
             name: name,
             password_hash: password_hash,
