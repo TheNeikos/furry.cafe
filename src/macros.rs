@@ -56,3 +56,35 @@ macro_rules! temp_redirect {
 macro_rules! url {
     ($url:expr) => {{use iron::Url; Url::parse(&(format!("http://localhost:3000{}", $url)[..])).unwrap() }}
 }
+
+#[macro_export]
+macro_rules! find_by_id {
+    ($req:ident, $name:expr, $module:ident) => {{
+        use iron::prelude::*;
+        use iron::status;
+
+        let id = match $req.extensions.get::<Router>().unwrap().find($name) {
+            Some(t) => {
+                match t.parse::<_>() {
+                    Ok(t) => Ok(t),
+                    Err(_) => Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/submissions/")))
+                }
+            }
+            None => {
+                Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/submissions/")))
+            }
+        };
+
+        id.and_then(|id| {
+            match $module::find(id) {
+                Err(e) => {
+                    Err(e.into())
+                },
+                Ok(Some(u)) => Ok(u),
+                Ok(None) => {
+                    Err(IronError::new(error::NotFound, status::NotFound))
+                }
+            }
+        })
+    }}
+}

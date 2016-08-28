@@ -121,3 +121,35 @@ pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, ::std::fmt::E
 
     Ok(buffer)
 }
+
+pub fn edit(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&Submission>) -> Result<String, ::std::fmt::Error> {
+    let mut buffer = String::new();
+    let mut partial = String::new();
+    try!(html!(partial,
+        div.row div class="col-sm-6 offset-sm-3" {
+            h1 { "Update your Submission" }
+
+            ^(PreEscaped(Form::new(FormMethod::Post, "/submissions/")
+              .with_encoding("multipart/form-data")
+              .with_fields(&[
+                   &Input::new("Image", "sub_image")
+                        .with_type("file")
+                        .with_errors(errors.as_ref().map(|x| &x.image)),
+                   &Input::new("Title", "sub_name")
+                        .with_value(sub.as_ref().map(|x| &x.title[..]).unwrap_or(&""))
+                        .with_errors(errors.as_ref().map(|x| &x.title)),
+                   &Textarea::new("Description", "sub_desc")
+                        .with_value(sub.as_ref().map(|x| &x.description[..]).unwrap_or(&""))
+                        .with_errors(None),
+                   &Input::new("", "")
+                        .with_value("Update")
+                        .with_type("submit")
+                        .with_class("btn btn-primary")
+              ])))
+        }
+    ));
+
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("Register"), Cow::Owned(partial), data));
+
+    Ok(buffer)
+}

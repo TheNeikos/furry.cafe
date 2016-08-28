@@ -9,6 +9,7 @@ use views;
 use models;
 use views::layout::LayoutData;
 use models::user::User;
+use models::submission;
 
 pub fn index(req: &mut Request) -> IronResult<Response> {
     let sub_list = try!(models::submission::last(20));
@@ -68,27 +69,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 pub fn show(req: &mut Request) -> IronResult<Response> {
     use router::Router;
 
-    let id = match req.extensions.get::<Router>().unwrap().find("id") {
-        Some(t) => {
-            match t.parse::<_>() {
-                Ok(t) => t,
-                Err(_) => return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/submissions/")))
-            }
-        }
-        None => {
-            return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/submissions/")));
-        }
-    };
-
-    let submission = match try!(models::submission::find(id)) {
-        Some(u) => u,
-        None => {
-            error!("Could not find submission with id: {}", id);
-            let mut resp = Response::with(status::NotFound);
-            resp.headers.set(ContentType::html());
-            return Ok(resp)
-        }
-    };
+    let submission = try!(find_by_id!(req, "id", submission));
 
     let data = LayoutData::from_request(req);
     let mut resp = Response::with((status::Ok, template!(views::submission::show(&submission, &data))));
@@ -96,8 +77,11 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
     Ok(resp)
 }
 
-pub fn edit(_req: &mut Request) -> IronResult<Response> {
-    unimplemented!()
+pub fn edit(req: &mut Request) -> IronResult<Response> {
+    let data = LayoutData::from_request(req);
+    let mut resp = Response::with((status::Ok, template!(views::submission::edit(None, &data, None))));
+    resp.headers.set(ContentType::html());
+    Ok(resp)
 }
 
 pub fn update(_req: &mut Request) -> IronResult<Response> {
