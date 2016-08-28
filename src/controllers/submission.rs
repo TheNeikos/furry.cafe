@@ -67,8 +67,6 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn show(req: &mut Request) -> IronResult<Response> {
-    use router::Router;
-
     let submission = try!(find_by_id!(req, "id", submission));
 
     let data = LayoutData::from_request(req);
@@ -79,13 +77,50 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
 
 pub fn edit(req: &mut Request) -> IronResult<Response> {
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::submission::edit(None, &data, None))));
+
+    let submission = try!(find_by_id!(req, "id", submission));
+
+    let mut resp = Response::with((status::Ok, template!(views::submission::edit(&submission, None, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
 
-pub fn update(_req: &mut Request) -> IronResult<Response> {
-    unimplemented!()
+pub fn update(req: &mut Request) -> IronResult<Response> {
+    use params::{Params, Value};
+
+    let data = LayoutData::from_request(req);
+
+    let submission = try!(find_by_id!(req, "id", submission));
+
+    let map = req.get_ref::<Params>().unwrap();
+
+    let sub_name = match map.get("sub_name") {
+        Some(&Value::String(ref name)) => Some(&name[..]),
+        _ => None
+    };
+
+    let sub_desc = match map.get("sub_desc") {
+        Some(&Value::String(ref name)) => Some(&name[..]),
+        _ => None
+    };
+
+    let image = match map.get("sub_image") {
+        Some(&Value::File(ref file)) => Some(file),
+        _ => None
+    };
+
+    let update_submission = match models::submission::UpdateSubmission::new(image ,sub_name, sub_desc) {
+        Ok(update_submission) => update_submission,
+        Err(err) => {
+            let mut resp = Response::with((status::Ok, template!(views::submission::edit(&submission, Some(err), &data))));
+            resp.headers.set(ContentType::html());
+            return Ok(resp);
+        }
+    };
+
+    try!(submission.update(&update_submission));
+
+    return Ok(Response::with((status::SeeOther, Redirect(url!(format!("/submissions/{}", submission.id))))))
 }
 
 pub fn delete(_req: &mut Request) -> IronResult<Response> {

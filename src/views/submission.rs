@@ -101,7 +101,7 @@ pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, ::std::fmt::E
                     " "
                     a.btn.btn-secondary href=^(image) "Full Size"
                     " "
-                    a.btn.btn-info href=^(url!(format!("/users/{}/edit", user.id))) "Edit"
+                    a.btn.btn-info href=^(url!(format!("/submissions/{}/edit", sub.id))) "Edit"
                     " "
                     a.btn.btn-danger href=^(url!(format!("/users/{}/profile/edit", user.id))) "Signal"
                 }
@@ -122,24 +122,24 @@ pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, ::std::fmt::E
     Ok(buffer)
 }
 
-pub fn edit(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&Submission>) -> Result<String, ::std::fmt::Error> {
+pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
         div.row div class="col-sm-6 offset-sm-3" {
             h1 { "Update your Submission" }
 
-            ^(PreEscaped(Form::new(FormMethod::Post, "/submissions/")
+            ^(PreEscaped(Form::new(FormMethod::Post, &format!("/submissions/{}", sub.id))
               .with_encoding("multipart/form-data")
               .with_fields(&[
                    &Input::new("Image", "sub_image")
                         .with_type("file")
                         .with_errors(errors.as_ref().map(|x| &x.image)),
                    &Input::new("Title", "sub_name")
-                        .with_value(sub.as_ref().map(|x| &x.title[..]).unwrap_or(&""))
+                        .with_value(&sub.title[..])
                         .with_errors(errors.as_ref().map(|x| &x.title)),
                    &Textarea::new("Description", "sub_desc")
-                        .with_value(sub.as_ref().map(|x| &x.description[..]).unwrap_or(&""))
+                        .with_value(&sub.description)
                         .with_errors(None),
                    &Input::new("", "")
                         .with_value("Update")

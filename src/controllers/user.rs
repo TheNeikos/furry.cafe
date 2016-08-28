@@ -65,8 +65,6 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn show(req: &mut Request) -> IronResult<Response> {
-    use router::Router;
-
     let user = try!(find_by_id!(req, "id", user));
 
     let role = try!(user.get_role());
@@ -78,8 +76,6 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn edit(req: &mut Request) -> IronResult<Response> {
-    use router::Router;
-
     let user = try!(find_by_id!(req, "id", user));
 
     let data = LayoutData::from_request(req);
@@ -90,7 +86,6 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
 
 pub fn update(req: &mut Request) -> IronResult<Response> {
     use params::{Params, Value};
-    use router::Router;
 
     let data = LayoutData::from_request(req);
 
@@ -127,8 +122,6 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn delete(req: &mut Request) -> IronResult<Response> {
-    use router::Router;
-
     let user = try!(find_by_id!(req, "id", user));
 
     try!(user.delete());

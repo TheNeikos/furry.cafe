@@ -62,6 +62,7 @@ macro_rules! find_by_id {
     ($req:ident, $name:expr, $module:ident) => {{
         use iron::prelude::*;
         use iron::status;
+        use router::Router;
 
         let id = match $req.extensions.get::<Router>().unwrap().find($name) {
             Some(t) => {
