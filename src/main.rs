@@ -27,6 +27,7 @@ extern crate image;
 
 use std::env;
 use std::path::Path;
+use std::time::Duration;
 
 use iron::prelude::*;
 use router::Router;
@@ -146,7 +147,7 @@ fn main() {
          .mount("/login", login_router)
          .mount("/logout", logout_router)
          .mount("/submissions", sub_router)
-         .mount("/assets/", staticfile::Static::new(Path::new("assets/")));
+         .mount("/assets/", staticfile::Static::new(Path::new("assets/")).cache(Duration::new(60 * 60 * 24 * 7, 0)));
 
 
     let cookie_secret= env::var("COOKIE_SECRET")
