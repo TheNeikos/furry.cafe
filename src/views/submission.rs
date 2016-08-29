@@ -5,6 +5,7 @@ use views;
 use views::layout::LayoutData;
 use views::components::user::UserLink;
 use views::components::form::*;
+use views::components::button::*;
 use models::submission::{Submission, SubmissionError, NewSubmission};
 
 pub fn index(subs: &[Submission], data: &LayoutData) -> Result<String, ::std::fmt::Error> {
@@ -146,6 +147,10 @@ pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData
                         .with_type("submit")
                         .with_class("btn btn-primary")
               ])))
+        }
+
+        div.row div class="col-sm-6 offset-sm-3" {
+            ^(PreEscaped(Button::new("Delete", &format!("/submissions/{}/delete", sub.id)).with_method(RequestMethod::Post)))
         }
     ));
 
