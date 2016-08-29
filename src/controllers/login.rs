@@ -2,7 +2,6 @@ use iron::prelude::*;
 use iron::status;
 use iron::headers::ContentType;
 use iron::modifiers::Redirect;
-use iron::Url;
 use iron_login::User as UserTrait;
 
 use views;
@@ -61,7 +60,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     let login = login.log_in(user);
 
     // TODO: Add config for url?
-    return Ok(Response::with((login, (status::SeeOther, Redirect(Url::parse("http://localhost:3000/").unwrap())))))
+    return Ok(Response::with((login, temp_redirect!("/"))))
 }
 
 pub fn delete(req: &mut Request) -> IronResult<Response> {
@@ -75,5 +74,5 @@ pub fn destroy(req: &mut Request) -> IronResult<Response> {
     let logout = User::get_login(req).log_out();
 
     // TODO: Add config for url?
-    return Ok(Response::with((logout, (status::SeeOther, Redirect(Url::parse("http://localhost:3000/").unwrap())))))
+    return Ok(Response::with((logout, temp_redirect!("/"))))
 }

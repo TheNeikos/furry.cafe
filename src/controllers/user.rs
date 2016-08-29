@@ -2,7 +2,6 @@ use iron::prelude::*;
 use iron::status;
 use iron::headers::ContentType;
 use iron::modifiers::Redirect;
-use iron::Url;
 
 use error::{self};
 use views;
@@ -61,7 +60,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     try!(User::create_from(new_user));
 
     // TODO: Add config for url?
-    return Ok(Response::with((status::SeeOther, Redirect(Url::parse("http://localhost:3000/users/").unwrap()))))
+    return Ok(Response::with(temp_redirect!("/users/")))
 }
 
 pub fn show(req: &mut Request) -> IronResult<Response> {
