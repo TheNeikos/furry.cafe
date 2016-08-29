@@ -52,9 +52,22 @@ macro_rules! temp_redirect {
     }
 }
 
+
+lazy_static! {
+    pub static ref URL_PATH: String = {
+        use std::env;
+        env::var("FULL_URL")
+        .expect("COOKIE_SECRET must be set")
+    };
+}
+
 #[macro_export]
 macro_rules! url {
-    ($url:expr) => {{use iron::Url; Url::parse(&(format!("http://localhost:3000{}", $url)[..])).unwrap() }}
+    ($url:expr) => {{
+        use iron::Url;
+        let s: &String = &$crate::macros::URL_PATH;
+        Url::parse(&(format!("{}{}", s, $url)[..])).unwrap()
+    }}
 }
 
 #[macro_export]
