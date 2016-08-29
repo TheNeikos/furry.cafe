@@ -3,6 +3,8 @@
 #![feature(custom_derive, custom_attribute)]
 #![plugin(diesel_codegen, dotenv_macros)]
 
+#![allow(dead_code)]
+
 
 #[macro_use] extern crate iron;
 extern crate router;
@@ -25,6 +27,7 @@ extern crate image;
 
 use std::env;
 use std::path::Path;
+use std::time::Duration;
 
 use iron::prelude::*;
 use router::Router;
@@ -54,8 +57,6 @@ fn main() {
         //---------------------------------
         let mut router = Router::new();
         router.get("/",         controllers::user::index);
-        router.get("/new",      controllers::user::new);
-        router.post("/",        controllers::user::create);
         router.get("/:id",      controllers::user::show);
 
         let auth = middleware::authorization::Authorizer::new(vec![
@@ -107,12 +108,50 @@ fn main() {
     logout_router.get("/", controllers::login::delete);
     logout_router.post("/", controllers::login::destroy);
 
+    let sub_router = {
+        let mut router = Router::new();
+        router.get("/",         controllers::submission::index);
+        router.get("/:id",      controllers::submission::show);
+
+
+        let auth = middleware::authorization::Authorizer::new(vec![
+            middleware::authorization::LoggedIn,
+        ]);
+
+        let mut chain = Chain::new(controllers::submission::new);
+        chain.link_before(auth.clone());
+        router.get("/new",      chain);
+
+        let mut chain = Chain::new(controllers::submission::create);
+        chain.link_before(auth.clone());
+        router.post("/",        chain);
+
+        let mut chain = Chain::new(controllers::submission::edit);
+        chain.link_before(auth.clone());
+        router.get("/:id/edit", chain);
+
+        let mut chain = Chain::new(controllers::submission::update);
+        chain.link_before(auth.clone());
+        router.put("/:id",      chain);
+
+        let mut chain = Chain::new(controllers::submission::update);
+        chain.link_before(auth.clone());
+        router.post("/:id",     chain);
+
+        let mut chain = Chain::new(controllers::submission::delete);
+        chain.link_before(auth.clone());
+        router.post("/:id/delete",     chain);
+
+        router
+    };
+
     let mut mount = Mount::new();
     mount.mount("/", index_router)
          .mount("/users", user_router)
          .mount("/login", login_router)
          .mount("/logout", logout_router)
-         .mount("/assets/", staticfile::Static::new(Path::new("assets/")));
+         .mount("/submissions", sub_router)
+         .mount("/assets/", staticfile::Static::new(Path::new("assets/")).cache(Duration::new(60 * 60 * 24 * 7, 0)));
 
 
     let cookie_secret= env::var("COOKIE_SECRET")

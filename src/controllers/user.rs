@@ -2,12 +2,12 @@ use iron::prelude::*;
 use iron::status;
 use iron::headers::ContentType;
 use iron::modifiers::Redirect;
-use iron::Url;
 
 use error::{self};
 use views;
 use models;
 use views::layout::LayoutData;
+use models::user;
 
 pub fn index(req: &mut Request) -> IronResult<Response> {
     let user_list = try!(models::user::find_all());
@@ -60,32 +60,11 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     try!(User::create_from(new_user));
 
     // TODO: Add config for url?
-    return Ok(Response::with((status::SeeOther, Redirect(Url::parse("http://localhost:3000/users/").unwrap()))))
+    return Ok(Response::with(temp_redirect!("/users/")))
 }
 
 pub fn show(req: &mut Request) -> IronResult<Response> {
-    use router::Router;
-
-    let id = match req.extensions.get::<Router>().unwrap().find("id") {
-        Some(t) => {
-            match t.parse::<_>() {
-                Ok(t) => t,
-                Err(_) => return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")))
-            }
-        }
-        None => {
-            return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")));
-        }
-    };
-
-    let user = match try!(models::user::find(id)) {
-        Some(u) => u,
-        None => {
-            let mut resp = Response::with(status::NotFound);
-            resp.headers.set(ContentType::html());
-            return Ok(resp)
-        }
-    };
+    let user = try!(find_by_id!(req, "id", user));
 
     let role = try!(user.get_role());
     let profile = try!(user.get_profile());
@@ -96,27 +75,7 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn edit(req: &mut Request) -> IronResult<Response> {
-    use router::Router;
-    let id = match req.extensions.get::<Router>().unwrap().find("id") {
-        Some(t) => {
-            match t.parse::<_>() {
-                Ok(t) => t,
-                Err(_) => return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")))
-            }
-        }
-        None => {
-            return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")));
-        }
-    };
-
-    let user = match try!(models::user::find(id)) {
-        Some(u) => u,
-        None => {
-            let mut resp = Response::with(status::NotFound);
-            resp.headers.set(ContentType::html());
-            return Ok(resp)
-        }
-    };
+    let user = try!(find_by_id!(req, "id", user));
 
     let data = LayoutData::from_request(req);
     let mut resp = Response::with((status::Ok, template!(views::user::edit(&user, None, &data))));
@@ -126,30 +85,10 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
 
 pub fn update(req: &mut Request) -> IronResult<Response> {
     use params::{Params, Value};
-    use router::Router;
 
     let data = LayoutData::from_request(req);
 
-    let id = match req.extensions.get::<Router>().unwrap().find("id") {
-        Some(t) => {
-            match t.parse::<_>() {
-                Ok(t) => t,
-                Err(_) => return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")))
-            }
-        }
-        None => {
-            return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")));
-        }
-    };
-
-    let user = match try!(models::user::find(id)) {
-        Some(u) => u,
-        None => {
-            let mut resp = Response::with(status::NotFound);
-            resp.headers.set(ContentType::html());
-            return Ok(resp)
-        }
-    };
+    let user = try!(find_by_id!(req, "id", user));
 
     let map = req.get_ref::<Params>().unwrap();
     let username = match map.get("user_name") {
@@ -182,28 +121,7 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn delete(req: &mut Request) -> IronResult<Response> {
-    use router::Router;
-
-    let id = match req.extensions.get::<Router>().unwrap().find("id") {
-        Some(t) => {
-            match t.parse::<_>() {
-                Ok(t) => t,
-                Err(_) => return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")))
-            }
-        }
-        None => {
-            return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")));
-        }
-    };
-
-    let user = match try!(models::user::find(id)) {
-        Some(u) => u,
-        None => {
-            let mut resp = Response::with(status::NotFound);
-            resp.headers.set(ContentType::html());
-            return Ok(resp)
-        }
-    };
+    let user = try!(find_by_id!(req, "id", user));
 
     try!(user.delete());
 

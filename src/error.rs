@@ -221,3 +221,17 @@ impl Error for UnauthorizedError {
     fn description(&self) -> &str { "Unauthorized" }
 }
 
+
+#[derive(Debug)]
+pub struct NotFound;
+
+impl fmt::Display for NotFound {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        Debug::fmt(self, f)
+    }
+}
+
+impl Error for NotFound {
+    fn description(&self) -> &str { "Not Found" }
+}
+

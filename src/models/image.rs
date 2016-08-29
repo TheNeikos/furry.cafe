@@ -1,6 +1,5 @@
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::fs::File;
-use std::path::Path;
 
 use diesel;
 use image::{DynamicImage, GenericImage, ImageFormat};
@@ -60,7 +59,7 @@ impl NewImage {
         let path = format!("./assets/uploads/{}_{}-{}-{}.png", dims.0, dims.1, SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix);
         let mut file = try!(File::create(&path));
         if let Err(e) = img.save(&mut file, ImageFormat::PNG) {
-            error!("Could not save image...");
+            error!("Could not save image... {}", e);
         };
         Ok(NewImage {
             path: String::from(&path[1..]),
@@ -69,7 +68,7 @@ impl NewImage {
     }
 }
 
-pub fn find_by_id(uid: i64) -> Result<Option<Image>, error::DatabaseError> {
+pub fn find(uid: i64) -> Result<Option<Image>, error::DatabaseError> {
     use diesel::prelude::*;
     use models::schema::images::dsl::*;
 

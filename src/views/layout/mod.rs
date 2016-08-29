@@ -35,7 +35,7 @@ pub fn application(mut data: &mut fmt::Write,
     html!(data, {
         html {
             head {
-                title ^title
+                title ^(format!("{} - Furratoria", title))
                 link rel="stylesheet" href="/assets/external/css/bootstrap.min.css" integrity="sha384-MIwDKRSSImVFAZCVLtU0LMDdON6KVCrZHyVQQj6e8wIEJkW4tvwqXrbMIya1vriY" crossorigin="anonymous" /
                 link rel="stylesheet" href="/assets/application.css" /
                 script src="/assets/external/js/jquery-3.1.0.min.js" ""
