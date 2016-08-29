@@ -138,6 +138,10 @@ fn main() {
         chain.link_before(auth.clone());
         router.post("/:id",     chain);
 
+        let mut chain = Chain::new(controllers::submission::delete);
+        chain.link_before(auth.clone());
+        router.post("/:id/delete",     chain);
+
         router
     };
 

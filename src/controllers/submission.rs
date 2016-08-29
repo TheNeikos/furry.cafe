@@ -123,7 +123,11 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
     return Ok(Response::with((status::SeeOther, Redirect(url!(format!("/submissions/{}", submission.id))))))
 }
 
-pub fn delete(_req: &mut Request) -> IronResult<Response> {
-    unimplemented!()
+pub fn delete(req: &mut Request) -> IronResult<Response> {
+    let submission = try!(find_by_id!(req, "id", submission));
+
+    try!(submission.delete());
+
+    return Ok(Response::with(temp_redirect!("/submissions/")));
 }
 

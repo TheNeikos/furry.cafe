@@ -65,6 +65,14 @@ impl Submission {
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
+    pub fn delete(self) -> Result<usize, error::DatabaseError> {
+        use diesel;
+        use diesel::prelude::*;
+        use models::schema::submissions::dsl::*;
+        diesel::delete(submissions.filter(id.eq(self.id)))
+            .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
+    }
+
     pub fn get_image(&self) -> Result<Option<Image>, error::DatabaseError> {
         models::image::find(self.image)
     }
