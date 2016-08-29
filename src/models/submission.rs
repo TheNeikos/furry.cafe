@@ -19,7 +19,7 @@ fn convert_image(mut img: DynamicImage) -> Option<i64> {
         _ => (),
     }
 
-    let new_image = match NewImage::create_from_dynamic_image(&img, "avatar") {
+    let new_image = match NewImage::create_from_dynamic_image(&img, "submission") {
         Ok(t) => t,
         Err(e) => {
             error!("Could not create from dynamic image {}", e);
