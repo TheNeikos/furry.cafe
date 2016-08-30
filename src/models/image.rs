@@ -21,7 +21,9 @@ pub struct Image {
     pub created_at: diesel::data_types::PgTimestamp,
     pub updated_at: diesel::data_types::PgTimestamp,
     host_type: i32,
-    path: String
+    path: String,
+    pub width: i32,
+    pub height: i32,
 }
 
 impl Image {
@@ -43,6 +45,8 @@ impl Image {
 pub struct NewImage {
     host_type: i32,
     path: String,
+    width: i32,
+    height: i32,
 }
 
 impl NewImage {
@@ -50,6 +54,8 @@ impl NewImage {
         NewImage {
             host_type: typ as i32,
             path: path.to_string(),
+            width: 0,
+            height: 0,
         }
     }
 
@@ -64,6 +70,8 @@ impl NewImage {
         Ok(NewImage {
             path: String::from(&path[1..]),
             host_type: ImageType::Local as i32,
+            width: dims.0 as i32,
+            height: dims.1 as i32,
         })
     }
 }

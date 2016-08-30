@@ -12,6 +12,13 @@ footer {
 
 }
 
+.user_profile .banner {
+    width: 100%;
+    max-height: 200px;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
 .user_info {
     height: 200px;
     margin-top: 80px;
