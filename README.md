@@ -11,7 +11,7 @@ Roadmap:
     - [x] Add Classic User Roles (Admin, Mod, User)
 - [ ] Better User Controls
     - [x] User Profile Editing
-    - [ ] Banner Choosing (from a submitter artwork)
+    - [x] Banner Choosing (from a submitter artwork)
     - [x] Profile Picture
 - [ ] Artwork Hosting (that doesn't suck (tm))
     - [ ] Support different level of visibility
