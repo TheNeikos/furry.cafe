@@ -12,7 +12,7 @@ Roadmap:
 - [ ] Better User Controls
     - [x] User Profile Editing
     - [ ] Banner Choosing (from a submitter artwork)
-    - [ ] Profile Picture
+    - [x] Profile Picture
 - [ ] Artwork Hosting (that doesn't suck (tm))
     - [ ] Support different level of visibility
         - Public
