@@ -65,8 +65,23 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -
     let mut buffer = String::new();
     let mut partial = String::new();
 
+    let banner = match profile.get_banner() {
+        Ok(t) => t,
+        Err(e) => {
+            error!("Could not load banner for profile {}: {}", profile.id, e);
+            // TODO: MAKE THIS BETTEEEER
+            return Err(::std::fmt::Error);
+        }
+    };
+
     try!(html!(partial,
         div.user_profile {
+            @if let Some(image) = banner {
+                div.row div class="col-md-10 offset-md-1" {
+                    div.banner style=^(format!("background-image: '{}'", image.get_path())) /
+                }
+            }
+
             div.row div class="col-md-10 offset-md-1" {
                 div.user_info.clearfix {
                     ^PreEscaped(UserAvatar(&user))

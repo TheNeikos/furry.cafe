@@ -74,7 +74,24 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
         _ => &old_profile.bio
     };
 
-    let new = models::user_profile::NewUserProfile::new(&user, bio);
+    let banner = match map.get("banner_image") {
+        Some(&Value::String(ref banner)) => {
+            match banner.parse::<_>() {
+                Ok(t) => Some(t),
+                Err(_) => None,
+            }
+        }
+        _ => old_profile.banner_image
+    };
+
+    let banner_image;
+    if banner.is_some() {
+        banner_image = try!(models::image::find(banner.unwrap()));
+    } else {
+        banner_image = None;
+    }
+
+    let new = models::user_profile::NewUserProfile::new(&user, bio, banner_image.as_ref());
     match user.set_profile(new.clone()) {
         Ok(()) => {
            Ok(Response::with((status::SeeOther, Redirect(url!(format!("/users/{}", user.id))))))

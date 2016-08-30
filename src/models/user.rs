@@ -123,6 +123,7 @@ impl User {
                 try!(self.set_profile(NewUserProfile {
                     user_id: self.id,
                     bio: "",
+                    banner_image: None,
                 }));
                 return self.get_profile(); // TODO: Is this safe??
             }
