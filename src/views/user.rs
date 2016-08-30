@@ -78,7 +78,7 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -
         div.user_profile {
             @if let Some(image) = banner {
                 div.row div class="col-md-10 offset-md-1" {
-                    div.banner style=^(format!("background-image: '{}'", image.get_path())) /
+                    div.banner style=^(format!("background-image: url('{}');height: {};", image.get_path(), image.height)) /
                 }
             }
 

@@ -22,8 +22,8 @@ pub struct Image {
     pub updated_at: diesel::data_types::PgTimestamp,
     host_type: i32,
     path: String,
-    width: i32,
-    height: i32,
+    pub width: i32,
+    pub height: i32,
 }
 
 impl Image {
