@@ -27,7 +27,7 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn create_from(new: NewImage) -> Result<i64, error::DatabaseError> {
+    pub fn create_from(new: NewImage) -> Result<i64, error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::images::dsl::*;
@@ -76,7 +76,7 @@ impl NewImage {
     }
 }
 
-pub fn find(uid: i64) -> Result<Option<Image>, error::DatabaseError> {
+pub fn find(uid: i64) -> Result<Option<Image>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::images::dsl::*;
 

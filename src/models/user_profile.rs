@@ -19,7 +19,7 @@ pub struct UserProfile {
 }
 
 impl UserProfile {
-    pub fn create_from(nup: NewUserProfile) -> Result<(), error::DatabaseError> {
+    pub fn create_from(nup: NewUserProfile) -> Result<(), error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::user_profiles::dsl::*;
@@ -27,7 +27,7 @@ impl UserProfile {
             .into(user_profiles).execute(&*database::connection().get().unwrap()).map_err(|e| e.into()).map(|_| ())
     }
 
-    pub fn get_banner(&self) -> Result<Option<Image>, error::DatabaseError> {
+    pub fn get_banner(&self) -> Result<Option<Image>, error::FurratoriaError> {
         match self.banner_image {
             Some(id) => models::image::find(id),
             None => Ok(None)
@@ -61,7 +61,7 @@ impl<'a> NewUserProfile<'a> {
     }
 }
 
-pub fn find_by_user_id(uid: i64) -> Result<Option<UserProfile>, error::DatabaseError> {
+pub fn find_by_user_id(uid: i64) -> Result<Option<UserProfile>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::user_profiles::dsl::*;
 

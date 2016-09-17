@@ -6,8 +6,8 @@ use bcrypt::BcryptError;
 
 use diesel;
 use std::error::Error;
-use std::fmt::{self, Debug};
 use models::user::User;
+use std::fmt;
 
 quick_error! {
     #[derive(Debug)]
@@ -18,35 +18,28 @@ quick_error! {
         Template(err: Box<Error + Send>) {
             cause(&**err)
             description(err.description())
-            from()
+            from(e: fmt::Error) -> (Box::new(e))
         }
         Database(err: Box<Error + Send>) {
             cause(&**err)
             description(err.description())
-            from(diesel::result::Error)
-        }
-        BadFormatting(err: Box<Error + Send>) {
-            cause(&**err)
-            description(err.description())
-            from(diesel::result::Error)
+            from(e: diesel::result::Error) -> (Box::new(e))
         }
         Login(err: Box<Error + Send>) {
             cause(&**err)
             description(err.description())
-            from(diesel::result::Error)
-            from(FurratoriaError::Internal)
-            from(FurratoriaError::Database)
+            //from(e: FurratoriaError) -> (Box::new(e))
+        }
+        Bcrypt(err: BcryptError) {
+            from()
         }
         Internal(err: Box<Error + Send>) {
             cause(&**err)
             description(err.description())
-            from(BcryptError)
         }
-        Unauthorized(user: User) {
-            cause(&**err)
-            description(err.description())
-        }
+        Unauthorized(user: Option<User>) {}
         NotFound {}
+        BadFormatting { }
     }
 }
 

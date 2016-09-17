@@ -3,11 +3,12 @@ use std::borrow::Cow;
 use maud::PreEscaped;
 
 use views;
+use error;
 use views::layout::LayoutData;
 use views::components::form::*;
 use models::user::UserError;
 
-pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -33,7 +34,7 @@ pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<String, ::s
     Ok(buffer)
 }
 
-pub fn logout(data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn logout(data: &LayoutData) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
 

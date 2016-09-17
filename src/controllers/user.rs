@@ -13,14 +13,14 @@ pub fn index(req: &mut Request) -> IronResult<Response> {
     let user_list = try!(models::user::find_all());
 
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::user::index(&user_list, &data))));
+    let mut resp = Response::with((status::Ok, try!(views::user::index(&user_list, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
 
 pub fn new(req: &mut Request) -> IronResult<Response> {
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::user::new(None, &data, None))));
+    let mut resp = Response::with((status::Ok, try!(views::user::new(None, &data, None))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -51,7 +51,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     let new_user = match models::user::NewUser::new(username, email, password) {
         Ok(new_user) => new_user,
         Err((err, new_user)) => {
-            let mut resp = Response::with((status::Ok, template!(views::user::new(Some(err), &data, Some(&new_user)))));
+            let mut resp = Response::with((status::Ok, try!(views::user::new(Some(err), &data, Some(&new_user)))));
             resp.headers.set(ContentType::html());
             return Ok(resp);
         }
@@ -69,7 +69,7 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
     let role = try!(user.get_role());
     let profile = try!(user.get_profile());
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::user::show(&user, role, &profile, &data))));
+    let mut resp = Response::with((status::Ok, try!(views::user::show(&user, role, &profile, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -78,7 +78,7 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
     let user = try!(find_by_id!(req, "id", user));
 
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::user::edit(&user, None, &data))));
+    let mut resp = Response::with((status::Ok, try!(views::user::edit(&user, None, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -109,7 +109,7 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
     let update_user = match models::user::UpdateUser::new(username, password, avatar) {
         Ok(update_user) => update_user,
         Err(err) => {
-            let mut resp = Response::with((status::Ok, template!(views::user::edit(&user, Some(err), &data))));
+            let mut resp = Response::with((status::Ok, try!(views::user::edit(&user, Some(err), &data))));
             resp.headers.set(ContentType::html());
             return Ok(resp);
         }
