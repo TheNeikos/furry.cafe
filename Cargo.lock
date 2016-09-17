@@ -20,6 +20,7 @@ dependencies = [
  "mount 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "params 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "pulldown-cmark 0.0.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quick-error 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2-diesel 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "router 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
