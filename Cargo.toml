@@ -20,6 +20,7 @@ maud_macros = "0.9"
 mount = "0.2"
 params = "0.3"
 pulldown-cmark = "0.0.8"
+quick-error = "1.1.0"
 r2d2 = "0.7.0"
 r2d2-diesel = "0.7.0"
 router = "0.2"
@@ -35,5 +36,5 @@ features = ["yaml"]
 version = "0.4.8"
 
 [dependencies.staticfile]
-version = "0.3.0"
 features = ["cache"]
+version = "0.3.0"

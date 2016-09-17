@@ -58,7 +58,7 @@ impl User {
         return ue;
     }
 
-    pub fn update(&self, update: &UpdateUser) -> Result<usize, error::DatabaseError> {
+    pub fn update(&self, update: &UpdateUser) -> Result<usize, error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::users::dsl::*;
@@ -66,7 +66,7 @@ impl User {
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn delete(self) -> Result<usize, error::DatabaseError> {
+    pub fn delete(self) -> Result<usize, error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::users::dsl::*;
@@ -74,20 +74,20 @@ impl User {
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn create_from(nu: NewUser) -> Result<(), error::DatabaseError> {
+    pub fn create_from(nu: NewUser) -> Result<(), error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::users::dsl::*;
-        let user_id = try!(database_try!(diesel::insert(&nu)
+        let user_id = try!(diesel::insert(&nu)
                                     .into(users)
                                     .returning(id)
                                     .get_result(&*database::connection().get().unwrap())
-                                    ));
+                                    );
         let user = try!(find(user_id)).unwrap();
         user.set_role(Role::Member)
     }
 
-    pub fn set_role(&self, role: Role) -> Result<(), error::DatabaseError> {
+    pub fn set_role(&self, role: Role) -> Result<(), error::FurratoriaError> {
         match try!(user_role::find_by_user_id(self.id)) {
             Some(mut x) => {
                 if x.role == role as i32 { return Ok(()); }
@@ -100,7 +100,7 @@ impl User {
         }
     }
 
-    pub fn get_role(&self) -> Result<Role, error::DatabaseError> {
+    pub fn get_role(&self) -> Result<Role, error::FurratoriaError> {
         match try!(user_role::find_by_user_id(self.id)) {
             Some(x) => Ok(Role::from(x.role)),
             None => {
@@ -111,11 +111,11 @@ impl User {
         }
     }
 
-    pub fn set_profile(&self, profile: NewUserProfile) -> Result<(), error::DatabaseError> {
+    pub fn set_profile(&self, profile: NewUserProfile) -> Result<(), error::FurratoriaError> {
         UserProfile::create_from(profile)
     }
 
-    pub fn get_profile(&self) -> Result<UserProfile, error::DatabaseError> {
+    pub fn get_profile(&self) -> Result<UserProfile, error::FurratoriaError> {
         match try!(user_profile::find_by_user_id(self.id)) {
             Some(x) => Ok(x),
             None => {
@@ -130,7 +130,7 @@ impl User {
         }
     }
 
-    pub fn get_avatar(&self) -> Result<Option<Image>, error::DatabaseError> {
+    pub fn get_avatar(&self) -> Result<Option<Image>, error::FurratoriaError> {
         match self.profile_image {
             Some(id) => models::image::find(id),
             None => Ok(None)
@@ -325,14 +325,14 @@ impl UserError {
 }
 
 
-pub fn find_all() -> Result<Vec<User>, error::DatabaseError> {
+pub fn find_all() -> Result<Vec<User>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::users::dsl::*;
 
     users.get_results::<models::user::User>(&*database::connection().get().unwrap()).map_err(|e| e.into())
 }
 
-pub fn find(uid: i64) -> Result<Option<User>, error::DatabaseError> {
+pub fn find(uid: i64) -> Result<Option<User>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::users::dsl::*;
 
@@ -340,7 +340,7 @@ pub fn find(uid: i64) -> Result<Option<User>, error::DatabaseError> {
          .get_result::<models::user::User>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn find_by_email(email_addr: &str) -> Result<Option<User>, error::DatabaseError> {
+pub fn find_by_email(email_addr: &str) -> Result<Option<User>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::users::dsl::*;
 
@@ -348,7 +348,7 @@ pub fn find_by_email(email_addr: &str) -> Result<Option<User>, error::DatabaseEr
          .get_result::<models::user::User>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn with_email_password(email: &str, password: &str) -> Result<Option<User>, error::LoginError> {
+pub fn with_email_password(email: &str, password: &str) -> Result<Option<User>, error::FurratoriaError> {
     let user = try!(find_by_email(email));
 
     if let None = user {

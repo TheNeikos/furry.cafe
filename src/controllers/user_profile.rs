@@ -14,11 +14,11 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
         Some(t) => {
             match t.parse::<_>() {
                 Ok(t) => t,
-                Err(_) => return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")))
+                Err(_) => return Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/users/")))
             }
         }
         None => {
-            return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")));
+            return Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/users/")));
         }
     };
 
@@ -34,7 +34,7 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
     let data = LayoutData::from_request(req);
     let profile = try!(user.get_profile());
     let new_profile = models::user_profile::NewUserProfile::from(&profile);
-    let mut resp = Response::with((status::Ok, template!(views::user_profile::edit(&user, &new_profile, None, &data))));
+    let mut resp = Response::with((status::Ok, try!(views::user_profile::edit(&user, &new_profile, None, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -49,11 +49,11 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
         Some(t) => {
             match t.parse::<_>() {
                 Ok(t) => t,
-                Err(_) => return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")))
+                Err(_) => return Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/users/")))
             }
         }
         None => {
-            return Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/users/")));
+            return Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/users/")));
         }
     };
 
@@ -98,7 +98,7 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
         }
         Err(_) => {
             // TODO: This is a DATABASE ERROR! Don't just ignore it!!!!
-            let mut resp = Response::with((status::Ok, template!(views::user_profile::edit(&user, &new, None, &data))));
+            let mut resp = Response::with((status::Ok, try!(views::user_profile::edit(&user, &new, None, &data))));
             resp.headers.set(ContentType::html());
             Ok(resp)
         }

@@ -24,6 +24,7 @@ extern crate log4rs;
 extern crate pulldown_cmark;
 extern crate maud_pulldown_cmark;
 extern crate image;
+#[macro_use] extern crate quick_error;
 
 use std::env;
 use std::path::Path;

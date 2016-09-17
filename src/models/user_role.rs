@@ -46,7 +46,7 @@ pub struct UserRole {
 }
 
 impl UserRole {
-    pub fn create_from(nur: NewUserRole) -> Result<(), error::DatabaseError> {
+    pub fn create_from(nur: NewUserRole) -> Result<(), error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::user_roles::dsl::*;
@@ -54,7 +54,7 @@ impl UserRole {
             .into(user_roles).execute(&*database::connection().get().unwrap()).map_err(|e| e.into()).map(|_| ())
     }
 
-    pub fn update(&mut self, role_: Role) -> Result<(), error::DatabaseError> {
+    pub fn update(&mut self, role_: Role) -> Result<(), error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::user_roles::dsl::*;
@@ -84,7 +84,7 @@ pub struct UpdateUserRole {
     role: i32,
 }
 
-pub fn find(uid: i64) -> Result<Option<UserRole>, error::DatabaseError> {
+pub fn find(uid: i64) -> Result<Option<UserRole>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::user_roles::dsl::*;
 
@@ -92,7 +92,7 @@ pub fn find(uid: i64) -> Result<Option<UserRole>, error::DatabaseError> {
          .get_result::<models::user_role::UserRole>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn find_by_user_id(uid: i64) -> Result<Option<UserRole>, error::DatabaseError> {
+pub fn find_by_user_id(uid: i64) -> Result<Option<UserRole>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::user_roles::dsl::*;
 

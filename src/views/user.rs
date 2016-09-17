@@ -3,6 +3,7 @@ use std::borrow::Cow;
 use maud::PreEscaped;
 
 use views;
+use error;
 use views::layout::LayoutData;
 use views::components::user::UserAvatar;
 use views::components::form::*;
@@ -10,7 +11,7 @@ use models::user::{UserError, User, NewUser};
 use models::user_role::Role;
 use models::user_profile::UserProfile;
 
-pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>) -> Result<String, ::std::fmt::Error> {
+pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -41,7 +42,7 @@ pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>)
     Ok(buffer)
 }
 
-pub fn index(users: &[User], data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn index(users: &[User], data: &LayoutData) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -61,18 +62,11 @@ pub fn index(users: &[User], data: &LayoutData) -> Result<String, ::std::fmt::Er
     Ok(buffer)
 }
 
-pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
 
-    let banner = match profile.get_banner() {
-        Ok(t) => t,
-        Err(e) => {
-            error!("Could not load banner for profile {}: {}", profile.id, e);
-            // TODO: MAKE THIS BETTEEEER
-            return Err(::std::fmt::Error);
-        }
-    };
+    let banner = try!(profile.get_banner());
 
     try!(html!(partial,
         div.user_profile {
@@ -116,7 +110,7 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -
     Ok(buffer)
 }
 
-pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,

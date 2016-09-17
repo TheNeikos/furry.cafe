@@ -49,7 +49,7 @@ pub struct Submission {
 }
 
 impl Submission {
-    pub fn create_from(nup: NewSubmission) -> Result<i64, error::DatabaseError> {
+    pub fn create_from(nup: NewSubmission) -> Result<i64, error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::submissions::dsl::*;
@@ -57,7 +57,7 @@ impl Submission {
             .returning(id).get_result(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn update(&self, update: &UpdateSubmission) -> Result<usize, error::DatabaseError> {
+    pub fn update(&self, update: &UpdateSubmission) -> Result<usize, error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::submissions::dsl::*;
@@ -65,7 +65,7 @@ impl Submission {
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn delete(self) -> Result<usize, error::DatabaseError> {
+    pub fn delete(self) -> Result<usize, error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::submissions::dsl::*;
@@ -73,11 +73,11 @@ impl Submission {
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn get_image(&self) -> Result<Option<Image>, error::DatabaseError> {
+    pub fn get_image(&self) -> Result<Option<Image>, error::FurratoriaError> {
         models::image::find(self.image)
     }
 
-    pub fn get_submitter(&self) -> Result<Option<User>, error::DatabaseError> {
+    pub fn get_submitter(&self) -> Result<Option<User>, error::FurratoriaError> {
         models::user::find(self.user_id)
     }
 }
@@ -269,7 +269,7 @@ impl SubmissionError {
     }
 }
 
-pub fn find(uid: i64) -> Result<Option<Submission>, error::DatabaseError> {
+pub fn find(uid: i64) -> Result<Option<Submission>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::submissions::dsl::*;
 
@@ -277,7 +277,7 @@ pub fn find(uid: i64) -> Result<Option<Submission>, error::DatabaseError> {
          .get_result::<models::submission::Submission>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn find_by_user_id(uid: i64) -> Result<Option<Submission>, error::DatabaseError> {
+pub fn find_by_user_id(uid: i64) -> Result<Option<Submission>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::submissions::dsl::*;
 
@@ -285,7 +285,7 @@ pub fn find_by_user_id(uid: i64) -> Result<Option<Submission>, error::DatabaseEr
          .get_result::<models::submission::Submission>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn last(amt: i64) -> Result<Vec<Submission>, error::DatabaseError> {
+pub fn last(amt: i64) -> Result<Vec<Submission>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::submissions::dsl::*;
 

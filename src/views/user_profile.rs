@@ -2,13 +2,14 @@ use std::borrow::Cow;
 use maud::PreEscaped;
 
 use views;
+use error;
 use views::layout::LayoutData;
 use views::components::form::*;
 use models::user::User;
 use models::user_profile::NewUserProfile;
 
 // TODO: Add profile errors
-pub fn edit(user: &User, profile: &NewUserProfile, _errors: Option<()>, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn edit(user: &User, profile: &NewUserProfile, _errors: Option<()>, data: &LayoutData) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,

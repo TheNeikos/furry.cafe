@@ -11,7 +11,7 @@ use models::user::{User, UserError};
 
 pub fn new(req: &mut Request) -> IronResult<Response> {
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::login::login(None, &data))));
+    let mut resp = Response::with((status::Ok, try!(views::login::login(None, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -39,7 +39,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
         let mut err = UserError::new();
         err.email.push("cannot be empty");
         err.password.push("cannot be empty");
-        let mut resp = Response::with((status::Ok, template!(views::login::login(Some(err), &data))));
+        let mut resp = Response::with((status::Ok, try!(views::login::login(Some(err), &data))));
         resp.headers.set(ContentType::html());
         return Ok(resp);
     }
@@ -51,7 +51,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
         Ok(Some(user)) => user,
         _ => {
             // TODO: Actually tell the user no fitting was found
-            let mut resp = Response::with((status::Ok, template!(views::login::login(None, &data))));
+            let mut resp = Response::with((status::Ok, try!(views::login::login(None, &data))));
             resp.headers.set(ContentType::html());
             return Ok(resp);
         }
@@ -65,7 +65,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 
 pub fn delete(req: &mut Request) -> IronResult<Response> {
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::login::logout(&data))));
+    let mut resp = Response::with((status::Ok, try!(views::login::logout(&data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }

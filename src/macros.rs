@@ -18,34 +18,6 @@ macro_rules! resource {
 }
 
 #[macro_export]
-macro_rules! template {
-    ($fun:expr) => {{
-        use error;
-        try!(match $fun {
-            ::std::result::Result::Ok(val) => ::std::result::Result::Ok(val),
-            ::std::result::Result::Err(err) => {
-                let e : error::TemplateError = ::std::convert::From::from(err);
-                ::std::result::Result::Err(e)
-            }
-        })
-    }}
-}
-
-#[macro_export]
-macro_rules! database_try {
-    ($fun:expr) => {{
-        use error;
-        match $fun {
-            ::std::result::Result::Ok(val) => ::std::result::Result::Ok(val),
-            ::std::result::Result::Err(err) => {
-                let e : error::DatabaseError = ::std::convert::From::from(err);
-                ::std::result::Result::Err(e)
-            }
-        }
-    }}
-}
-
-#[macro_export]
 macro_rules! temp_redirect {
     ($url:expr) => {
         (status::SeeOther, Redirect(url!($url)))
@@ -81,11 +53,11 @@ macro_rules! find_by_id {
             Some(t) => {
                 match t.parse::<_>() {
                     Ok(t) => Ok(t),
-                    Err(_) => Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/submissions/")))
+                    Err(_) => Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/submissions/")))
                 }
             }
             None => {
-                Err(IronError::new(error::BadFormattingError::new(), temp_redirect!("/submissions/")))
+                Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/submissions/")))
             }
         };
 
@@ -96,7 +68,7 @@ macro_rules! find_by_id {
                 },
                 Ok(Some(u)) => Ok(u),
                 Ok(None) => {
-                    Err(IronError::new(error::NotFound, status::NotFound))
+                    Err(IronError::new(error::FurratoriaError::NotFound, status::NotFound))
                 }
             }
         })

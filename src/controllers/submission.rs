@@ -15,14 +15,14 @@ pub fn index(req: &mut Request) -> IronResult<Response> {
     let sub_list = try!(models::submission::last(20));
 
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::submission::index(&sub_list, &data))));
+    let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
 
 pub fn new(req: &mut Request) -> IronResult<Response> {
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::submission::new(None, &data, None))));
+    let mut resp = Response::with((status::Ok, try!(views::submission::new(None, &data, None))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -54,7 +54,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     let new_submission = match models::submission::NewSubmission::new(&user, image, sub_name, sub_desc) {
         Ok(new_submission) => new_submission,
         Err((err, new_submission)) => {
-            let mut resp = Response::with((status::Ok, template!(views::submission::new(Some(err), &data, Some(&new_submission)))));
+            let mut resp = Response::with((status::Ok, try!(views::submission::new(Some(err), &data, Some(&new_submission)))));
             resp.headers.set(ContentType::html());
             return Ok(resp);
         }
@@ -70,7 +70,7 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
     let submission = try!(find_by_id!(req, "id", submission));
 
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, template!(views::submission::show(&submission, &data))));
+    let mut resp = Response::with((status::Ok, try!(views::submission::show(&submission, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -80,7 +80,7 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
 
     let submission = try!(find_by_id!(req, "id", submission));
 
-    let mut resp = Response::with((status::Ok, template!(views::submission::edit(&submission, None, &data))));
+    let mut resp = Response::with((status::Ok, try!(views::submission::edit(&submission, None, &data))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -112,7 +112,7 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
     let update_submission = match models::submission::UpdateSubmission::new(image ,sub_name, sub_desc) {
         Ok(update_submission) => update_submission,
         Err(err) => {
-            let mut resp = Response::with((status::Ok, template!(views::submission::edit(&submission, Some(err), &data))));
+            let mut resp = Response::with((status::Ok, try!(views::submission::edit(&submission, Some(err), &data))));
             resp.headers.set(ContentType::html());
             return Ok(resp);
         }

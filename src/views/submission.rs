@@ -2,13 +2,14 @@ use std::borrow::Cow;
 use maud::PreEscaped;
 
 use views;
+use error;
 use views::layout::LayoutData;
 use views::components::user::UserLink;
 use views::components::form::*;
 use views::components::button::*;
 use models::submission::{Submission, SubmissionError, NewSubmission};
 
-pub fn index(subs: &[Submission], data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn index(subs: &[Submission], data: &LayoutData) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -26,7 +27,7 @@ pub fn index(subs: &[Submission], data: &LayoutData) -> Result<String, ::std::fm
     Ok(buffer)
 }
 
-pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewSubmission>) -> Result<String, ::std::fmt::Error> {
+pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewSubmission>) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
@@ -58,25 +59,21 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
     Ok(buffer)
 }
 
-pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
 
-    let image = match sub.get_image() {
-        Ok(Some(t)) => t.get_path(),
-        Ok(None) => return Err(::std::fmt::Error),
-        Err(e) => {
-            error!("Could not load image for {} {}", sub.id, e);
-            return Err(::std::fmt::Error); // TODO: ...? Really!? This sucks lol
+    let image = match try!(sub.get_image()) {
+        Some(i) => i,
+        None => {
+            return Err(error::FurratoriaError::Template(Box::new(error::FurratoriaError::NotFound)))
         }
     };
 
-    let user = match sub.get_submitter() {
-        Ok(Some(t)) => t,
-        Ok(None) => return Err(::std::fmt::Error),
-        Err(e) => {
-            error!("Could not load submitter for {} {}", sub.id, e);
-            return Err(::std::fmt::Error); // TODO: ...? Really!? This sucks lol
+    let user = match try!(sub.get_submitter()) {
+        Some(u) => u,
+        None => {
+            return Err(error::FurratoriaError::Template(Box::new(error::FurratoriaError::NotFound)))
         }
     };
 
@@ -84,7 +81,7 @@ pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, ::std::fmt::E
         div.submission {
             div.row div class="col-md-10 offset-md-1" {
                 div.submission.clearfix {
-                    img src=^(image) alt=^(format!("{}'s Submission", user.name)) /
+                    img src=^(image.get_path()) alt=^(format!("{}'s Submission", user.name)) /
                 }
 
                 div {
@@ -100,7 +97,7 @@ pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, ::std::fmt::E
                 div.sub_actions {
                     a.btn.btn-primary href=^(url!(format!("/users/{}/edit", user.id))) "Favorit"
                     " "
-                    a.btn.btn-secondary href=^(image) "Full Size"
+                    a.btn.btn-secondary href=^(image.get_path()) "Full Size"
                     " "
                     a.btn.btn-info href=^(url!(format!("/submissions/{}/edit", sub.id))) "Edit"
                     " "
@@ -123,7 +120,7 @@ pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, ::std::fmt::E
     Ok(buffer)
 }
 
-pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData) -> Result<String, ::std::fmt::Error> {
+pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
