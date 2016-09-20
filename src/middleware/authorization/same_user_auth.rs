@@ -17,9 +17,9 @@ impl UserRequirement for SameUserAuth {
             let id = match req.extensions.get::<Router>().unwrap().find("id") {
                     Some(t) => match t.parse::<_>() {
                                 Ok(t) => t,
-                                Err(_) => return true
+                                Err(_) => return false
                             },
-                    None => return true, // For now we just pass through...
+                    None => return false, // For now we just pass through...
             };
             match user::find(id) {
                 Ok(t) => t,

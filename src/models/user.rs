@@ -74,7 +74,7 @@ impl User {
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn create_from(nu: NewUser) -> Result<(), error::FurratoriaError> {
+    pub fn create_from(nu: NewUser) -> Result<i64, error::FurratoriaError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::users::dsl::*;
@@ -84,7 +84,7 @@ impl User {
                                     .get_result(&*database::connection().get().unwrap())
                                     );
         let user = try!(find(user_id)).unwrap();
-        user.set_role(Role::Member)
+        user.set_role(Role::Member).map(|_| user_id)
     }
 
     pub fn set_role(&self, role: Role) -> Result<(), error::FurratoriaError> {

@@ -7,7 +7,7 @@ use database;
 use models;
 use error;
 
-#[derive(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(i32)]
 pub enum Role {
     Banned, Member, Moderator, Admin
