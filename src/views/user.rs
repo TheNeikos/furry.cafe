@@ -29,6 +29,7 @@ pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>)
                    &Input::new("Password", "user_password")
                         .with_type("password")
                         .with_errors(errors.as_ref().map(|x| &x.password)),
+                   &Input::new("Invite Key", "invite_code"),
                    &Input::new("", "")
                         .with_value("Register")
                         .with_type("submit")

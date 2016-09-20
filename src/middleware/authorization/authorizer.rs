@@ -25,7 +25,6 @@ impl<T: UserRequirement + Send + Sync + 'static> BeforeMiddleware for Authorizer
         let user = User::get_login(req).get_user();
 
         let results = self.reqs.iter().map(|x| x.check(user.as_ref(), req)).all(|x| x);
-
         if results {
             Ok(())
         } else {

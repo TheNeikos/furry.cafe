@@ -6,3 +6,4 @@ pub mod components;
 pub mod login;
 pub mod markdown;
 pub mod submission;
+pub mod invite;

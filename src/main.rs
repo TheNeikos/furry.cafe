@@ -25,6 +25,7 @@ extern crate pulldown_cmark;
 extern crate maud_pulldown_cmark;
 extern crate image;
 #[macro_use] extern crate quick_error;
+extern crate rand;
 
 use std::env;
 use std::path::Path;
@@ -148,11 +149,28 @@ fn main() {
         router
     };
 
+    let admin_chain = {
+        let mut router = Router::new();
+
+        router.get("/invites",  controllers::invite::index);
+        router.post("/invites", controllers::invite::create);
+
+        let auth = middleware::authorization::Authorizer::new(vec![
+            middleware::authorization::HasRole(models::user_role::Role::Admin),
+        ]);
+
+        let mut chain = Chain::new(router);
+        chain.link_before(auth);
+
+        chain
+    };
+
     let mut mount = Mount::new();
     mount.mount("/", index_router)
-         .mount("/users", user_router)
-         .mount("/login", login_router)
-         .mount("/logout", logout_router)
+         .mount("/admin",      admin_chain)
+         .mount("/users",       user_router)
+         .mount("/login",       login_router)
+         .mount("/logout",      logout_router)
          .mount("/submissions", sub_router)
          .mount("/assets/", staticfile::Static::new(Path::new("assets/")).cache(Duration::new(60 * 60 * 24 * 7, 0)));
 

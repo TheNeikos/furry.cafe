@@ -48,6 +48,11 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
         _ => None
     };
 
+    let invite_code = match map.get("invite_code") {
+        Some(&Value::String(ref code)) => Some(&code[..]),
+        _ => None
+    };
+
     let new_user = match models::user::NewUser::new(username, email, password) {
         Ok(new_user) => new_user,
         Err((err, new_user)) => {
@@ -57,7 +62,28 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
         }
     };
 
-    try!(User::create_from(new_user));
+    let invite = {
+        match invite_code {
+            Some(code) => {
+                info!("Trying code {}", code);
+                match try!(models::invite::find_by_key(code)) {
+                    Some(i) => {
+                        if i.user_id.is_some() {
+                            return Ok(Response::with(temp_redirect!("/users/")))
+                        } else {
+                            i
+                        }
+                    },
+                    None => return Ok(Response::with(temp_redirect!("/users/")))
+                }
+            }
+            None => return Ok(Response::with(temp_redirect!("/users/")))
+        }
+    };
+
+    let id = try!(User::create_from(new_user));
+
+    try!(invite.update(&models::invite::UpdateInvite::create_for(&invite, id)));
 
     // TODO: Add config for url?
     return Ok(Response::with(temp_redirect!("/users/")))

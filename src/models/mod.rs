@@ -5,3 +5,4 @@ pub mod user_role;
 pub mod user_profile;
 pub mod image;
 pub mod submission;
+pub mod invite;
