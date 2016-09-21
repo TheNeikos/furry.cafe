@@ -118,7 +118,7 @@ impl<'a, 'b> NewSubmission<'a, 'b> {
         let mut to_be_converted = None;
 
         if let Some(image) = image {
-            if image.size() > 2 * 1024 * 1024 { // 2 Megabytes
+            if image.size() > 5 * 1024 * 1024 { // 2 Megabytes
                 se.image.push("Image is too big (limit is 2MiB)");
             }
 
