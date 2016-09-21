@@ -11,7 +11,7 @@ pub fn root(data: &LayoutData) -> Result<String, ::std::fmt::Error> {
         h1 { "Hello World!" }
     ));
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("Root"), Cow::Owned(partial), data));
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("Homepage"), Cow::Owned(partial), data));
 
     Ok(buffer)
 }
@@ -34,7 +34,7 @@ pub fn unauthorized(data: &LayoutData) -> Result<String, ::std::fmt::Error> {
         }
     ));
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("Root"), Cow::Owned(partial), data));
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("Unauthorized"), Cow::Owned(partial), data));
 
     Ok(buffer)
 }
@@ -57,7 +57,7 @@ pub fn notfound(data: &LayoutData) -> Result<String, ::std::fmt::Error> {
         }
     ));
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("root"), Cow::Owned(partial), data));
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("Not Found"), Cow::Owned(partial), data));
 
     Ok(buffer)
 }
@@ -80,7 +80,7 @@ pub fn internalerror(data: &LayoutData) -> Result<String, ::std::fmt::Error> {
         }
     ));
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("root"), Cow::Owned(partial), data));
+    try!(views::layout::application(&mut buffer, Cow::Borrowed("Error"), Cow::Owned(partial), data));
 
     Ok(buffer)
 }
