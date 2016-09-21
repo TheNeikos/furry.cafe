@@ -77,8 +77,12 @@ impl Submission {
         models::image::find(self.image)
     }
 
-    pub fn get_submitter(&self) -> Result<Option<User>, error::FurratoriaError> {
-        models::user::find(self.user_id)
+    pub fn get_submitter(&self) -> Result<User, error::FurratoriaError> {
+        match models::user::find(self.user_id) {
+            Ok(None) => Err(error::FurratoriaError::NotFound),
+            Ok(Some(u)) => Ok(u),
+            Err(e) => Err(e)
+        }
     }
 }
 
@@ -118,7 +122,7 @@ impl<'a, 'b> NewSubmission<'a, 'b> {
         let mut to_be_converted = None;
 
         if let Some(image) = image {
-            if image.size() > 2 * 1024 * 1024 { // 2 Megabytes
+            if image.size() > 5 * 1024 * 1024 { // 2 Megabytes
                 se.image.push("Image is too big (limit is 2MiB)");
             }
 

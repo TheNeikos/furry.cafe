@@ -15,7 +15,7 @@ pub fn index(req: &mut Request) -> IronResult<Response> {
     let sub_list = try!(models::submission::last(20));
 
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data))));
+    let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data, req))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
@@ -70,7 +70,7 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
     let submission = try!(find_by_id!(req, "id", submission));
 
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, try!(views::submission::show(&submission, &data))));
+    let mut resp = Response::with((status::Ok, try!(views::submission::show(&submission, &data, req))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }

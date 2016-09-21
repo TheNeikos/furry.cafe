@@ -1,3 +1,5 @@
+use iron::Request;
+
 use std::borrow::Cow;
 use maud::PreEscaped;
 
@@ -8,16 +10,30 @@ use views::components::user::UserLink;
 use views::components::form::*;
 use views::components::button::*;
 use models::submission::{Submission, SubmissionError, NewSubmission};
+use middleware::authorization::{self, UserAuthorization};
 
-pub fn index(subs: &[Submission], data: &LayoutData) -> Result<String, error::FurratoriaError> {
+pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
     try!(html!(partial,
         h1 { "Submissions" }
 
-        @for sub in subs {
-            div.submission {
-                a.submission-link href=^(url!(format!("/submissions/{}", sub.id))) ^sub.title
+        @if req.current_user_can(authorization::LoggedIn) {
+            a.btn.btn-primary href=^(url!("/submissions/new")) "New Submission"
+        }
+
+        div.submissions @for sub in subs {
+            div a href=^(url!(format!("/submissions/{}", sub.id))) {
+                div.card {
+                    img.card-img-top src=^(try!(sub.get_image()).map(|x| x.get_path()).unwrap_or(String::from("/todo"))) /
+                    div.card-block {
+                        h4.card-title ^(sub.title)
+                        h6.card-subtitle.text-muted {
+                            "by "
+                            ^({PreEscaped(UserLink(&try!(sub.get_submitter())))})
+                        }
+                    }
+                }
             }
         }
     ));
@@ -59,7 +75,7 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
     Ok(buffer)
 }
 
-pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, error::FurratoriaError> {
+pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
 
@@ -70,12 +86,7 @@ pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, error::Furrat
         }
     };
 
-    let user = match try!(sub.get_submitter()) {
-        Some(u) => u,
-        None => {
-            return Err(error::FurratoriaError::Template(Box::new(error::FurratoriaError::NotFound)))
-        }
-    };
+    let user = try!(sub.get_submitter());
 
     try!(html!(partial,
         div.submission {
@@ -93,15 +104,19 @@ pub fn show(sub: &Submission, data: &LayoutData) -> Result<String, error::Furrat
                 }
             }
 
-            div.row div class="col-md-10 offset-md-1" {
-                div.sub_actions {
-                    a.btn.btn-primary href=^(url!(format!("/users/{}/edit", user.id))) "Favorit"
-                    " "
-                    a.btn.btn-secondary href=^(image.get_path()) "Full Size"
-                    " "
-                    a.btn.btn-info href=^(url!(format!("/submissions/{}/edit", sub.id))) "Edit"
-                    " "
-                    a.btn.btn-danger href=^(url!(format!("/users/{}/profile/edit", user.id))) "Signal"
+            @if req.current_user_can(authorization::LoggedIn) {
+                div.row div class="col-md-10 offset-md-1" {
+                    div.sub_actions {
+                        a.btn.btn-primary href=^(url!(format!("/users/{}/edit", user.id))) "Favorit"
+                        " "
+                        a.btn.btn-secondary href=^(image.get_path()) "Full Size"
+                        " "
+                        @if req.current_user_can(authorization::SameUserAuth) {
+                            a.btn.btn-info href=^(url!(format!("/submissions/{}/edit", sub.id))) "Edit"
+                            " "
+                        }
+                        a.btn.btn-danger href=^(url!(format!("/users/{}/profile/edit", user.id))) "Signal"
+                    }
                 }
             }
 
