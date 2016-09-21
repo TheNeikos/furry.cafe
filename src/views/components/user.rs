@@ -23,15 +23,16 @@ pub struct UserAvatar<'a>(pub &'a User);
 
 impl<'a> Display for UserAvatar<'a> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
-
-        let avatar = match self.0.get_avatar() {
-                Ok(Some(t)) => t.get_path(),
-                _ => String::from(DEFAULT_AVATAR),
-        };
-
-        html!(f,
-            img.user_avatar src=^(avatar) alt=^(format!("{}'s Avatar", self.0.name)) /
-        )
+        match self.0.get_avatar() {
+            Ok(Some(t)) => {
+                html!(f,
+                    img.user_avatar src=^(t.get_path()) alt=^(format!("{}'s Avatar", self.0.name)) /
+                )
+            },
+            _ => {
+                html!(f, "")
+            }
+        }
     }
 }
 

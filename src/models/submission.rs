@@ -77,8 +77,12 @@ impl Submission {
         models::image::find(self.image)
     }
 
-    pub fn get_submitter(&self) -> Result<Option<User>, error::FurratoriaError> {
-        models::user::find(self.user_id)
+    pub fn get_submitter(&self) -> Result<User, error::FurratoriaError> {
+        match models::user::find(self.user_id) {
+            Ok(None) => Err(error::FurratoriaError::NotFound),
+            Ok(Some(u)) => Ok(u),
+            Err(e) => Err(e)
+        }
     }
 }
 
