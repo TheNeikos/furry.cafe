@@ -6,7 +6,7 @@ use maud::PreEscaped;
 use views;
 use error;
 use views::layout::LayoutData;
-use views::components::user::UserAvatar;
+use views::components::user::{UserAvatar, UserLink};
 use views::components::form::*;
 use models::user::{UserError, User, NewUser};
 use models::user_role::Role;
@@ -51,11 +51,9 @@ pub fn index(users: &[User], data: &LayoutData) -> Result<String, error::Furrato
     try!(html!(partial,
         h1 { "Users" }
 
-        p a href=^(url!("/users/new")) "New User"
-
         @for user in users {
             div class="user" {
-                a.user-link href=^(url!(format!("/users/{}", user.id))) ^user.name
+                ^(PreEscaped(UserLink(user)))
             }
         }
     ));
