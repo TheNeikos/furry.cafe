@@ -51,7 +51,10 @@ pub fn application(mut data: &mut fmt::Write,
 
                     hr /
                     footer {
-                        p ^PreEscaped("Furratoria 2016 &copy; Neikos")
+                        p {
+                            ^PreEscaped("Furratoria 2016 &copy; Neikos &mdash; ")
+                            small.revision ^(include_str!("../../../.git/refs/heads/master"))
+                        }
                     }
                 }
             }
