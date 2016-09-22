@@ -66,7 +66,7 @@ impl<'a> Display for Navbar<'a> {
                     ul.nav.navbar-nav.pull-xs-right {
                         div.dropdown {
                             li.nav-item.active {
-                                a.nav-link href="/profile" ^user.name
+                                a.nav-link href=^(format!("/users/{}", user.id)) ^user.name
                             }
                             li.nav-item {
                                 a.nav-link.small href="/logout" "Logout"
@@ -77,6 +77,9 @@ impl<'a> Display for Navbar<'a> {
                     ul.nav.navbar-nav.pull-xs-right {
                         li.nav-item.active {
                             a.nav-link href="/login" "Login"
+                        }
+                        li.nav-item.active {
+                            a.nav-link href="/users/new" "Register"
                         }
                     }
                 }

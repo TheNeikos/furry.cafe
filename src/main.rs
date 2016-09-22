@@ -58,10 +58,17 @@ fn main() {
         //---- Normal Usage ---------------
         //---------------------------------
         let mut router = Router::new();
-        router.get("/",         controllers::user::index);
-        router.get("/:id",      controllers::user::show);
+
         router.get("/new",      controllers::user::new);
         router.post("/",        controllers::user::create);
+        router.get("/:id",      controllers::user::show);
+
+        let auth = middleware::authorization::Authorizer::new(vec![
+            middleware::authorization::LoggedIn
+        ]);
+        let mut chain = Chain::new(controllers::user::index);
+        chain.link_before(auth.clone());
+        router.get("/",         chain);
 
         let auth = middleware::authorization::Authorizer::new(vec![
             middleware::authorization::SameUserAuth

@@ -111,7 +111,7 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<St
                         " "
                         a.btn.btn-secondary href=^(image.get_path()) "Full Size"
                         " "
-                        @if req.current_user_can(authorization::SameUserAuth) {
+                        @if req.current_user_can(authorization::SameUserAuthAs(&user)) {
                             a.btn.btn-info href=^(url!(format!("/submissions/{}/edit", sub.id))) "Edit"
                             " "
                         }
@@ -130,7 +130,7 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<St
         }
     ));
 
-    try!(views::layout::application(&mut buffer, Cow::Owned(format!("{}", sub.title)), Cow::Owned(partial), data));
+    try!(views::layout::application(&mut buffer, Cow::Owned(format!("{} by {}", sub.title, user.name)), Cow::Owned(partial), data));
 
     Ok(buffer)
 }
