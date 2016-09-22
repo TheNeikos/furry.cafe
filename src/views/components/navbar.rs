@@ -78,6 +78,9 @@ impl<'a> Display for Navbar<'a> {
                         li.nav-item.active {
                             a.nav-link href="/login" "Login"
                         }
+                        li.nav-item.active {
+                            a.nav-link href="/users/new" "Register"
+                        }
                     }
                 }
             }
