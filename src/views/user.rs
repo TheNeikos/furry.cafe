@@ -1,3 +1,4 @@
+use iron::Request;
 
 use std::borrow::Cow;
 use maud::PreEscaped;
@@ -10,6 +11,7 @@ use views::components::form::*;
 use models::user::{UserError, User, NewUser};
 use models::user_role::Role;
 use models::user_profile::UserProfile;
+use middleware::authorization::{self, UserAuthorization};
 
 pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
@@ -63,7 +65,7 @@ pub fn index(users: &[User], data: &LayoutData) -> Result<String, error::Furrato
     Ok(buffer)
 }
 
-pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -> Result<String, error::FurratoriaError> {
+pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, req: &mut Request) -> Result<String, error::FurratoriaError> {
     let mut buffer = String::new();
     let mut partial = String::new();
 
@@ -88,11 +90,15 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData) -
                 }
             }
 
-            div.row div class="col-md-10 offset-md-1" {
-                div.user_actions {
-                    a.btn.btn-info href=^(url!(format!("/users/{}/edit", user.id))) "Edit"
-                    " "
-                    a.btn.btn-info href=^(url!(format!("/users/{}/profile/edit", user.id))) "Edit Profile"
+            @if req.current_user_can(authorization::LoggedIn) {
+                div.row div class="col-md-10 offset-md-1" {
+                    div.user_actions {
+                        @if req.current_user_can(authorization::SameUserAuth) {
+                            a.btn.btn-info href=^(url!(format!("/users/{}/edit", user.id))) "Edit"
+                                " "
+                                a.btn.btn-info href=^(url!(format!("/users/{}/profile/edit", user.id))) "Edit Profile"
+                        }
+                    }
                 }
             }
 
