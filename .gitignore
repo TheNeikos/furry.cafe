@@ -1,3 +1,5 @@
 target
 .env
+.sass-cache
 assets/uploads
+
