@@ -4763,6 +4763,9 @@ a.text-danger:focus, a.text-danger:hover {
   .hidden-print {
     display: none !important; } }
 
+.navbar {
+  margin-bottom: 1.5rem; }
+
 footer {
   text-align: center;
   font-variant: small-caps;
@@ -4770,9 +4773,6 @@ footer {
   footer .revision {
     font-variant: normal;
     color: #c8c8c8; }
-
-.navbar {
-  margin-bottom: 1.5rem; }
 
 .user_profile .banner {
   width: 100%;
