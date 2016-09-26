@@ -14,7 +14,6 @@ iron-login = "0.5.0"
 lazy_static = "0.2.1"
 log = "0.3.6"
 logger = "0.1"
-maud = "0.11"
 maud-pulldown-cmark = "0.2"
 maud_macros = "0.11"
 mount = "0.2"
@@ -39,3 +38,7 @@ version = "0.4.8"
 [dependencies.staticfile]
 features = ["cache"]
 version = "0.3.0"
+
+[dependencies.maud]
+version = "0.11"
+features = ["iron"]

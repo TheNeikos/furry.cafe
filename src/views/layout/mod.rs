@@ -2,7 +2,7 @@
 use std::borrow::Cow;
 use std::fmt;
 
-use maud::PreEscaped;
+use maud::{Markup, PreEscaped};
 use iron::Url;
 use iron::Request;
 use mount::OriginalUrl;
@@ -26,16 +26,15 @@ impl LayoutData {
 }
 
 
-pub fn application(mut data: &mut fmt::Write,
-                   title: Cow<str>,
-                   partial: Cow<str>,
+pub fn application(title: Cow<str>,
+                   partial: Markup,
                    layout_data: &LayoutData,
-                   ) -> Result<(), fmt::Error>
+                   ) -> Markup
 {
-    html!(data, {
+    html!(
         html {
             head {
-                title ^(format!("{} - Furratoria", title))
+                title (format!("{} - Furratoria", title))
                 link rel="stylesheet" href="/assets/external/css/bootstrap.min.css" integrity="sha384-MIwDKRSSImVFAZCVLtU0LMDdON6KVCrZHyVQQj6e8wIEJkW4tvwqXrbMIya1vriY" crossorigin="anonymous" /
                 link rel="stylesheet" href="/assets/application.min.css" /
                 script src="/assets/external/js/jquery-3.1.0.min.js" ""
@@ -45,19 +44,19 @@ pub fn application(mut data: &mut fmt::Write,
 
             body {
                 div.container-fluid {
-                    ^PreEscaped(Navbar::new(&layout_data))
+                    (PreEscaped(Navbar::new(&layout_data)))
 
-                    ^PreEscaped(partial)
+                    (partial)
 
                     hr /
                     footer {
                         p {
-                            ^PreEscaped("Furratoria 2016 &copy; Neikos &mdash; ")
-                            small.revision ^(include_str!("../../../.git/refs/heads/master"))
+                            (PreEscaped("Furratoria 2016 &copy; Neikos &mdash; "))
+                            small.revision (include_str!("../../../.git/refs/heads/master"))
                         }
                     }
                 }
             }
         }
-    })
+    )
 }
