@@ -1,0 +1,55 @@
+
+.submission .submission {
+    text-align: center;
+    margin-bottom: 1rem;
+    img {
+        max-width: 100%;
+        padding: 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.5);
+    }
+
+    .title {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+    }
+
+    .author {
+        float: right;
+    }
+
+    .sub_actions {
+        text-align: center;
+        padding: 0.5rem 1rem;
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .submission_description {
+        margin-top: 1rem;
+    }
+}
+
+
+.submissions {
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: baseline;
+
+    .card {
+        max-width: 400px;
+    }
+
+    .card .card-img-top {
+        max-width: 100%;
+        max-height: 400px;
+    }
+
+    .card {
+        text-align: center;
+    }
+
+    .card .card-block {
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+}
+
