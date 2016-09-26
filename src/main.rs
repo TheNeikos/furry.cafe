@@ -50,8 +50,8 @@ fn main() {
     dotenv().ok();
     log4rs::init_file("config/log4rs.yaml", Default::default()).unwrap();
     let mut index_router = Router::new();
-    index_router.get("/", controllers::root::handler);
-    index_router.get("/about", controllers::about::handler);
+    index_router.get("/",      controllers::root::handler,  "index");
+    index_router.get("/about", controllers::about::handler, "about");
 
     let user_router = {
         //---------------------------------
@@ -59,16 +59,16 @@ fn main() {
         //---------------------------------
         let mut router = Router::new();
 
-        router.get("/new",      controllers::user::new);
-        router.post("/",        controllers::user::create);
-        router.get("/:id",      controllers::user::show);
+        router.get("/new",      controllers::user::new, "user_new");
+        router.post("/",        controllers::user::create, "user_create");
+        router.get("/:id",      controllers::user::show, "user_show");
 
         let auth = middleware::authorization::Authorizer::new(vec![
             middleware::authorization::LoggedIn
         ]);
         let mut chain = Chain::new(controllers::user::index);
         chain.link_before(auth.clone());
-        router.get("/",         chain);
+        router.get("/",         chain, "user_index");
 
         let auth = middleware::authorization::Authorizer::new(vec![
             middleware::authorization::SameUserAuth
@@ -76,16 +76,11 @@ fn main() {
         let mut chain = Chain::new(controllers::user::edit);
         chain.link_before(auth.clone());
 
-        router.get("/:id/edit", chain);
+        router.get("/:id/edit", chain, "user_edit");
 
         let mut chain = Chain::new(controllers::user::update);
         chain.link_before(auth.clone());
-
-        router.put("/:id",      chain);
-
-        let mut chain = Chain::new(controllers::user::update);
-        chain.link_before(auth.clone());
-        router.post("/:id",     chain);
+        router.post("/:id",     chain, "user_update");
 
 
         //---------------------------------
@@ -95,16 +90,11 @@ fn main() {
         let mut chain = Chain::new(controllers::user_profile::edit);
         chain.link_before(auth.clone());
 
-        router.get("/:id/profile/edit", chain);
+        router.get("/:id/profile/edit", chain, "user_profile_edit");
 
         let mut chain = Chain::new(controllers::user_profile::update);
         chain.link_before(auth.clone());
-
-        router.put("/:id/profile",      chain);
-
-        let mut chain = Chain::new(controllers::user_profile::update);
-        chain.link_before(auth.clone());
-        router.post("/:id/profile",     chain);
+        router.post("/:id/profile",     chain, "user_profile_update");
 
         // FIXME: Disable accounts rather than deleting them
         // router.delete("/:id",   controllers::user::delete);
@@ -112,17 +102,17 @@ fn main() {
     };
 
     let mut login_router = Router::new();
-    login_router.get("/", controllers::login::new);
-    login_router.post("/", controllers::login::create);
+    login_router.get("/", controllers::login::new, "login_new");
+    login_router.post("/", controllers::login::create, "login_create");
 
     let mut logout_router = Router::new();
-    logout_router.get("/", controllers::login::delete);
-    logout_router.post("/", controllers::login::destroy);
+    logout_router.get("/", controllers::login::delete, "login_delete");
+    logout_router.post("/", controllers::login::destroy, "login_destroy");
 
     let sub_router = {
         let mut router = Router::new();
-        router.get("/",         controllers::submission::index);
-        router.get("/:id",      controllers::submission::show);
+        router.get("/",         controllers::submission::index, "submission_index");
+        router.get("/:id",      controllers::submission::show, "submission_show");
 
 
         let auth = middleware::authorization::Authorizer::new(vec![
@@ -131,27 +121,23 @@ fn main() {
 
         let mut chain = Chain::new(controllers::submission::new);
         chain.link_before(auth.clone());
-        router.get("/new",      chain);
+        router.get("/new",      chain, "submission_new");
 
         let mut chain = Chain::new(controllers::submission::create);
         chain.link_before(auth.clone());
-        router.post("/",        chain);
+        router.post("/",        chain, "submission_create");
 
         let mut chain = Chain::new(controllers::submission::edit);
         chain.link_before(auth.clone());
-        router.get("/:id/edit", chain);
+        router.get("/:id/edit", chain, "submission_edit");
 
         let mut chain = Chain::new(controllers::submission::update);
         chain.link_before(auth.clone());
-        router.put("/:id",      chain);
-
-        let mut chain = Chain::new(controllers::submission::update);
-        chain.link_before(auth.clone());
-        router.post("/:id",     chain);
+        router.post("/:id",     chain, "submission_update");
 
         let mut chain = Chain::new(controllers::submission::delete);
         chain.link_before(auth.clone());
-        router.post("/:id/delete",     chain);
+        router.post("/:id/delete",     chain, "submission_delete");
 
         router
     };
@@ -159,8 +145,8 @@ fn main() {
     let admin_chain = {
         let mut router = Router::new();
 
-        router.get("/invites",  controllers::invite::index);
-        router.post("/invites", controllers::invite::create);
+        router.get("/invites",  controllers::invite::index, "admin_invite_index");
+        router.post("/invites", controllers::invite::create, "admin_invite_create");
 
         let auth = middleware::authorization::Authorizer::new(vec![
             middleware::authorization::HasRole(models::user_role::Role::Admin),
