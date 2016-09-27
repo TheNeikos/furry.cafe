@@ -17,6 +17,7 @@ logger = "0.1"
 maud_macros = "0.11"
 mount = "0.2"
 params = "0.4"
+maud-pulldown-cmark = "0.3"
 pulldown-cmark = "0.0.8"
 quick-error = "1.1.0"
 r2d2 = "0.7.0"
@@ -41,8 +42,3 @@ version = "0.3.0"
 [dependencies.maud]
 version = "0.11"
 features = ["iron"]
-
-[dependencies.maud-pulldown-cmark]
-git = "https://github.com/TheNeikos/maud-pulldown-cmark.git"
-rev = "8a238ab"
-
