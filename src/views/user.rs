@@ -68,7 +68,7 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
 
             div.row div class="col-md-10 offset-md-1" {
                 div.user_info.clearfix {
-                    PreEscaped(UserAvatar(&user))
+                    (PreEscaped(UserAvatar(&user, (250, 250))))
                     h1.user_name { (user.name) }
                     div.user_role {
                         strong "Role: "
