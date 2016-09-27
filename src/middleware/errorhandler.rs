@@ -14,6 +14,7 @@ impl AfterMiddleware for ErrorHandler {
     fn catch(&self, req: &mut Request, mut err: IronError) -> IronResult<Response> {
         let data = LayoutData::from_request(req);
 
+        error!("{}", err.error);
         if let Some(e) = err.error.downcast::<FurratoriaError>() {
             match e {
                 &FurratoriaError::Unauthorized(_) => {
