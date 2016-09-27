@@ -1,6 +1,5 @@
 
 use std::borrow::Cow;
-use std::fmt;
 
 use maud::{Markup, PreEscaped};
 use iron::Url;
