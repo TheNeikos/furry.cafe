@@ -52,16 +52,16 @@ impl<'a> Display for Button<'a> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
         match self.req_meth {
             RequestMethod::Get => {
-                html!(f,
-                    a href=^(url!(self.path)) class=^(format!("btn {}", self.typ.as_str())) ^(self.label)
-                )
+                f.write_str(&html!(
+                    a href=(url!(self.path)) class=(format!("btn {}", self.typ.as_str())) (self.label)
+                ).into_string())
             }
             RequestMethod::Post => {
-                html!(f,
-                    form method="POST" action=^(url!(self.path)) {
-                        input type="submit"  class=^(format!("btn {}", self.typ.as_str())) value=^(self.label) /
+                f.write_str(&html!(
+                    form method="POST" action=(url!(self.path)) {
+                        input type="submit"  class=(format!("btn {}", self.typ.as_str())) value=(self.label) /
                     }
-                )
+                ).into_string())
             }
         }
     }

@@ -45,18 +45,18 @@ impl<'a> Navbar<'a> {
 impl<'a> Display for Navbar<'a> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
 
-        html!(f,
+        f.write_str(&html!(
             nav.navbar.navbar-static-top.navbar-light.bg-faded {
                 a.navbar-brand href="/" "Furratoria"
                 ul.nav.navbar-nav {
                     @for item in NAVBAR_ENTRIES {
                         @if item.path == self.path {
                             li.nav-item.active {
-                                a.nav-link href=^item.path ^item.name
+                                a.nav-link href=(item.path) (item.name)
                             }
                         } @else {
                             li.nav-item {
-                                a.nav-link href=^item.path ^item.name
+                                a.nav-link href=(item.path) (item.name)
                             }
                         }
                     }
@@ -66,7 +66,7 @@ impl<'a> Display for Navbar<'a> {
                     ul.nav.navbar-nav.pull-xs-right {
                         div.dropdown {
                             li.nav-item.active {
-                                a.nav-link href=^(format!("/users/{}", user.id)) ^user.name
+                                a.nav-link href=(format!("/users/{}", user.id)) (user.name)
                             }
                             li.nav-item {
                                 a.nav-link.small href="/logout" "Logout"
@@ -84,7 +84,7 @@ impl<'a> Display for Navbar<'a> {
                     }
                 }
             }
-        )
+        ).into_string())
     }
 }
 

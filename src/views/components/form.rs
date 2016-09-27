@@ -50,13 +50,13 @@ impl<'a, 'b, 'c> Form<'a, 'b, 'c> {
 impl<'a, 'b, 'c> Display for Form<'a, 'b, 'c> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
 
-        html!(f,
-            form method=^(self.method) action=^(self.path) enctype=^(self.encoding) {
+        f.write_str(&html!(
+            form method=(self.method) action=(self.path) enctype=(self.encoding) {
                 @for field in self.fields {
-                    ^(PreEscaped(field))
+                    (PreEscaped(field))
                 }
             }
-        )
+        ).into_string())
     }
 }
 
@@ -106,19 +106,19 @@ impl<'a, 'b, 'c, 'd, 'e, 'f> Input<'a, 'b, 'c, 'd, 'e, 'f> {
 impl<'a, 'b, 'c, 'd, 'e, 'f> Display for Input<'a, 'b, 'c, 'd, 'e, 'f> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
 
-        html!(f,
+        f.write_str(&html!(
             div.form-group {
                 @if self.label != "" {
-                    label for=^(self.name) ^(self.label)
+                    label for=(self.name) (self.label)
                 }
-                input type=^(self.type_) id=^(self.name) name=^(self.name) class=^(format!("form-control {}", self.class)) value=^(self.value) ""
+                input type=(self.type_) id=(self.name) name=(self.name) class=(format!("form-control {}", self.class)) value=(self.value) ""
                 @if let Some(errors) = self.errors {
                     @for err in errors {
-                        p.error.error-text ^err
+                        p.error.error-text (err)
                     }
                 }
             }
-        )
+        ).into_string())
     }
 }
 
@@ -161,21 +161,21 @@ impl<'a, 'b, 'c, 'e, 'f> Textarea<'a, 'b, 'c, 'e, 'f> {
 impl<'a, 'b, 'c, 'e, 'f> Display for Textarea<'a, 'b, 'c, 'e, 'f> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
 
-        html!(f,
+        f.write_str(&html!(
             div.form-group {
                 @if self.label != "" {
-                    label for=^(self.name) ^(self.label)
+                    label for=(self.name) (self.label)
                 }
-                textarea id=^(self.name) name=^(self.name) class=^(format!("form-control {}", self.class)) rows=15 {
-                    ^self.value
+                textarea id=(self.name) name=(self.name) class=(format!("form-control {}", self.class)) rows=(15) {
+                    (self.value)
                 }
                 @if let Some(errors) = self.errors {
                     @for err in errors {
-                        p.error.error-text ^err
+                        p.error.error-text (err)
                     }
                 }
             }
-        )
+        ).into_string())
     }
 }
 

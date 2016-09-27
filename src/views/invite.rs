@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use maud::PreEscaped;
+use maud::{Markup, PreEscaped};
 
 use views;
 use error;
@@ -8,10 +8,8 @@ use views::components::user::UserLink;
 use views::components::form::*;
 use models::invite::Invite;
 
-pub fn index(invites: &[Invite], data: &LayoutData) -> Result<String, error::FurratoriaError> {
-    let mut buffer = String::new();
-    let mut partial = String::new();
-    try!(html!(partial,
+pub fn index(invites: &[Invite], data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
+    let body = html! {
         h1 { "Invites" }
 
         table {
@@ -24,30 +22,28 @@ pub fn index(invites: &[Invite], data: &LayoutData) -> Result<String, error::Fur
                     tr {
                         td {
                             @if let Some(user) = try!(inv.get_user()) {
-                                ^(PreEscaped(UserLink(&user)))
+                                (PreEscaped(UserLink(&user)))
                             } @else {
                                 "<NONE>"
                             }
                         }
 
                         td {
-                            ^(inv.invite_key)
+                            (inv.invite_key)
                         }
                     }
                 }
             }
         }
 
-        ^(PreEscaped(Form::new(FormMethod::Post, "/admin/invites")
+        (PreEscaped(Form::new(FormMethod::Post, "/admin/invites")
           .with_fields(&[
                &Input::new("", "")
                     .with_value("Create")
                     .with_type("submit")
                     .with_class("btn btn-primary")
           ])))
-    ));
+    };
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("Invites"), Cow::Owned(partial), data));
-
-    Ok(buffer)
+    Ok(views::layout::application(Cow::Borrowed("Invites"), body, data))
 }

@@ -8,12 +8,12 @@ pub struct UserLink<'a>(pub &'a User);
 
 impl<'a> Display for UserLink<'a> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
-        html!(f,
-            a.user_link href=^(format!("/users/{}", self.0.id)) alt=^(format!("{}'s Profile", self.0.name)) span {
-                ^(PreEscaped(UserAvatar(&self.0)))
-                ^(self.0.name)
+        f.write_str(&html!(
+            a.user_link href=(format!("/users/{}", self.0.id)) alt=(format!("{}'s Profile", self.0.name)) span {
+                (PreEscaped(UserAvatar(&self.0)))
+                (self.0.name)
             }
-        )
+        ).into_string())
     }
 }
 
@@ -25,12 +25,12 @@ impl<'a> Display for UserAvatar<'a> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
         match self.0.get_avatar() {
             Ok(Some(t)) => {
-                html!(f,
-                    img.user_avatar src=^(t.get_path()) alt=^(format!("{}'s Avatar", self.0.name)) /
-                )
+                f.write_str(&html!(
+                    img.user_avatar src=(t.get_path()) alt=(format!("{}'s Avatar", self.0.name)) /
+                ).into_string())
             },
             _ => {
-                html!(f, "")
+                Ok(())
             }
         }
     }

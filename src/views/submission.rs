@@ -1,7 +1,7 @@
 use iron::Request;
 
 use std::borrow::Cow;
-use maud::PreEscaped;
+use maud::{Markup, PreEscaped};
 
 use views;
 use error;
@@ -12,45 +12,39 @@ use views::components::button::*;
 use models::submission::{Submission, SubmissionError, NewSubmission};
 use middleware::authorization::{self, UserAuthorization};
 
-pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request) -> Result<String, error::FurratoriaError> {
-    let mut buffer = String::new();
-    let mut partial = String::new();
-    try!(html!(partial,
+pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request) -> Result<Markup, error::FurratoriaError> {
+    let body = html! {
         h1 { "Submissions" }
 
         @if req.current_user_can(authorization::LoggedIn) {
-            a.btn.btn-primary href=^(url!("/submissions/new")) "New Submission"
+            a.btn.btn-primary href=(url!("/submissions/new")) "New Submission"
         }
 
         div.submissions @for sub in subs {
-            div a href=^(url!(format!("/submissions/{}", sub.id))) {
+            div a href=(url!(format!("/submissions/{}", sub.id))) {
                 div.card {
-                    img.card-img-top src=^(try!(sub.get_image()).map(|x| x.get_path()).unwrap_or(String::from("/todo"))) /
+                    img.card-img-top src=(try!(sub.get_image()).map(|x| x.get_path()).unwrap_or(String::from("/todo"))) /
                     div.card-block {
-                        h4.card-title ^(sub.title)
+                        h4.card-title (sub.title)
                         h6.card-subtitle.text-muted {
                             "by "
-                            ^({PreEscaped(UserLink(&try!(sub.get_submitter())))})
+                            ({PreEscaped(UserLink(&try!(sub.get_submitter())))})
                         }
                     }
                 }
             }
         }
-    ));
+    };
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("Submissions"), Cow::Owned(partial), data));
-
-    Ok(buffer)
+    Ok(views::layout::application(Cow::Borrowed("Submissions"), body, data))
 }
 
-pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewSubmission>) -> Result<String, error::FurratoriaError> {
-    let mut buffer = String::new();
-    let mut partial = String::new();
-    try!(html!(partial,
+pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewSubmission>) -> Result<Markup, error::FurratoriaError> {
+    let body = html! {
         div.row div class="col-sm-6 offset-sm-3" {
             h1 { "Upload new Submission" }
 
-            ^(PreEscaped(Form::new(FormMethod::Post, "/submissions/")
+            (PreEscaped(Form::new(FormMethod::Post, "/submissions/")
               .with_encoding("multipart/form-data")
               .with_fields(&[
                    &Input::new("Image", "sub_image")
@@ -68,17 +62,12 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
                         .with_class("btn btn-primary")
               ])))
         }
-    ));
+    };
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("Register"), Cow::Owned(partial), data));
-
-    Ok(buffer)
+    Ok(views::layout::application(Cow::Borrowed("Register"), body, data))
 }
 
-pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<String, error::FurratoriaError> {
-    let mut buffer = String::new();
-    let mut partial = String::new();
-
+pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Markup, error::FurratoriaError> {
     let image = match try!(sub.get_image()) {
         Some(i) => i,
         None => {
@@ -88,18 +77,18 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<St
 
     let user = try!(sub.get_submitter());
 
-    try!(html!(partial,
+    let body = html! {
         div.submission {
             div.row div class="col-md-10 offset-md-1" {
                 div.submission.clearfix {
-                    img src=^(image.get_path()) alt=^(format!("{}'s Submission", user.name)) /
+                    img src=(image.get_path()) alt=(format!("{}'s Submission", user.name)) /
                 }
 
                 div {
-                    h1.title { ^sub.title }
+                    h1.title { (sub.title) }
                     span.author {
                         "by "
-                        ^(PreEscaped(UserLink(&user)))
+                        (PreEscaped(UserLink(&user)))
                     }
                 }
             }
@@ -107,42 +96,38 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<St
             @if req.current_user_can(authorization::LoggedIn) {
                 div.row div class="col-md-10 offset-md-1" {
                     div.sub_actions {
-                        a.btn.btn-primary href=^(url!(format!("/users/{}/edit", user.id))) "Favorit"
+                        a.btn.btn-primary href=(url!(format!("/users/{}/edit", user.id))) "Favorit"
                         " "
-                        a.btn.btn-secondary href=^(image.get_path()) "Full Size"
+                        a.btn.btn-secondary href=(image.get_path()) "Full Size"
                         " "
                         @if req.current_user_can(authorization::SameUserAuthAs(&user)) {
-                            a.btn.btn-info href=^(url!(format!("/submissions/{}/edit", sub.id))) "Edit"
+                            a.btn.btn-info href=(url!(format!("/submissions/{}/edit", sub.id))) "Edit"
                             " "
                         }
-                        a.btn.btn-danger href=^(url!(format!("/users/{}/profile/edit", user.id))) "Signal"
+                        a.btn.btn-danger href=(url!(format!("/users/{}/profile/edit", user.id))) "Signal"
                     }
                 }
             }
 
             div.row div class="col-md-10 offset-md-1" {
                 div.submission_description {
-                    ^(views::markdown::parse(&sub.description))
+                    (views::markdown::parse(&sub.description))
                 }
             }
 
 
         }
-    ));
+    };
 
-    try!(views::layout::application(&mut buffer, Cow::Owned(format!("{} by {}", sub.title, user.name)), Cow::Owned(partial), data));
-
-    Ok(buffer)
+    Ok(views::layout::application(Cow::Owned(format!("{} by {}", sub.title, user.name)), body, data))
 }
 
-pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData) -> Result<String, error::FurratoriaError> {
-    let mut buffer = String::new();
-    let mut partial = String::new();
-    try!(html!(partial,
+pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
+    let body = html! {
         div.row div class="col-sm-6 offset-sm-3" {
             h1 { "Update your Submission" }
 
-            ^(PreEscaped(Form::new(FormMethod::Post, &format!("/submissions/{}", sub.id))
+            (PreEscaped(Form::new(FormMethod::Post, &format!("/submissions/{}", sub.id))
               .with_encoding("multipart/form-data")
               .with_fields(&[
                    &Input::new("Image", "sub_image")
@@ -162,11 +147,9 @@ pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData
         }
 
         div.row div class="col-sm-6 offset-sm-3" {
-            ^(PreEscaped(Button::new("Delete", &format!("/submissions/{}/delete", sub.id)).with_method(RequestMethod::Post)))
+            (PreEscaped(Button::new("Delete", &format!("/submissions/{}/delete", sub.id)).with_method(RequestMethod::Post)))
         }
-    ));
+    };
 
-    try!(views::layout::application(&mut buffer, Cow::Borrowed("Register"), Cow::Owned(partial), data));
-
-    Ok(buffer)
+    Ok(views::layout::application(Cow::Borrowed("Register"), body, data))
 }
