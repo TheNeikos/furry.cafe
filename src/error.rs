@@ -37,6 +37,12 @@ quick_error! {
             cause(&**err)
             description(err.description())
         }
+        Image(err: ::image::ImageError) {
+            from()
+        }
+        Io(err: ::std::io::Error) {
+            from()
+        }
         Unauthorized(user: Option<User>) {}
         NotFound {}
         BadFormatting { }

@@ -23,7 +23,10 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request) -> Resul
         div.submissions @for sub in subs {
             div a href=(url!(format!("/submissions/{}", sub.id))) {
                 div.card {
-                    img.card-img-top src=(try!(sub.get_image()).map(|x| x.get_path()).unwrap_or(String::from("/todo"))) /
+                    img.card-img-top src=(match try!(sub.get_image()) {
+                        Some(i) => try!(i.get_with_size(500, 500)).map(|x| x.get_path()).unwrap_or_else(|| String::from("/todo")),
+                        None => String::from("/todo")
+                    }) /
                     div.card-block {
                         h4.card-title (sub.title)
                         h6.card-subtitle.text-muted {

@@ -2,6 +2,7 @@
 #![plugin(maud_macros)]
 #![feature(custom_derive, custom_attribute)]
 #![plugin(diesel_codegen, dotenv_macros)]
+#![feature(question_mark)]
 
 #![allow(dead_code)]
 
