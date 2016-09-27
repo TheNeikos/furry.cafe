@@ -37,7 +37,7 @@ pub fn application(mut data: &mut fmt::Write,
             head {
                 title ^(format!("{} - Furratoria", title))
                 link rel="stylesheet" href="/assets/external/css/bootstrap.min.css" integrity="sha384-MIwDKRSSImVFAZCVLtU0LMDdON6KVCrZHyVQQj6e8wIEJkW4tvwqXrbMIya1vriY" crossorigin="anonymous" /
-                link rel="stylesheet" href="/assets/application.css" /
+                link rel="stylesheet" href="/assets/application.min.css" /
                 script src="/assets/external/js/jquery-3.1.0.min.js" ""
                 script src="/assets/external/js/tether.min.js" ""
                 script src="/assets/external/js/bootstrap.min.js" integrity="sha384-ux8v3A6CPtOTqOzMKiuo3d/DomGaaClxFYdCu2HPMBEkf6x2xiDyJ7gkXU0MWwaD" crossorigin="anonymous" ""
