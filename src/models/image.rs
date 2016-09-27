@@ -131,7 +131,7 @@ pub fn find_from_image(uid: i64, w: i32, h: i32) -> Result<Option<Image>, error:
     use diesel::prelude::*;
     use models::schema::images::dsl::*;
 
-    images.limit(1).filter(parent_id.eq(uid)).filter(width.le(w).and(height.le(h)))
+    images.limit(1).filter(parent_id.eq(uid)).filter(width.eq(w).or(height.eq(h))).order(width.desc()).order(height.desc())
          .get_result::<models::image::Image>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
