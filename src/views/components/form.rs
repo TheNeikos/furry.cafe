@@ -179,7 +179,52 @@ impl<'a, 'b, 'c, 'e, 'f> Display for Textarea<'a, 'b, 'c, 'e, 'f> {
     }
 }
 
-
-trait FormError {
-    fn get_errors(&self) -> &Vec<&str>;
+pub struct Select<'a> {
+    label: &'a str,
+    name: &'a str,
+    options: Vec<(&'a str, &'a str)>,
+    selected: &'a str,
 }
+
+impl<'a> Select<'a> {
+    pub fn new(label: &'a str, name: &'a str) -> Select<'a> {
+        Select {
+            label: label,
+            name: name,
+            options: vec![],
+            selected: ""
+        }
+    }
+
+    pub fn add_option(&'a mut self, name: &'a str, val: &'a str) -> &mut Select {
+        self.options.push((name, val));
+        self
+    }
+
+    pub fn with_selected(&'a mut self, selected: &'a str) -> &mut Select {
+        self.selected = selected;
+        self
+    }
+}
+
+impl<'a> Display for Select<'a> {
+    fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
+        f.write_str(&html!(
+            div.form-group {
+                @if self.label != "" {
+                    label for=(self.name) (self.label)
+                }
+                select.custom-select.form-control name=(self.name) {
+                    @for opt in &self.options {
+                        @if self.selected == opt.1 {
+                            option selected="selected" value=(opt.1) (opt.0)
+                        } @else {
+                            option value=(opt.1) (opt.0)
+                        }
+                    }
+                }
+            }
+        ).into_string())
+    }
+}
+

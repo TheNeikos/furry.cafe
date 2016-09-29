@@ -43,6 +43,9 @@ quick_error! {
         Io(err: ::std::io::Error) {
             from()
         }
+        Parse(err: ::std::num::ParseIntError) {
+            from()
+        }
         Unauthorized(user: Option<User>) {}
         NotFound {}
         BadFormatting { }

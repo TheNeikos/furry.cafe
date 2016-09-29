@@ -87,6 +87,7 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
 
 pub fn update(req: &mut Request) -> IronResult<Response> {
     use params::{Params, Value};
+    use std::str::FromStr;
 
     let data = LayoutData::from_request(req);
 
@@ -109,7 +110,12 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
         _ => None
     };
 
-    let update_submission = match models::submission::UpdateSubmission::new(image ,sub_name, sub_desc) {
+    let sub_visibility = match map.get("sub_visibility") {
+        Some(&Value::String(ref vis)) => Some(try!(i32::from_str(vis).map_err(|x| error::FurratoriaError::from(x)))),
+        _ => None
+    };
+
+    let update_submission = match models::submission::UpdateSubmission::new(image ,sub_name, sub_desc, sub_visibility) {
         Ok(update_submission) => update_submission,
         Err(err) => {
             let mut resp = Response::with((status::Ok, try!(views::submission::edit(&submission, Some(err), &data))));
