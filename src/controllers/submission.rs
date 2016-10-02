@@ -12,7 +12,8 @@ use models::user::User;
 use models::submission;
 
 pub fn index(req: &mut Request) -> IronResult<Response> {
-    let sub_list = try!(models::submission::last(20));
+    let user = User::get_login(req).get_user();
+    let sub_list = try!(models::submission::SubmissionFilter::new(None).with_viewer(user.as_ref()).run());
 
     let data = LayoutData::from_request(req);
     let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data, req))));

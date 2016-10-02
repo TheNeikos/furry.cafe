@@ -6,3 +6,4 @@ pub mod user_profile;
 pub mod image;
 pub mod submission;
 pub mod invite;
+pub mod filter_settings;

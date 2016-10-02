@@ -6,6 +6,7 @@ use image::{self, GenericImage, DynamicImage};
 use models::schema::submissions;
 use models::user::User;
 use models::image::{Image, NewImage};
+use models::filter_settings::FilterSettings;
 use database;
 use models;
 use error;
@@ -346,3 +347,67 @@ pub fn last(amt: i64) -> Result<Vec<Submission>, error::FurratoriaError> {
 }
 
 
+pub struct SubmissionFilter<'a> {
+    settings: FilterSettings,
+    submitter: Option<&'a User>,
+    viewer: Option<&'a User>,
+    title: Option<&'a str>,
+    description: Option<&'a str>,
+}
+
+impl<'a> SubmissionFilter<'a> {
+    pub fn new(settings: Option<FilterSettings>) -> SubmissionFilter<'a> {
+        SubmissionFilter {
+            settings: settings.unwrap_or_else(|| FilterSettings::default()),
+            viewer: None,
+            submitter: None,
+            title: None,
+            description: None,
+        }
+    }
+
+    pub fn with_submitter(mut self, user: &'a User) -> SubmissionFilter {
+        self.submitter = Some(user);
+        self
+    }
+
+    pub fn with_viewer(mut self, user: Option<&'a User>) -> SubmissionFilter {
+        self.viewer = user;
+        self
+    }
+
+    pub fn with_title(mut self, s: &'a str) -> SubmissionFilter {
+        self.title = Some(s);
+        self
+    }
+
+    pub fn with_decription(mut self, d: &'a str) -> SubmissionFilter {
+        self.description = Some(d);
+        self
+    }
+
+    pub fn run(self) -> Result<Vec<Submission>, error::FurratoriaError> {
+        use diesel::prelude::*;
+        use models::schema::submissions::dsl::*;
+
+        let mut query = submissions.limit(self.settings.limit).into_boxed();
+
+        if let Some(user) = self.submitter {
+            query = query.filter(user_id.eq(user.id));
+        }
+
+        if let Some(n) = self.title {
+            query = query.filter(title.like(n));
+        }
+
+        if let Some(desc) = self.description {
+            query = query.filter(description.like(desc));
+        }
+
+        query = query.filter(visibility.eq(Visibility::Public as i32).or(user_id.eq(self.viewer.map(|x| x.id).unwrap_or(-1))));
+
+        query = query.order(created_at.desc());
+
+        query.get_results::<models::submission::Submission>(&*database::connection().get().unwrap()).map_err(|e| e.into())
+    }
+}
