@@ -77,15 +77,16 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
                 }
             }
 
-            @if req.current_user_can(authorization::LoggedIn) {
-                div.row div class="col-md-10 offset-md-1" {
-                    div.user_actions {
+            div.row div class="col-md-10 offset-md-1" {
+                div.user_actions {
+                    @if req.current_user_can(authorization::LoggedIn) {
                         @if req.current_user_can(authorization::SameUserAuth) {
                             a.btn.btn-info href=(url!(format!("/users/{}/edit", user.id))) "Edit"
-                                " "
-                                a.btn.btn-info href=(url!(format!("/users/{}/profile/edit", user.id))) "Edit Profile"
+                            " "
+                            a.btn.btn-info href=(url!(format!("/users/{}/profile/edit", user.id))) "Edit Profile"
                         }
                     }
+                    a.btn.btn-info href=(url!(format!("/users/{}/submissions", user.id))) "Submissions"
                 }
             }
 

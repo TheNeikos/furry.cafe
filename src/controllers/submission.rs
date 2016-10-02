@@ -12,7 +12,8 @@ use models::user::User;
 use models::submission;
 
 pub fn index(req: &mut Request) -> IronResult<Response> {
-    let sub_list = try!(models::submission::last(20));
+    let user = User::get_login(req).get_user();
+    let sub_list = try!(models::submission::SubmissionFilter::new(None).with_viewer(user.as_ref()).run());
 
     let data = LayoutData::from_request(req);
     let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data, req))));
@@ -87,6 +88,7 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
 
 pub fn update(req: &mut Request) -> IronResult<Response> {
     use params::{Params, Value};
+    use std::str::FromStr;
 
     let data = LayoutData::from_request(req);
 
@@ -109,7 +111,12 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
         _ => None
     };
 
-    let update_submission = match models::submission::UpdateSubmission::new(image ,sub_name, sub_desc) {
+    let sub_visibility = match map.get("sub_visibility") {
+        Some(&Value::String(ref vis)) => Some(try!(i32::from_str(vis).map_err(|x| error::FurratoriaError::from(x)))),
+        _ => None
+    };
+
+    let update_submission = match models::submission::UpdateSubmission::new(image ,sub_name, sub_desc, sub_visibility) {
         Ok(update_submission) => update_submission,
         Err(err) => {
             let mut resp = Response::with((status::Ok, try!(views::submission::edit(&submission, Some(err), &data))));

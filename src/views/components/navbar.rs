@@ -88,5 +88,3 @@ impl<'a> Display for Navbar<'a> {
     }
 }
 
-
-

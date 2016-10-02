@@ -142,6 +142,10 @@ pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData
                    &Textarea::new("Description", "sub_desc")
                         .with_value(&sub.description)
                         .with_errors(None),
+                   &Select::new("Visibility", "sub_visibility")
+                        .add_option("Public","0")
+                        .add_option("Private", "2")
+                        .with_selected(sub.get_visibility().as_str()),
                    &Input::new("", "")
                         .with_value("Update")
                         .with_type("submit")

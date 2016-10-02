@@ -6,6 +6,7 @@ use image::{self, GenericImage, DynamicImage};
 use models::schema::submissions;
 use models::user::User;
 use models::image::{Image, NewImage};
+use models::filter_settings::FilterSettings;
 use database;
 use models;
 use error;
@@ -36,6 +37,31 @@ fn convert_image(mut img: DynamicImage) -> Option<i64> {
     }
 }
 
+#[repr(i32)]
+#[derive(Copy, Clone, Eq, PartialEq)]
+pub enum Visibility {
+    Public, Friends, Private,
+}
+
+impl Visibility {
+    pub fn from_i32(i: i32) -> Visibility {
+        match i {
+            0 => Visibility::Public,
+            1 => Visibility::Friends,
+            2 => Visibility::Private,
+            _ => panic!("Could not convert {} to visibility", i),
+        }
+    }
+
+    pub fn as_str(&self) -> &'static str {
+        match *self {
+            Visibility::Public => "0",
+            Visibility::Friends => "1",
+            Visibility::Private => "2",
+        }
+    }
+}
+
 #[derive(Queryable, Identifiable)]
 #[belongs_to(User)]
 pub struct Submission {
@@ -46,6 +72,8 @@ pub struct Submission {
     image: i64,
     pub title: String,
     pub description: String,
+    pub published_at: Option<diesel::data_types::PgTimestamp>,
+    visibility: i32,
 }
 
 impl Submission {
@@ -83,6 +111,10 @@ impl Submission {
             Ok(Some(u)) => Ok(u),
             Err(e) => Err(e)
         }
+    }
+
+    pub fn get_visibility(&self) -> Visibility {
+        Visibility::from_i32(self.visibility)
     }
 }
 
@@ -180,11 +212,13 @@ impl<'a, 'b> NewSubmission<'a, 'b> {
 pub struct UpdateSubmission<'a> {
     title: Option<&'a str>,
     description: Option<&'a str>,
-    image: Option<i64>
+    image: Option<i64>,
+    published_at: Option<diesel::data_types::PgTimestamp>,
+    visibility: Option<i32>,
 }
 
 impl<'a> UpdateSubmission<'a> {
-    pub fn new(mut image: Option<&File>, title: Option<&'a str>, desc: Option<&'a str>)
+    pub fn new(mut image: Option<&File>, title: Option<&'a str>, desc: Option<&'a str>, vis: Option<i32>)
         -> Result<UpdateSubmission<'a>, SubmissionError>
     {
         let mut se = SubmissionError::new();
@@ -204,6 +238,12 @@ impl<'a> UpdateSubmission<'a> {
         if let Some(desc) = desc {
             if desc.chars().count() > 150_000 {
                 se.description.push("Description cannot be longer than 150 000 characters");
+            }
+        }
+
+        if let Some(vis) = vis {
+            if vis > 2 {
+                se.visibility.push("Wrong input")
             }
         }
 
@@ -240,16 +280,18 @@ impl<'a> UpdateSubmission<'a> {
             }
         };
 
-        let image = to_be_converted.and_then(convert_image);
-
         if se.has_any_errors() {
             return Err(se);
         }
+
+        let image = to_be_converted.and_then(convert_image);
 
         Ok(UpdateSubmission {
             title: title,
             description: desc,
             image: image,
+            published_at: None,
+            visibility: vis
         })
     }
 }
@@ -260,16 +302,23 @@ pub struct SubmissionError {
     pub title: Vec<&'static str>,
     pub description: Vec<&'static str>,
     pub image: Vec<&'static str>,
+    pub visibility: Vec<&'static str>,
 }
 
 impl SubmissionError {
     pub fn new() -> SubmissionError {
-        SubmissionError { title: vec![], description: vec![], image: vec![]}
+        SubmissionError {
+            title: vec![],
+            description: vec![],
+            image: vec![],
+            visibility: vec![],
+        }
     }
     fn has_any_errors(&self) -> bool {
         !(self.title.is_empty()
           && self.description.is_empty()
-          && self.image.is_empty())
+          && self.image.is_empty()
+          && self.visibility.is_empty())
     }
 }
 
@@ -293,8 +342,72 @@ pub fn last(amt: i64) -> Result<Vec<Submission>, error::FurratoriaError> {
     use diesel::prelude::*;
     use models::schema::submissions::dsl::*;
 
-    submissions.limit(amt).order(created_at.desc())
+    submissions.limit(amt).order(created_at.desc()).filter(visibility.eq(0))
          .get_results::<models::submission::Submission>(&*database::connection().get().unwrap()).map_err(|e| e.into())
 }
 
 
+pub struct SubmissionFilter<'a> {
+    settings: FilterSettings,
+    submitter: Option<&'a User>,
+    viewer: Option<&'a User>,
+    title: Option<&'a str>,
+    description: Option<&'a str>,
+}
+
+impl<'a> SubmissionFilter<'a> {
+    pub fn new(settings: Option<FilterSettings>) -> SubmissionFilter<'a> {
+        SubmissionFilter {
+            settings: settings.unwrap_or_else(|| FilterSettings::default()),
+            viewer: None,
+            submitter: None,
+            title: None,
+            description: None,
+        }
+    }
+
+    pub fn with_submitter(mut self, user: &'a User) -> SubmissionFilter {
+        self.submitter = Some(user);
+        self
+    }
+
+    pub fn with_viewer(mut self, user: Option<&'a User>) -> SubmissionFilter {
+        self.viewer = user;
+        self
+    }
+
+    pub fn with_title(mut self, s: &'a str) -> SubmissionFilter {
+        self.title = Some(s);
+        self
+    }
+
+    pub fn with_decription(mut self, d: &'a str) -> SubmissionFilter {
+        self.description = Some(d);
+        self
+    }
+
+    pub fn run(self) -> Result<Vec<Submission>, error::FurratoriaError> {
+        use diesel::prelude::*;
+        use models::schema::submissions::dsl::*;
+
+        let mut query = submissions.limit(self.settings.limit).into_boxed();
+
+        if let Some(user) = self.submitter {
+            query = query.filter(user_id.eq(user.id));
+        }
+
+        if let Some(n) = self.title {
+            query = query.filter(title.like(n));
+        }
+
+        if let Some(desc) = self.description {
+            query = query.filter(description.like(desc));
+        }
+
+        query = query.filter(visibility.eq(Visibility::Public as i32).or(user_id.eq(self.viewer.map(|x| x.id).unwrap_or(-1))));
+
+        query = query.order(created_at.desc());
+
+        query.get_results::<models::submission::Submission>(&*database::connection().get().unwrap()).map_err(|e| e.into())
+    }
+}
