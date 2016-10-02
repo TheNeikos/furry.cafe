@@ -2,12 +2,13 @@ use iron::prelude::*;
 use iron::status;
 use iron::headers::ContentType;
 use iron::modifiers::Redirect;
+use iron_login::User as UserTrait;
 
 use error::{self};
 use views;
 use models;
 use views::layout::LayoutData;
-use models::user;
+use models::user::{self, User};
 
 pub fn index(req: &mut Request) -> IronResult<Response> {
     let user_list = try!(models::user::find_all());
@@ -21,6 +22,19 @@ pub fn index(req: &mut Request) -> IronResult<Response> {
 pub fn new(req: &mut Request) -> IronResult<Response> {
     let data = LayoutData::from_request(req);
     let mut resp = Response::with((status::Ok, try!(views::user::new(None, &data, None))));
+    resp.headers.set(ContentType::html());
+    Ok(resp)
+}
+
+pub fn submissions(req: &mut Request) -> IronResult<Response> {
+    let user = try!(find_by_id!(req, "id", user));
+    let viewer = User::get_login(req).get_user();
+    let sub_list = try!(models::submission::SubmissionFilter::new(None)
+                        .with_submitter(&user)
+                        .with_viewer(viewer.as_ref()).run());
+
+    let data = LayoutData::from_request(req);
+    let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data, req))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }

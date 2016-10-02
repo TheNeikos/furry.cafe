@@ -60,9 +60,10 @@ fn main() {
         //---------------------------------
         let mut router = Router::new();
 
-        router.get("/new",      controllers::user::new, "user_new");
-        router.post("/",        controllers::user::create, "user_create");
-        router.get("/:id",      controllers::user::show, "user_show");
+        router.get("/new",             controllers::user::new,         "user_new");
+        router.post("/",               controllers::user::create,      "user_create");
+        router.get("/:id/submissions", controllers::user::submissions, "user_submissions");
+        router.get("/:id",             controllers::user::show,        "user_show");
 
         let auth = middleware::authorization::Authorizer::new(vec![
             middleware::authorization::LoggedIn
