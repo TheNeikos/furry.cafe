@@ -65,7 +65,7 @@ impl<'a> Display for Navbar<'a> {
                                 a.nav-link href=(format!("/users/{}", user.id)) (user.name)
                             }
                             li.nav-item {
-                                a.nav-link.small href="/logout" "Logout"
+                                a.nav-link href="/logout" "Logout"
                             }
                         }
                     }
