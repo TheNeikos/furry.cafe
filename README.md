@@ -14,7 +14,7 @@ Roadmap:
     - [x] Banner Choosing (from a submitter artwork)
     - [x] Profile Picture
 - [ ] Artwork Hosting (that doesn't suck (tm))
-    - [ ] Support different level of visibility
+    - [x] Support different level of visibility
         - Public
         - Registered
         - Private (Direct link only with ability to reset link)
