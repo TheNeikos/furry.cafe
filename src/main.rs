@@ -27,6 +27,7 @@ extern crate maud_pulldown_cmark;
 extern crate image;
 #[macro_use] extern crate quick_error;
 extern crate rand;
+extern crate rustc_serialize;
 
 use std::env;
 use std::path::Path;
