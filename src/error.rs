@@ -45,6 +45,7 @@ quick_error! {
         }
         Parse(err: Option<Box<Error + Send>>) {
             from(e: ::std::num::ParseIntError) -> (Some(Box::new(e)))
+            from(e: ::rustc_serialize::base64::FromBase64Error) -> (Some(Box::new(e)))
         }
         Unauthorized(user: Option<User>) {}
         NotFound {}

@@ -3,6 +3,7 @@ use std::fs::File;
 
 use diesel;
 use image::{DynamicImage, GenericImage, ImageFormat, self};
+use rustc_serialize::base64::{ToBase64, FromBase64, self};
 
 use models::schema::images;
 use database;
@@ -12,13 +13,14 @@ use error;
 #[repr(i32)]
 #[derive(Copy, Clone, Debug)]
 pub enum ImageType {
-    Local
+    Local, Base64,
 }
 
 impl ImageType {
     pub fn from_i32(i: i32) -> ImageType {
         match i {
             0 => ImageType::Local,
+            1 => ImageType::Base64,
             _ => panic!("tried to use out of bound image type")
         }
     }
@@ -46,7 +48,10 @@ impl Image {
     }
 
     pub fn get_path(&self) -> String {
-        format!("{}", self.path)
+        match ImageType::from_i32(self.host_type) {
+            ImageType::Local  => format!("{}", self.path),
+            ImageType::Base64 => format!("data:image/png;base64,{}", self.path),
+        }
     }
 
     pub fn get_with_size(&self, width: i32, height: i32) -> Result<Option<Image>, error::FurratoriaError> {
@@ -92,6 +97,10 @@ impl NewImage {
             match ImageType::from_i32(img.host_type) {
                 ImageType::Local => {
                     try!(image::open(&format!(".{}", img.get_path())[..]))
+                },
+                ImageType::Base64 => {
+                    let bytes = try!(img.path.from_base64());
+                    try!(image::load_from_memory(&bytes[..]))
                 }
             }
         };
@@ -104,14 +113,34 @@ impl NewImage {
     // TODO: Better Error handling
     pub fn create_from_dynamic_image(img: &DynamicImage, suffix: &str) -> Result<NewImage, ::std::io::Error> {
         let dims = img.dimensions();
-        let path = format!("./assets/uploads/{}_{}-{}-{}.png", dims.0, dims.1, SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix);
-        let mut file = try!(File::create(&path));
-        if let Err(e) = img.save(&mut file, ImageFormat::PNG) {
-            error!("Could not save image... {}", e);
-        };
+        let mut path;
+        let typ;
+
+        if dims.0 < 200 && dims.1 < 200 {
+            let mut buf = Vec::new();
+            if let Err(e) = img.save(&mut buf, ImageFormat::PNG) {
+                error!("Could not save image... {}", e);
+            };
+            path = buf.to_base64(base64::Config {
+                char_set: base64::CharacterSet::Standard,
+                newline: base64::Newline::LF,
+                pad: true,
+                line_length: None,
+            });
+            typ = ImageType::Base64 as i32;
+        } else {
+            path = format!("./assets/uploads/{}_{}-{}-{}.png", dims.0, dims.1, SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix);
+            let mut file = try!(File::create(&path));
+            if let Err(e) = img.save(&mut file, ImageFormat::PNG) {
+                error!("Could not save image... {}", e);
+            };
+            typ = ImageType::Local as i32;
+            path = String::from(&path[1..]);
+        }
+
         Ok(NewImage {
-            path: String::from(&path[1..]),
-            host_type: ImageType::Local as i32,
+            path: path,
+            host_type: typ,
             width: dims.0 as i32,
             height: dims.1 as i32,
             parent_id: None,
