@@ -130,6 +130,10 @@ fn main() {
         chain.link_before(auth.clone());
         router.post("/",        chain, "submission_create");
 
+        let auth = middleware::authorization::Authorizer::new(vec![
+            middleware::authorization::IsOwner::<::models::submission::Submission>::new(),
+        ]);
+
         let mut chain = Chain::new(controllers::submission::edit);
         chain.link_before(auth.clone());
         router.get("/:id/edit", chain, "submission_edit");
