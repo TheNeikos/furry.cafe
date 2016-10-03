@@ -2,13 +2,9 @@
 .submission {
     text-align: center;
     margin-bottom: 1rem;
-    img {
+    .submission img {
         max-width: 100%;
         border: 1px solid rgba(0, 0, 0, 0.5);
-    }
-
-    .title {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.5);
     }
 
     .uploader {
@@ -40,6 +36,8 @@
 
     .card {
         max-width: 400px;
+        background: none;
+        box-shadow: 0px 0px 15px 0px rgba(black, 0.4);
     }
 
     .card .card-img-top {
@@ -53,6 +51,11 @@
 
     .card .card-block {
         border-top: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 2px 15px -4px $navbar-background-color;
+        background-color: $navbar-background-color;
+        a {
+            color: darken(white, 5);
+        }
     }
 }
 

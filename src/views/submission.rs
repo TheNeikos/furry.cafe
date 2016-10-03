@@ -16,10 +16,12 @@ use middleware::authorization::{self, UserAuthorization};
 
 pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Option<User>) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        h1 { (user.as_ref().map(|x| format!("{} ", x.name.possessive())).unwrap_or(String::new())) "Gallery" }
+        h1 {
+            { (user.as_ref().map(|x| format!("{} ", x.name.possessive())).unwrap_or(String::new())) "Gallery" }
 
-        @if req.current_user_can(authorization::LoggedIn) && user.is_none() {
-            a.btn.btn-primary href=(url!("/submissions/new")) "New Submission"
+            @if req.current_user_can(authorization::LoggedIn) && user.is_none() {
+                a.btn.btn-primary.pull-xs-right href=(url!("/submissions/new")) "New Submission"
+            }
         }
 
         div.submissions @for sub in subs {

@@ -1,6 +1,20 @@
+$navbar-background-color: rgba(white, 0.4);
+$navbar-color: darken(white, 5);
 
 .navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     margin-bottom: 1.5rem;
+    border-radius: 0;
+    box-shadow: 0px 2px 15px -4px $navbar-background-color;
+    background-color: $navbar-background-color;
+
+    .nav-link {
+        font-family: 'Orbitron';
+    }
+
 }
 
 .navbar-brand {
