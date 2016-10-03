@@ -59,6 +59,10 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
                    &Textarea::new("Description", "sub_desc")
                         .with_value(sub.as_ref().map(|x| &x.description).unwrap_or(&""))
                         .with_errors(None),
+                   &Select::new("Visibility", "sub_visibility")
+                        .add_option("Public","0")
+                        .add_option("Private", "2")
+                        .with_selected(sub.as_ref().map(|x| x.get_visibility().as_str()).unwrap_or(&"")),
                    &Input::new("", "")
                         .with_value("Upload")
                         .with_type("submit")

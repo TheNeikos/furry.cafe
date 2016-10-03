@@ -43,12 +43,12 @@ quick_error! {
         Io(err: ::std::io::Error) {
             from()
         }
-        Parse(err: ::std::num::ParseIntError) {
-            from()
+        Parse(err: Option<Box<Error + Send>>) {
+            from(e: ::std::num::ParseIntError) -> (Some(Box::new(e)))
         }
         Unauthorized(user: Option<User>) {}
         NotFound {}
-        BadFormatting { }
+        BadFormatting {}
     }
 }
 

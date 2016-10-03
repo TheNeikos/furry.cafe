@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use iron::prelude::*;
 use iron::status;
 use iron::headers::ContentType;
@@ -52,7 +54,15 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
         _ => None
     };
 
-    let new_submission = match models::submission::NewSubmission::new(&user, image, sub_name, sub_desc) {
+    let vis = match map.get("sub_visibility") {
+        Some(&Value::String(ref vis)) => match submission::Visibility::try_from_i32(try!(i32::from_str(vis).map_err(|x| error::FurratoriaError::from(x)))) {
+            Ok(v) => Some(v),
+            _ => None,
+        },
+        _ => None
+    };
+
+    let new_submission = match models::submission::NewSubmission::new(&user, image, sub_name, sub_desc, vis) {
         Ok(new_submission) => new_submission,
         Err((err, new_submission)) => {
             let mut resp = Response::with((status::Ok, try!(views::submission::new(Some(err), &data, Some(&new_submission)))));
