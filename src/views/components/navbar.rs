@@ -10,11 +10,7 @@ struct NavbarEntry<'a, 'b> {
 
 static NAVBAR_ENTRIES: &'static [NavbarEntry<'static, 'static>] = &[
     NavbarEntry {
-        name: "Home",
-        path: "/"
-    },
-    NavbarEntry {
-        name: "Submissions",
+        name: "Gallery",
         path: "/submissions/"
     },
     NavbarEntry {
@@ -50,7 +46,7 @@ impl<'a> Display for Navbar<'a> {
                 a.navbar-brand href="/" "Furratoria"
                 ul.nav.navbar-nav {
                     @for item in NAVBAR_ENTRIES {
-                        @if item.path == self.path {
+                        @if self.path.starts_with(item.path) {
                             li.nav-item.active {
                                 a.nav-link href=(item.path) (item.name)
                             }
@@ -69,7 +65,7 @@ impl<'a> Display for Navbar<'a> {
                                 a.nav-link href=(format!("/users/{}", user.id)) (user.name)
                             }
                             li.nav-item {
-                                a.nav-link.small href="/logout" "Logout"
+                                a.nav-link href="/logout" "Logout"
                             }
                         }
                     }

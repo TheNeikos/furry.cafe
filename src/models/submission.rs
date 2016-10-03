@@ -44,6 +44,15 @@ pub enum Visibility {
 }
 
 impl Visibility {
+    pub fn try_from_i32(i: i32) -> Result<Visibility, error::FurratoriaError> {
+        match i {
+            0 => Ok(Visibility::Public),
+            1 => Ok(Visibility::Friends),
+            2 => Ok(Visibility::Private),
+            _ => Err(error::FurratoriaError::Parse(None)),
+        }
+    }
+
     pub fn from_i32(i: i32) -> Visibility {
         match i {
             0 => Visibility::Public,
@@ -125,10 +134,11 @@ pub struct NewSubmission<'a, 'b> {
     pub title: &'a str,
     pub description: &'b str,
     image: i64,
+    visibility: i32,
 }
 
 impl<'a, 'b> NewSubmission<'a, 'b> {
-    pub fn new(user: &User, image: Option<&File>, title: Option<&'a str>, desc: Option<&'b str>)
+    pub fn new(user: &User, image: Option<&File>, title: Option<&'a str>, desc: Option<&'b str>, vis: Option<Visibility>)
         -> Result<NewSubmission<'a, 'b>, (SubmissionError, NewSubmission<'a, 'b>)>
     {
         let mut se = SubmissionError::new();
@@ -191,6 +201,7 @@ impl<'a, 'b> NewSubmission<'a, 'b> {
             title: title.unwrap_or(&""),
             description: desc.unwrap_or(&""),
             image: 0,
+            visibility: vis.unwrap_or(Visibility::Public) as i32,
         };
 
         if se.has_any_errors() {
@@ -204,7 +215,12 @@ impl<'a, 'b> NewSubmission<'a, 'b> {
             title: title.unwrap(),
             description: desc.unwrap_or(&""),
             image: image,
+            visibility: vis.unwrap_or(Visibility::Public) as i32,
         })
+    }
+
+    pub fn get_visibility(&self) -> Visibility {
+        Visibility::from_i32(self.visibility)
     }
 }
 

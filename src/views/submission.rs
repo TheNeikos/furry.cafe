@@ -5,19 +5,23 @@ use maud::{Markup, PreEscaped};
 
 use views;
 use error;
+use helper::*;
 use views::layout::LayoutData;
 use views::components::user::UserLink;
 use views::components::form::*;
 use views::components::button::*;
 use models::submission::{Submission, SubmissionError, NewSubmission};
+use models::user::User;
 use middleware::authorization::{self, UserAuthorization};
 
-pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request) -> Result<Markup, error::FurratoriaError> {
+pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Option<User>) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        h1 { "Submissions" }
+        h1 {
+            { (user.as_ref().map(|x| format!("{} ", x.name.possessive())).unwrap_or(String::new())) "Gallery" }
 
-        @if req.current_user_can(authorization::LoggedIn) {
-            a.btn.btn-primary href=(url!("/submissions/new")) "New Submission"
+            @if req.current_user_can(authorization::LoggedIn) && user.is_none() {
+                a.btn.btn-primary.pull-xs-right href=(url!("/submissions/new")) "New Submission"
+            }
         }
 
         div.submissions @for sub in subs {
@@ -29,7 +33,7 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request) -> Resul
                     }) /
                     div.card-block {
                         h4.card-title (sub.title)
-                        h6.card-subtitle.text-muted {
+                        div.card-subtitle.text-muted {
                             "by "
                             ({PreEscaped(UserLink(&try!(sub.get_submitter())))})
                         }
@@ -59,6 +63,10 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
                    &Textarea::new("Description", "sub_desc")
                         .with_value(sub.as_ref().map(|x| &x.description).unwrap_or(&""))
                         .with_errors(None),
+                   &Select::new("Visibility", "sub_visibility")
+                        .add_option("Public","0")
+                        .add_option("Private", "2")
+                        .with_selected(sub.as_ref().map(|x| x.get_visibility().as_str()).unwrap_or(&"")),
                    &Input::new("", "")
                         .with_value("Upload")
                         .with_type("submit")
@@ -89,8 +97,8 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
 
                 div {
                     h1.title { (sub.title) }
-                    span.author {
-                        "by "
+                    span.uploader {
+                        "Uploaded by "
                         (PreEscaped(UserLink(&user)))
                     }
                 }
@@ -100,12 +108,9 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
                 div.row div class="col-md-10 offset-md-1" {
                     div.sub_actions {
                         a.btn.btn-primary href=(url!(format!("/users/{}/edit", user.id))) "Favorit"
-                        " "
                         a.btn.btn-secondary href=(image.get_path()) "Full Size"
-                        " "
                         @if req.current_user_can(authorization::SameUserAuthAs(&user)) {
                             a.btn.btn-info href=(url!(format!("/submissions/{}/edit", sub.id))) "Edit"
-                            " "
                         }
                         a.btn.btn-danger href=(url!(format!("/users/{}/profile/edit", user.id))) "Signal"
                     }

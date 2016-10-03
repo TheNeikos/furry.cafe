@@ -1,13 +1,37 @@
-use maud::Markup;
+use maud::{Markup, PreEscaped};
 
 use views;
 use std::borrow::Cow;
 
 use views::layout::LayoutData;
+use views::components::Column;
 
 pub fn root(data: &LayoutData) -> Result<Markup, ::std::fmt::Error> {
     let body = html! {
-        h1 { "Hello World!" }
+        div.row (PreEscaped(Column::new(html! {
+            h1 "Welcome to Furratoria!"
+            p {
+                "We're a bunch of Furries cruising the unknown worlds of artistic space. "
+                "Here we share and discuss Artwork we have created or bought about our Characters."
+            }
+
+            h2 "Artworks"
+            p {
+                "Art in any form has its place around here. "
+                "To help you organize it we have several features you can use once you are registered:"
+
+                ul {
+                    li "Artist Tagging — Collaboration? Commission? You can tag other users (or link to profiles on other sites) to always give credit"
+                    li "Characters — You will be able to create a page just for your Character and tag him in pictures, making it easy to keep it all in one place"
+                    li "Tagged Favorites — Only want the relevant ones? Filter them easily"
+                }
+            }
+
+            p {
+                strong "If that sounds exciting, come and join us! "
+                a.btn.btn-primary href="/users/new" "Sign up"
+            }
+        })))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Homepage"), body, data))
