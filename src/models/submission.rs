@@ -7,6 +7,7 @@ use models::schema::submissions;
 use models::user::User;
 use models::image::{Image, NewImage};
 use models::filter_settings::FilterSettings;
+use models::HasOwner;
 use database;
 use models;
 use error;
@@ -71,7 +72,7 @@ impl Visibility {
     }
 }
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Clone)]
 #[belongs_to(User)]
 pub struct Submission {
     pub id: i64,
@@ -425,5 +426,15 @@ impl<'a> SubmissionFilter<'a> {
         query = query.order(created_at.desc());
 
         query.get_results::<models::submission::Submission>(&*database::connection().get().unwrap()).map_err(|e| e.into())
+    }
+}
+
+impl HasOwner for Submission {
+    fn get_owner(id: i64) -> Result<Option<User>, error::FurratoriaError> {
+        match find(id) {
+            Ok(Some(sub)) => models::user::find(sub.user_id),
+            Ok(None) => Err(error::FurratoriaError::NotFound),
+            Err(e) => Err(e)
+        }
     }
 }
