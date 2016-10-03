@@ -31,7 +31,7 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Op
                     }) /
                     div.card-block {
                         h4.card-title (sub.title)
-                        h6.card-subtitle.text-muted {
+                        div.card-subtitle.text-muted {
                             "by "
                             ({PreEscaped(UserLink(&try!(sub.get_submitter())))})
                         }

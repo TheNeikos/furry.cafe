@@ -9,6 +9,11 @@
 }
 
 @font-face {
+    font-family: OrbitronBold;
+    src: url(/assets/external/fonts/Orbitron/Orbitron-Bold.ttf);
+}
+
+@font-face {
     font-family: RobotoMono;
     src: url(/assets/external/fonts/RobotoMono/RobotoMono-Regular.ttf);
 }
@@ -26,4 +31,8 @@ footer {
 
 textarea {
     font-family: monospace;
+}
+
+h1 {
+    padding-left: 1em;
 }
