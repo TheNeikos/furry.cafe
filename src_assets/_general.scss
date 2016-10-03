@@ -1,3 +1,17 @@
+@font-face {
+    font-family: Oswald;
+    src: url(/assets/external/fonts/Oswald/Oswald-Regular.ttf);
+}
+
+@font-face {
+    font-family: Orbitron;
+    src: url(/assets/external/fonts/Orbitron/Orbitron-Regular.ttf);
+}
+
+@font-face {
+    font-family: RobotoMono;
+    src: url(/assets/external/fonts/RobotoMono/RobotoMono-Regular.ttf);
+}
 
 footer {
     text-align: center;
@@ -10,3 +24,6 @@ footer {
     }
 }
 
+textarea {
+    font-family: monospace;
+}
