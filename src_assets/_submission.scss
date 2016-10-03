@@ -1,10 +1,9 @@
 
-.submission .submission {
+.submission {
     text-align: center;
     margin-bottom: 1rem;
     img {
         max-width: 100%;
-        padding: 1rem;
         border: 1px solid rgba(0, 0, 0, 0.5);
     }
 
@@ -12,7 +11,7 @@
         border-bottom: 1px solid rgba(0, 0, 0, 0.5);
     }
 
-    .author {
+    .uploader {
         float: right;
     }
 
@@ -20,6 +19,10 @@
         text-align: center;
         padding: 0.5rem 1rem;
         background: rgba(0, 0, 0, 0.1);
+
+        .btn {
+            margin-right: 0.5em;
+        }
     }
 
     .submission_description {

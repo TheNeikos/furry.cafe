@@ -5,18 +5,20 @@ use maud::{Markup, PreEscaped};
 
 use views;
 use error;
+use helper::*;
 use views::layout::LayoutData;
 use views::components::user::UserLink;
 use views::components::form::*;
 use views::components::button::*;
 use models::submission::{Submission, SubmissionError, NewSubmission};
+use models::user::User;
 use middleware::authorization::{self, UserAuthorization};
 
-pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request) -> Result<Markup, error::FurratoriaError> {
+pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Option<User>) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        h1 { "Submissions" }
+        h1 { (user.as_ref().map(|x| format!("{} ", x.name.possessive())).unwrap_or(String::new())) "Gallery" }
 
-        @if req.current_user_can(authorization::LoggedIn) {
+        @if req.current_user_can(authorization::LoggedIn) && user.is_none() {
             a.btn.btn-primary href=(url!("/submissions/new")) "New Submission"
         }
 
@@ -93,8 +95,8 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
 
                 div {
                     h1.title { (sub.title) }
-                    span.author {
-                        "by "
+                    span.uploader {
+                        "Uploaded by "
                         (PreEscaped(UserLink(&user)))
                     }
                 }
@@ -104,12 +106,9 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
                 div.row div class="col-md-10 offset-md-1" {
                     div.sub_actions {
                         a.btn.btn-primary href=(url!(format!("/users/{}/edit", user.id))) "Favorit"
-                        " "
                         a.btn.btn-secondary href=(image.get_path()) "Full Size"
-                        " "
                         @if req.current_user_can(authorization::SameUserAuthAs(&user)) {
                             a.btn.btn-info href=(url!(format!("/submissions/{}/edit", sub.id))) "Edit"
-                            " "
                         }
                         a.btn.btn-danger href=(url!(format!("/users/{}/profile/edit", user.id))) "Signal"
                     }

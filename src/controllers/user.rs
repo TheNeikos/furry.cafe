@@ -34,7 +34,7 @@ pub fn submissions(req: &mut Request) -> IronResult<Response> {
                         .with_viewer(viewer.as_ref()).run());
 
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data, req))));
+    let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data, req, Some(user)))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }

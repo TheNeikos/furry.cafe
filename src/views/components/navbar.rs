@@ -10,7 +10,7 @@ struct NavbarEntry<'a, 'b> {
 
 static NAVBAR_ENTRIES: &'static [NavbarEntry<'static, 'static>] = &[
     NavbarEntry {
-        name: "Submissions",
+        name: "Gallery",
         path: "/submissions/"
     },
     NavbarEntry {

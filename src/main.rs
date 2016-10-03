@@ -46,6 +46,7 @@ mod error;
 mod models;
 mod logger;
 mod middleware;
+mod helper;
 
 fn main() {
     dotenv().ok();

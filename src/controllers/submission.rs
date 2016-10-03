@@ -18,7 +18,7 @@ pub fn index(req: &mut Request) -> IronResult<Response> {
     let sub_list = try!(models::submission::SubmissionFilter::new(None).with_viewer(user.as_ref()).run());
 
     let data = LayoutData::from_request(req);
-    let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data, req))));
+    let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data, req, None))));
     resp.headers.set(ContentType::html());
     Ok(resp)
 }
