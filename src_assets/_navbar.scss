@@ -10,11 +10,11 @@ $navbar-color: darken(white, 5);
     border-radius: 0;
     box-shadow: 0px 2px 15px -4px $navbar-background-color;
     background-color: $navbar-background-color;
+    padding: 0.1rem 1rem;
 
     .nav-link {
         font-family: 'Orbitron';
     }
-
 }
 
 .navbar-brand {
