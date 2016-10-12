@@ -16,6 +16,14 @@ impl Column {
             content: content,
         }
     }
+
+    pub fn new_with_size(size: usize, pull: usize, content: Markup) -> Column {
+        Column {
+            size: size,
+            pull: pull,
+            content: content,
+        }
+    }
 }
 
 impl Display for Column {
