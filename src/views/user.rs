@@ -8,6 +8,7 @@ use error;
 use views::layout::LayoutData;
 use views::components::user::{UserAvatar, UserLink};
 use views::components::form::*;
+use views::components::Column;
 use models::user::{UserError, User, NewUser};
 use models::user_role::Role;
 use models::user_profile::UserProfile;
@@ -15,7 +16,7 @@ use middleware::authorization::{self, UserAuthorization};
 
 pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        div.row div class="col-sm-6 offset-sm-3" {
+        div.row (PreEscaped(Column::new(html! {
             h1 { "Register" }
 
             (PreEscaped(Form::new(FormMethod::Post, "/users/")
@@ -35,7 +36,7 @@ pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>)
                         .with_type("submit")
                         .with_class("btn btn-primary")
               ])))
-        }
+        })))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Register"), body, data))
@@ -61,12 +62,12 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
     let body = html! {
         div.user_profile {
             @if let Some(image) = banner {
-                div.row div class="col-md-10 offset-md-1" {
+                div.row (PreEscaped(Column::new(html! {
                     div.banner style=(format!("background-image: url('{}');height: {};", image.get_path(), image.height)) /
-                }
+                })))
             }
 
-            div.row div class="col-md-10 offset-md-1" {
+            div.row (PreEscaped(Column::new(html! {
                 div.user_info.clearfix {
                     (PreEscaped(UserAvatar(&user, (250, 250))))
                     h1.user_name { (user.name) }
@@ -75,9 +76,9 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
                         (role.as_str())
                     }
                 }
-            }
+            })))
 
-            div.row div class="col-md-10 offset-md-1" {
+            div.row (PreEscaped(Column::new(html! {
                 div.user_actions {
                     @if req.current_user_can(authorization::LoggedIn) {
                         @if req.current_user_can(authorization::SameUserAuth) {
@@ -87,13 +88,13 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
                     }
                     a.btn.btn-info href=(url!(format!("/users/{}/submissions", user.id))) "Gallery"
                 }
-            }
+            })))
 
-            div.row div class="col-md-10 offset-md-1" {
+            div.row (PreEscaped(Column::new(html! {
                 div.user_bio {
                     (views::markdown::parse(&profile.bio))
                 }
-            }
+            })))
 
 
         }
@@ -104,27 +105,29 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
 
 pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        h1 { "Edit User " (user.name) }
-        (PreEscaped(Form::new(FormMethod::Post, &format!("/users/{}", user.id))
-          .with_encoding("multipart/form-data")
-          .with_fields(&[
-               &Input::new("Name", "user_name")
-                    .with_value(&user.name)
-                    .with_errors(errors.as_ref().map(|x| &x.name)),
-               &Input::new("Email", "user_email")
-                    .with_value(&user.email)
-                    .with_errors(errors.as_ref().map(|x| &x.email)),
-               &Input::new("Password", "user_password")
-                    .with_type("password")
-                    .with_errors(errors.as_ref().map(|x| &x.password)),
-               &Input::new("Avatar", "user_avatar")
-                    .with_type("file")
-                    .with_errors(errors.as_ref().map(|x| &x.profile_image)),
-               &Input::new("", "")
-                    .with_value("Update")
-                    .with_type("submit")
-                    .with_class("btn btn-primary")
-          ])))
+        div.row (PreEscaped(Column::new(html! {
+            h1 { "Edit User " (user.name) }
+            (PreEscaped(Form::new(FormMethod::Post, &format!("/users/{}", user.id))
+              .with_encoding("multipart/form-data")
+              .with_fields(&[
+                   &Input::new("Name", "user_name")
+                        .with_value(&user.name)
+                        .with_errors(errors.as_ref().map(|x| &x.name)),
+                   &Input::new("Email", "user_email")
+                        .with_value(&user.email)
+                        .with_errors(errors.as_ref().map(|x| &x.email)),
+                   &Input::new("Password", "user_password")
+                        .with_type("password")
+                        .with_errors(errors.as_ref().map(|x| &x.password)),
+                   &Input::new("Avatar", "user_avatar")
+                        .with_type("file")
+                        .with_errors(errors.as_ref().map(|x| &x.profile_image)),
+                   &Input::new("", "")
+                        .with_value("Update")
+                        .with_type("submit")
+                        .with_class("btn btn-primary")
+              ])))
+        })))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Register"), body, data))
