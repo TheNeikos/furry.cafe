@@ -18,7 +18,7 @@ impl<'a> Display for UserLink<'a> {
     }
 }
 
-static DEFAULT_AVATAR : &'static str = "/assets/imgs/default_avatar.png";
+static DEFAULT_AVATAR : &'static str = "/assets/images/default_avatar.png";
 
 pub struct UserAvatar<'a>(pub &'a User, pub (i32, i32));
 
@@ -28,6 +28,9 @@ impl<'a> Display for UserAvatar<'a> {
             Ok(Some(t)) => {
                 f.write_str(&Image::new(&t).with_size(self.1).with_class("user_avatar").to_string()[..])
             },
+            Ok(None) => {
+                f.write_str(&format!("<img class='user_avatar' src='{}' />", DEFAULT_AVATAR))
+            }
             _ => {
                 Ok(())
             }

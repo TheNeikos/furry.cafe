@@ -63,7 +63,7 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
         div.user_profile {
             @if let Some(image) = banner {
                 div.row (PreEscaped(Column::new(html! {
-                    div.banner style=(format!("background-image: url('{}');height: {};", image.get_path(), image.height)) /
+                    div.banner style=(format!("background-image: url('{}');height: {};", image.get_path(), image.height)) ""
                 })))
             }
 
