@@ -125,7 +125,7 @@ impl User {
                     bio: "",
                     banner_image: None,
                 }));
-                return self.get_profile(); // TODO: Is this safe??
+                return self.get_profile(); // This is safe if the DB is safe
             }
         }
     }
