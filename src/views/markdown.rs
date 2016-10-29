@@ -9,6 +9,6 @@ pub fn parse(s: &str) -> PreEscaped<String> {
     });
 
     let mut string = String::new();
-    Markdown::from_events(events).render_once(&mut string).unwrap();
+    Markdown::from_events(events).render_once_to(&mut string);
     PreEscaped(string)
 }

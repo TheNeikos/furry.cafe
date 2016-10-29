@@ -35,23 +35,26 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
         _ => None
     };
 
-    if email.is_none() || password.is_none() {
-        let mut err = UserError::new();
-        err.email.push("cannot be empty");
-        err.password.push("cannot be empty");
-        let mut resp = Response::with((status::Ok, try!(views::login::login(Some(err), &data))));
-        resp.headers.set(ContentType::html());
-        return Ok(resp);
-    }
 
-    let email = email.unwrap();
-    let password = password.unwrap();
+    let (email, password) = match (email, password) {
+        (Some(e), Some(p)) => (e, p),
+        _ => {
+            let mut err = UserError::new();
+            err.email.push("cannot be empty");
+            err.password.push("cannot be empty");
+            let mut resp = Response::with((status::Ok, try!(views::login::login(Some(err), &data))));
+            resp.headers.set(ContentType::html());
+            return Ok(resp);
+        }
+    };
 
     let user = match models::user::with_email_password(email, password) {
         Ok(Some(user)) => user,
         _ => {
+            let mut err = UserError::new();
+            err.email.push("User/Password combination could not be found");
             // TODO: Actually tell the user no fitting was found
-            let mut resp = Response::with((status::Ok, try!(views::login::login(None, &data))));
+            let mut resp = Response::with((status::Ok, try!(views::login::login(Some(err), &data))));
             resp.headers.set(ContentType::html());
             return Ok(resp);
         }
@@ -59,7 +62,6 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 
     let login = login.log_in(user);
 
-    // TODO: Add config for url?
     return Ok(Response::with((login, temp_redirect!("/"))))
 }
 
@@ -73,6 +75,5 @@ pub fn delete(req: &mut Request) -> IronResult<Response> {
 pub fn destroy(req: &mut Request) -> IronResult<Response> {
     let logout = User::get_login(req).log_out();
 
-    // TODO: Add config for url?
     return Ok(Response::with((logout, temp_redirect!("/"))))
 }

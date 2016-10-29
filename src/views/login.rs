@@ -11,7 +11,7 @@ use models::user::UserError;
 
 pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        div.row (PreEscaped(Column::new_with_size(6, 3, html! {
+        div.row (Column::custom(6, 3, html! {
             h1 "Login"
 
             (PreEscaped(Form::new(FormMethod::Post, "/login")
@@ -26,7 +26,7 @@ pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<Markup, err
                         .with_type("Submit")
                         .with_class("btn btn-primary")
               ])))
-        })))
+        }))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Login"), body, data))
@@ -34,7 +34,7 @@ pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<Markup, err
 
 pub fn logout(data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        div.row (PreEscaped(Column::new_with_size(6, 3, html! {
+        div.row (Column::custom(6, 3, html! {
             h1 "Logout"
 
             (PreEscaped(Form::new(FormMethod::Post, "/logout")
@@ -44,7 +44,7 @@ pub fn logout(data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
                         .with_type("Submit")
                         .with_class("btn btn-primary")
              ])))
-        })))
+        }))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Logout"), body, data))

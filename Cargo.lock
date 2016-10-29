@@ -14,9 +14,9 @@ dependencies = [
  "log 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "log4rs 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "logger 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "maud 0.11.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "maud 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "maud-pulldown-cmark 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "maud_macros 0.11.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "maud_macros 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "mount 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "params 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "pulldown-cmark 0.0.8 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -458,7 +458,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "maud"
-version = "0.11.1"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "iron 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -467,19 +467,24 @@ dependencies = [
 [[package]]
 name = "maud-pulldown-cmark"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "maud 0.11.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "maud 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "pulldown-cmark 0.0.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "skeptic 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
+name = "maud-pulldown-cmark"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+replace = "maud-pulldown-cmark 0.3.0"
+
+[[package]]
 name = "maud_macros"
-version = "0.11.1"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "maud 0.11.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "maud 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -1178,9 +1183,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum logger 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3cf2488134e30432708391618d45fbdbf925223b842bba4f962fd03632b9566b"
 "checksum lzw 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)" = "7d947cbb889ed21c2a84be6ffbaebf5b4e0f4340638cba0444907e38b56be084"
 "checksum matches 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "15305656809ce5a4805b1ff2946892810992197ce1270ff79baded852187942e"
-"checksum maud 0.11.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a61f1d66b8913a98d5c6f1649a45d9fc59a83a4de32f21507f6f4b7a70997220"
+"checksum maud 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)" = "40e27d3adef3e97d828ffc3a4a8604910570037ac24c26abcf22e9a2c11b57a7"
 "checksum maud-pulldown-cmark 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d0598d75d74c851f1c3b81e2e022ab8165a518bb90160f66da54276c5a4b7ba3"
-"checksum maud_macros 0.11.1 (registry+https://github.com/rust-lang/crates.io-index)" = "17cb7490d852286c24f5a2de3cbe0fa96a06ec0d1f30a77751d22ddceec6aff4"
+"checksum maud_macros 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)" = "aa37ffc7e702cfefd6016e7f66f12a848b1052acaaf6f2b6468db2f14339a531"
 "checksum memchr 0.1.11 (registry+https://github.com/rust-lang/crates.io-index)" = "d8b629fb514376c675b98c1421e80b151d3817ac42d7c667717d282761418d20"
 "checksum mime 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "b5c93a4bd787ddc6e7833c519b73a50883deb5863d76d9b71eb8216fb7f94e66"
 "checksum mime_guess 1.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e9a7d89cb3bce9145b0d0339a0588b044e3e3e3faa1dcd74822ebdc36bfac020"
