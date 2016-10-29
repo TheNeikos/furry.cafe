@@ -110,17 +110,14 @@ impl NewImage {
         Ok(image)
     }
 
-    // TODO: Better Error handling
-    pub fn create_from_dynamic_image(img: &DynamicImage, suffix: &str) -> Result<NewImage, ::std::io::Error> {
+    pub fn create_from_dynamic_image(img: &DynamicImage, suffix: &str) -> Result<NewImage, error::FurratoriaError> {
         let dims = img.dimensions();
         let mut path;
         let typ;
 
         if dims.0 < 200 && dims.1 < 200 {
             let mut buf = Vec::new();
-            if let Err(e) = img.save(&mut buf, ImageFormat::PNG) {
-                error!("Could not save image... {}", e);
-            };
+            try!(img.save(&mut buf, ImageFormat::PNG));
             path = buf.to_base64(base64::Config {
                 char_set: base64::CharacterSet::Standard,
                 newline: base64::Newline::LF,
@@ -131,9 +128,7 @@ impl NewImage {
         } else {
             path = format!("./assets/uploads/{}_{}-{}-{}.png", dims.0, dims.1, SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix);
             let mut file = try!(File::create(&path));
-            if let Err(e) = img.save(&mut file, ImageFormat::PNG) {
-                error!("Could not save image... {}", e);
-            };
+            try!(img.save(&mut file, ImageFormat::PNG));
             typ = ImageType::Local as i32;
             path = String::from(&path[1..]);
         }
