@@ -49,7 +49,7 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Op
 
 pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewSubmission>) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        div.row (PreEscaped(Column::new_with_size(6, 3, html! {
+        div.row (Column::custom(6, 3, html! {
             h1 { "Upload new Submission" }
 
             (PreEscaped(Form::new(FormMethod::Post, "/submissions/")
@@ -73,7 +73,7 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
                         .with_type("submit")
                         .with_class("btn btn-primary")
               ])))
-        })))
+        }))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Register"), body, data))
@@ -91,7 +91,7 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
 
     let body = html! {
         div.submission {
-            div.row (PreEscaped(Column::new(html! {
+            div.row (Column::new(html! {
                 div.submission.clearfix {
                     img src=(image.get_path()) alt=(format!("{}'s Submission", user.name)) /
                 }
@@ -103,10 +103,10 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
                         (PreEscaped(UserLink(&user)))
                     }
                 }
-            })))
+            }))
 
             @if req.current_user_can(authorization::LoggedIn) {
-                div.row (PreEscaped(Column::new(html! {
+                div.row (Column::new(html! {
                     div.sub_actions {
                         a.btn.btn-primary href=(url!(format!("/users/{}/edit", user.id))) "Favorit"
                         a.btn.btn-secondary href=(image.get_path()) "Full Size"
@@ -115,16 +115,14 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
                         }
                         a.btn.btn-danger href=(url!(format!("/users/{}/profile/edit", user.id))) "Signal"
                     }
-                })))
+                }))
             }
 
-            div.row (PreEscaped(Column::new(html! {
+            div.row (Column::new(html! {
                 div.submission_description {
                     (views::markdown::parse(&sub.description))
                 }
-            })))
-
-
+            }))
         }
     };
 
@@ -133,7 +131,7 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
 
 pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        div.row (PreEscaped(Column::new(html! {
+        div.row (Column::custom(6, 3, html! {
             h1 { "Update your Submission" }
 
             (PreEscaped(Form::new(FormMethod::Post, &format!("/submissions/{}", sub.id))
@@ -157,11 +155,11 @@ pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData
                         .with_type("submit")
                         .with_class("btn btn-primary")
               ])))
-        })))
+        }))
 
-        div.row (PreEscaped(Column::new_with_size(6, 3, html! {
+        div.row (Column::custom(6, 3, html! {
             (PreEscaped(Button::new("Delete", &format!("/submissions/{}/delete", sub.id)).with_method(RequestMethod::Post)))
-        })))
+        }))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Register"), body, data))

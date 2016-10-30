@@ -16,7 +16,7 @@ use middleware::authorization::{self, UserAuthorization};
 
 pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        div.row (PreEscaped(Column::new(html! {
+        div.row (Column::custom(6, 3, html! {
             h1 { "Register" }
 
             (PreEscaped(Form::new(FormMethod::Post, "/users/")
@@ -36,7 +36,7 @@ pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>)
                         .with_type("submit")
                         .with_class("btn btn-primary")
               ])))
-        })))
+        }))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Register"), body, data))
@@ -44,13 +44,15 @@ pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>)
 
 pub fn index(users: &[User], data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        h1 { "Users" }
+        div.row (Column::new(html! {
+            h1 { "Users" }
 
-        @for user in users {
-            div class="user" {
-                (PreEscaped(UserLink(user)))
+            @for user in users {
+                div class="user" {
+                    (PreEscaped(UserLink(user)))
+                }
             }
-        }
+        }))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Users"), body, data))
@@ -62,12 +64,14 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
     let body = html! {
         div.user_profile {
             @if let Some(image) = banner {
-                div.row (PreEscaped(Column::new(html! {
-                    div.banner style=(format!("background-image: url('{}');height: {};", image.get_path(), image.height)) ""
-                })))
+                div.row {
+                    (Column::new(html! {
+                        div.banner style=(format!("background-image: url('{}');height: {};", image.get_path(), image.height)) ""
+                    }))
+                }
             }
 
-            div.row (PreEscaped(Column::new(html! {
+            div.row (Column::new(html! {
                 div.user_info.clearfix {
                     (PreEscaped(UserAvatar(&user, (250, 250))))
                     h1.user_name { (user.name) }
@@ -76,9 +80,9 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
                         (role.as_str())
                     }
                 }
-            })))
+            }))
 
-            div.row (PreEscaped(Column::new(html! {
+            div.row (Column::new(html! {
                 div.user_actions {
                     @if req.current_user_can(authorization::LoggedIn) {
                         @if req.current_user_can(authorization::SameUserAuth) {
@@ -88,15 +92,13 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
                     }
                     a.btn.btn-info href=(url!(format!("/users/{}/submissions", user.id))) "Gallery"
                 }
-            })))
+            }))
 
-            div.row (PreEscaped(Column::new(html! {
+            div.row (Column::new(html! {
                 div.user_bio {
                     (views::markdown::parse(&profile.bio))
                 }
-            })))
-
-
+            }))
         }
     };
 
@@ -105,7 +107,7 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
 
 pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
     let body = html! {
-        div.row (PreEscaped(Column::new(html! {
+        div.row (Column::custom(6, 3, html! {
             h1 { "Edit User " (user.name) }
             (PreEscaped(Form::new(FormMethod::Post, &format!("/users/{}", user.id))
               .with_encoding("multipart/form-data")
@@ -127,7 +129,7 @@ pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result
                         .with_type("submit")
                         .with_class("btn btn-primary")
               ])))
-        })))
+        }))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Register"), body, data))
