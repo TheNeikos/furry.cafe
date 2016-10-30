@@ -1,4 +1,4 @@
-use maud::{Markup, PreEscaped};
+use maud::{Markup};
 
 use views;
 use std::borrow::Cow;
@@ -8,7 +8,7 @@ use views::components::Column;
 
 pub fn root(data: &LayoutData) -> Result<Markup, ::std::fmt::Error> {
     let body = html! {
-        div.row (PreEscaped(Column::new(html! {
+        div.row (Column::new(html! {
             h1 "Welcome to Furratoria!"
             p {
                 "We're a bunch of Furries cruising the unknown worlds of artistic space. "
@@ -31,7 +31,7 @@ pub fn root(data: &LayoutData) -> Result<Markup, ::std::fmt::Error> {
                 strong "If that sounds exciting, come and join us! "
                 a.btn.btn-primary href="/users/new" "Sign up"
             }
-        })))
+        }))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Homepage"), body, data))

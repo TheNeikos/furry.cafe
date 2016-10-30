@@ -1,6 +1,5 @@
 use maud::Markup;
-
-use std::fmt::{self, Display, Formatter};
+use maud::Render;
 
 pub struct Column {
     size: usize,
@@ -17,7 +16,7 @@ impl Column {
         }
     }
 
-    pub fn new_with_size(size: usize, pull: usize, content: Markup) -> Column {
+    pub fn custom(size: usize, pull: usize, content: Markup) -> Column {
         Column {
             size: size,
             pull: pull,
@@ -26,11 +25,11 @@ impl Column {
     }
 }
 
-impl Display for Column {
-    fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
-        f.write_str(&html!(
-            div class=(format!("{} {}", {
-                format!("col-md-{}", self.size)
+impl Render for Column {
+    fn render_to(&self, mut f: &mut String) {
+        f.push_str(&html!(
+            div class=(format!("col-md-{} {}", {
+                self.size
             }, {
                 if self.pull > 0 {
                     format!("offset-md-{}", self.pull)
@@ -38,7 +37,7 @@ impl Display for Column {
                     String::new()
                 }
             })) (self.content)
-        ).into_string())
+        ).into_string());
     }
 }
 

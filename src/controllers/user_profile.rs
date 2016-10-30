@@ -84,12 +84,11 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
         _ => old_profile.banner_image
     };
 
-    let banner_image;
-    if banner.is_some() {
-        banner_image = try!(models::image::find(banner.unwrap()));
+    let banner_image = if banner.is_some() {
+        try!(models::image::find(banner.unwrap()))
     } else {
-        banner_image = None;
-    }
+        None
+    };
 
     let new = models::user_profile::NewUserProfile::new(&user, bio, banner_image.as_ref());
     match user.set_profile(new.clone()) {
@@ -97,7 +96,6 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
            Ok(Response::with((status::SeeOther, Redirect(url!(format!("/users/{}", user.id))))))
         }
         Err(_) => {
-            // TODO: This is a DATABASE ERROR! Don't just ignore it!!!!
             let mut resp = Response::with((status::Ok, try!(views::user_profile::edit(&user, &new, None, &data))));
             resp.headers.set(ContentType::html());
             Ok(resp)

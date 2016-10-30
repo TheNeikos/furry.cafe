@@ -15,7 +15,7 @@ lazy_static = "0.2.1"
 log = "0.3.6"
 logger = "0.1"
 maud-pulldown-cmark = "0.3"
-maud_macros = "0.11"
+maud_macros = "0.12"
 mount = "0.2"
 params = "0.4"
 pulldown-cmark = "0.0.8"
@@ -38,8 +38,11 @@ version = "0.4.8"
 
 [dependencies.maud]
 features = ["iron"]
-version = "0.11"
+version = "0.12"
 
 [dependencies.staticfile]
 features = ["cache"]
 version = "0.3.0"
+
+[replace]
+"maud-pulldown-cmark:0.3.0" = {path = "../maud-pulldown-cmark"}
