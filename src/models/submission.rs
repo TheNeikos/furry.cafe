@@ -50,7 +50,7 @@ impl Visibility {
             0 => Ok(Visibility::Public),
             1 => Ok(Visibility::Friends),
             2 => Ok(Visibility::Private),
-            3 => Ok(Visibility::Private),
+            3 => Ok(Visibility::Unpublished),
             _ => Err(error::FurratoriaError::Parse(None)),
         }
     }
@@ -60,7 +60,7 @@ impl Visibility {
             0 => Visibility::Public,
             1 => Visibility::Friends,
             2 => Visibility::Private,
-            3 => Visibility::Private,
+            3 => Visibility::Unpublished,
             _ => panic!("Could not convert {} to visibility", i),
         }
     }
@@ -71,6 +71,15 @@ impl Visibility {
             Visibility::Friends => "1",
             Visibility::Private => "2",
             Visibility::Unpublished => "3",
+        }
+    }
+
+    pub fn human(&self) -> &'static str {
+        match *self {
+            Visibility::Public => "Public",
+            Visibility::Friends => "Friends Only",
+            Visibility::Private => "Private - Link Only",
+            Visibility::Unpublished => "Unpublished",
         }
     }
 }

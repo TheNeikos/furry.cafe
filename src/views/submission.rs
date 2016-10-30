@@ -11,7 +11,7 @@ use views::components::user::UserLink;
 use views::components::form::*;
 use views::components::button::*;
 use views::components::{Column, Image};
-use models::submission::{Submission, SubmissionError, NewSubmission};
+use models::submission::{Submission, SubmissionError, NewSubmission, Visibility};
 use models::user::User;
 use middleware::authorization::{self, UserAuthorization};
 
@@ -33,14 +33,24 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Op
                     @if let Some(i) = try!(sub.get_image()) {
                         (Image::new(&i).with_size((500, 500)).with_class("card-img-top"))
                     } @else {
-                        img.card-img-top src="/assets/pictures/missing.png" alt="Missing Image" /
+                        img.card-img-top src="/assets/images/missing.png" alt="Missing Image" /
                     }
 
                     div.card-block {
-                        h4.card-title (sub.title)
+                        h4.card-title ({
+                            if &sub.title[..] == "" {
+                                "<Unpublished>"
+                            } else {
+                                &sub.title
+                            }})
                         div.card-subtitle.text-muted {
                             "by "
                             ({UserLink(&try!(sub.get_submitter()))})
+                        }
+                    }
+                    @if sub.get_visibility() != Visibility::Public {
+                        div.card-block.small {
+                            (sub.get_visibility().human())
                         }
                     }
                 }

@@ -76,3 +76,9 @@ form {
         margin: 0;
     }
 }
+
+.card-block {
+    &.small {
+        padding: 0.1rem;
+    }
+}
