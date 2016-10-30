@@ -64,7 +64,8 @@ impl UserRole {
     }
 }
 
-#[insertable_into(user_roles)]
+#[derive(Insertable)]
+#[table_name="user_roles"]
 pub struct NewUserRole {
     pub user_id: i64,
     pub role: i32,
@@ -79,7 +80,8 @@ impl NewUserRole {
     }
 }
 
-#[changeset_for(user_roles)]
+#[derive(AsChangeset)]
+#[table_name="user_roles"]
 pub struct UpdateUserRole {
     role: i32,
 }

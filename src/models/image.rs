@@ -72,7 +72,8 @@ impl Image {
 }
 
 #[derive(Clone, Debug)]
-#[insertable_into(images)]
+#[derive(Insertable)]
+#[table_name="images"]
 pub struct NewImage {
     host_type: i32,
     path: String,

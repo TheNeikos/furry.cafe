@@ -1,8 +1,7 @@
 #![feature(plugin)]
 #![plugin(maud_macros)]
-#![feature(custom_derive, custom_attribute)]
-#![plugin(diesel_codegen, dotenv_macros)]
-#![feature(question_mark)]
+#![feature(proc_macro)]
+#![plugin(dotenv_macros)]
 
 #![allow(dead_code)]
 
@@ -13,6 +12,7 @@ extern crate mount;
 extern crate maud;
 extern crate params;
 #[macro_use] extern crate diesel;
+#[macro_use] extern crate diesel_codegen;
 extern crate dotenv;
 #[macro_use] extern crate lazy_static;
 extern crate r2d2;

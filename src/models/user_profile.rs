@@ -36,7 +36,8 @@ impl UserProfile {
 }
 
 #[derive(Clone, Debug)]
-#[insertable_into(user_profiles)]
+#[derive(Insertable)]
+#[table_name="user_profiles"]
 pub struct NewUserProfile<'a> {
     pub user_id: i64,
     pub bio: &'a str,
