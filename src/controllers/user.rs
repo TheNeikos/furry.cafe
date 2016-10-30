@@ -31,7 +31,9 @@ pub fn submissions(req: &mut Request) -> IronResult<Response> {
     let viewer = User::get_login(req).get_user();
     let sub_list = try!(models::submission::SubmissionFilter::new(None)
                         .with_submitter(&user)
-                        .with_viewer(viewer.as_ref()).run());
+                        .with_viewer(viewer.as_ref())
+                        .with_unpublished()
+                        .run());
 
     let data = LayoutData::from_request(req);
     let mut resp = Response::with((status::Ok, try!(views::submission::index(&sub_list, &data, req, Some(user)))));

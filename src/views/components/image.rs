@@ -1,4 +1,4 @@
-use std::fmt::{self, Display, Formatter};
+use maud::Render;
 
 use models::image;
 
@@ -30,11 +30,11 @@ impl<'a> Image<'a> {
     }
 }
 
-impl<'a> Display for Image<'a> {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), fmt::Error> {
+impl<'a> Render for Image<'a> {
+    fn render_to(&self, f: &mut String) {
 
         let mut img = |i: &str| {
-                f.write_str(&html!(
+                f.push_str(&html!(
                     img src=(i) class=(self.class.unwrap_or(""))/
                 ).into_string())
         };

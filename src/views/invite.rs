@@ -22,7 +22,7 @@ pub fn index(invites: &[Invite], data: &LayoutData) -> Result<Markup, error::Fur
                     tr {
                         td {
                             @if let Some(user) = try!(inv.get_user()) {
-                                (PreEscaped(UserLink(&user)))
+                                (UserLink(&user))
                             } @else {
                                 "<NONE>"
                             }

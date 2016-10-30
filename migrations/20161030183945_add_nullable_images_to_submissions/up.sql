@@ -1,0 +1,1 @@
+ALTER TABLE submissions ALTER COLUMN image DROP NOT NULL;

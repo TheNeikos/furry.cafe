@@ -70,3 +70,9 @@ body {
 .container-fluid {
     margin-top: 60px;
 }
+
+form {
+    &.inline {
+        margin: 0;
+    }
+}

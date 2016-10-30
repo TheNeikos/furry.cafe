@@ -123,10 +123,6 @@ fn main() {
             middleware::authorization::LoggedIn,
         ]);
 
-        let mut chain = Chain::new(controllers::submission::new);
-        chain.link_before(auth.clone());
-        router.get("/new",      chain, "submission_new");
-
         let mut chain = Chain::new(controllers::submission::create);
         chain.link_before(auth.clone());
         router.post("/",        chain, "submission_create");

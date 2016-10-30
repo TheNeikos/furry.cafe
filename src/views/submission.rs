@@ -10,7 +10,7 @@ use views::layout::LayoutData;
 use views::components::user::UserLink;
 use views::components::form::*;
 use views::components::button::*;
-use views::components::Column;
+use views::components::{Column, Image};
 use models::submission::{Submission, SubmissionError, NewSubmission};
 use models::user::User;
 use middleware::authorization::{self, UserAuthorization};
@@ -21,22 +21,26 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Op
             { (user.as_ref().map(|x| format!("{} ", x.name.possessive())).unwrap_or(String::new())) "Gallery" }
 
             @if req.current_user_can(authorization::LoggedIn) && user.is_none() {
-                a.btn.btn-primary.pull-xs-right href=(url!("/submissions/new")) "New Submission"
+                span.pull-xs-right (Button::new("New Submission", "/submissions")
+                     .with_type(ButtonType::Primary)
+                     .with_method(RequestMethod::Post))
             }
         }
 
         div.submissions @for sub in subs {
             div a href=(url!(format!("/submissions/{}", sub.id))) {
                 div.card {
-                    img.card-img-top src=(match try!(sub.get_image()) {
-                        Some(i) => try!(i.get_with_size(500, 500)).map(|x| x.get_path()).unwrap_or_else(|| String::from("/todo")),
-                        None => String::from("/todo")
-                    }) /
+                    @if let Some(i) = try!(sub.get_image()) {
+                        (Image::new(&i).with_size((500, 500)).with_class("card-img-top"))
+                    } @else {
+                        img.card-img-top src="/assets/pictures/missing.png" alt="Missing Image" /
+                    }
+
                     div.card-block {
                         h4.card-title (sub.title)
                         div.card-subtitle.text-muted {
                             "by "
-                            ({PreEscaped(UserLink(&try!(sub.get_submitter())))})
+                            ({UserLink(&try!(sub.get_submitter()))})
                         }
                     }
                 }
@@ -100,7 +104,7 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
                     h1.title { (sub.title) }
                     span.uploader {
                         "Uploaded by "
-                        (PreEscaped(UserLink(&user)))
+                        (UserLink(&user))
                     }
                 }
             }))
@@ -158,7 +162,7 @@ pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData
         }))
 
         div.row (Column::custom(6, 3, html! {
-            (PreEscaped(Button::new("Delete", &format!("/submissions/{}/delete", sub.id)).with_method(RequestMethod::Post)))
+            (Button::new("Delete", &format!("/submissions/{}/delete", sub.id)).with_method(RequestMethod::Post))
         }))
     };
 
