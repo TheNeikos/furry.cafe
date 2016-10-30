@@ -44,7 +44,8 @@ impl Invite {
 }
 
 #[derive(Clone, Debug)]
-#[insertable_into(invites)]
+#[derive(Insertable)]
+#[table_name="invites"]
 pub struct NewInvite {
     pub invite_key: String,
 }
@@ -61,7 +62,8 @@ impl NewInvite {
 }
 
 #[derive(Clone, Debug)]
-#[changeset_for(invites)]
+#[derive(AsChangeset)]
+#[table_name="invites"]
 pub struct UpdateInvite {
     pub id: i64,
     pub user_id: i64,

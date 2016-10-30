@@ -129,7 +129,8 @@ impl Submission {
 }
 
 #[derive(Clone, Debug)]
-#[insertable_into(submissions)]
+#[derive(Insertable)]
+#[table_name="submissions"]
 pub struct NewSubmission<'a, 'b> {
     pub user_id: i64,
     pub title: &'a str,
@@ -165,7 +166,7 @@ impl<'a, 'b> NewSubmission<'a, 'b> {
         let mut to_be_converted = None;
 
         if let Some(image) = image {
-            if image.size() > 5 * 1024 * 1024 { // 2 Megabytes
+            if image.size > 5 * 1024 * 1024 { // 2 Megabytes
                 se.image.push("Image is too big (limit is 2MiB)");
             }
 
@@ -225,7 +226,8 @@ impl<'a, 'b> NewSubmission<'a, 'b> {
     }
 }
 
-#[changeset_for(submissions)]
+#[derive(AsChangeset)]
+#[table_name="submissions"]
 pub struct UpdateSubmission<'a> {
     title: Option<&'a str>,
     description: Option<&'a str>,
@@ -266,12 +268,12 @@ impl<'a> UpdateSubmission<'a> {
 
         let mut to_be_converted = None;
 
-        if image.is_some() && image.as_ref().map(|x| x.size()) == Some(0) {
+        if image.is_some() && image.as_ref().map(|x| x.size) == Some(0) {
             image = None;
         }
 
         if let Some(image) = image {
-            if image.size() > 2 * 1024 * 1024 { // 2 Megabytes
+            if image.size > 2 * 1024 * 1024 { // 2 Megabytes
                 se.image.push("Image is too big (limit is 2MiB)");
             }
 

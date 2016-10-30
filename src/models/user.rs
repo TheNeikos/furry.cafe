@@ -163,7 +163,8 @@ impl iron_login::User for User {
     }
 }
 
-#[changeset_for(users)]
+#[derive(AsChangeset)]
+#[table_name="users"]
 pub struct UpdateUser<'a> {
     name: Option<&'a str>,
     password_hash: Option<String>,
@@ -189,7 +190,7 @@ impl<'a> UpdateUser<'a> {
         let mut to_be_converted = None;
 
         if let Some(f) = file {
-            if f.size() > 300 * 1024 { // 300 Kilobytes
+            if f.size > 300 * 1024 { // 300 Kilobytes
                 ue.profile_image.push("Image is too big (limit is 300KiB)");
             }
 
@@ -253,7 +254,8 @@ impl<'a> UpdateUser<'a> {
     }
 }
 
-#[insertable_into(users)]
+#[derive(Insertable)]
+#[table_name="users"]
 pub struct NewUser<'a> {
     pub email: &'a str,
     pub password_hash: String,
