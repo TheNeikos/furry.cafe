@@ -130,6 +130,10 @@ impl Submission {
         }
     }
 
+    pub fn has_image(&self) -> bool {
+        self.image.is_some()
+    }
+
     pub fn get_submitter(&self) -> Result<User, error::FurratoriaError> {
         match models::user::find(self.user_id) {
             Ok(None) => Err(error::FurratoriaError::NotFound),
@@ -181,8 +185,16 @@ pub struct UpdateSubmission<'a> {
 }
 
 impl<'a> UpdateSubmission<'a> {
-    pub fn new(mut image: Option<&File>, title: Option<&'a str>, desc: Option<&'a str>, vis: Option<i32>)
-        -> Result<UpdateSubmission<'a>, SubmissionError>
+    pub fn has_image(&self) -> bool {
+        self.image.is_some()
+    }
+
+    pub fn get_visibility(&self) -> Option<Visibility> {
+        self.visibility.map(|x| Visibility::from_i32(x))
+    }
+
+    pub fn new(sub: &Submission, mut image: Option<&File>, title: Option<&'a str>, desc: Option<&'a str>, vis: Option<i32>)
+        -> Result<UpdateSubmission<'a>, (UpdateSubmission<'a>, SubmissionError)>
     {
         let mut se = SubmissionError::new();
 
@@ -241,21 +253,26 @@ impl<'a> UpdateSubmission<'a> {
             } else {
                 se.image.push("Could not use this image, please try again")
             }
-        };
-
-        if se.has_any_errors() {
-            return Err(se);
+        } else if !sub.has_image() {
+            se.image.push("Image cannot be empty");
         }
 
         let image = to_be_converted.and_then(convert_image);
 
-        Ok(UpdateSubmission {
+        let us = UpdateSubmission {
             title: title,
             description: desc,
             image: image,
             published_at: None,
             visibility: vis
-        })
+        };
+
+        if se.has_any_errors() {
+            return Err((us, se));
+        }
+
+
+        Ok(us)
     }
 }
 

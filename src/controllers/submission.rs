@@ -9,7 +9,7 @@ use views;
 use models;
 use views::layout::LayoutData;
 use models::user::User;
-use models::submission;
+use models::submission::{self, Visibility};
 
 pub fn index(req: &mut Request) -> IronResult<Response> {
     let user = User::get_login(req).get_user();
@@ -89,9 +89,15 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
         _ => None
     };
 
-    let update_submission = match models::submission::UpdateSubmission::new(image ,sub_name, sub_desc, sub_visibility) {
+    let update_submission = match models::submission::UpdateSubmission::new(&submission, image, sub_name, sub_desc, sub_visibility) {
         Ok(update_submission) => update_submission,
-        Err(err) => {
+        Err((us, err)) => {
+            let mut submission = submission;
+            if us.get_visibility() == Some(Visibility::Unpublished) || us.has_image() || submission.has_image() {
+                try!(submission.update(&us));
+                submission = iexpect!(try!(submission::find(submission.id)));
+            }
+
             let mut resp = Response::with((status::Ok, try!(views::submission::edit(&submission, Some(err), &data))));
             resp.headers.set(ContentType::html());
             return Ok(resp);

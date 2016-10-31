@@ -53,11 +53,11 @@ macro_rules! find_by_id {
             Some(t) => {
                 match t.parse::<_>() {
                     Ok(t) => Ok(t),
-                    Err(_) => Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/submissions/")))
+                    Err(_) => Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/")))
                 }
             }
             None => {
-                Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/submissions/")))
+                Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/")))
             }
         };
 

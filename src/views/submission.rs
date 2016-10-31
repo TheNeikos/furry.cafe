@@ -94,20 +94,18 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
 }
 
 pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Markup, error::FurratoriaError> {
-    let image = match try!(sub.get_image()) {
-        Some(i) => i,
-        None => {
-            return Err(error::FurratoriaError::Template(Box::new(error::FurratoriaError::NotFound)))
-        }
-    };
-
+    let image = try!(sub.get_image());
     let user = try!(sub.get_submitter());
 
     let body = html! {
         div.submission {
             div.row (Column::new(html! {
                 div.submission.clearfix {
-                    img src=(image.get_path()) alt=(format!("{}'s Submission", user.name)) /
+                    @if let Some(ref image) = image {
+                        img src=(image.get_path()) alt=(format!("{}'s Submission", user.name)) /
+                    } @else {
+                        img src="/assets/images/missing.png" alt=(format!("{}'s Submission", user.name)) /
+                    }
                 }
 
                 div {
@@ -123,7 +121,9 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
                 div.row (Column::new(html! {
                     div.sub_actions {
                         a.btn.btn-primary href=(url!(format!("/users/{}/edit", user.id))) "Favorit"
-                        a.btn.btn-secondary href=(image.get_path()) "Full Size"
+                        @if let Some(ref image) = image {
+                            a.btn.btn-secondary href=(image.get_path()) "Full Size"
+                        }
                         @if req.current_user_can(authorization::SameUserAuthAs(&user)) {
                             a.btn.btn-info href=(url!(format!("/submissions/{}/edit", sub.id))) "Edit"
                         }
@@ -163,6 +163,7 @@ pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData
                    &Select::new("Visibility", "sub_visibility")
                         .add_option("Public","0")
                         .add_option("Private", "2")
+                        .add_option("Unpublished", "3")
                         .with_selected(sub.get_visibility().as_str()),
                    &Input::new("", "")
                         .with_value("Update")
