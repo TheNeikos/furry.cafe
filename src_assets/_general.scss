@@ -70,3 +70,15 @@ body {
 .container-fluid {
     margin-top: 60px;
 }
+
+form {
+    &.inline {
+        margin: 0;
+    }
+}
+
+.card-block {
+    &.small {
+        padding: 0.1rem;
+    }
+}

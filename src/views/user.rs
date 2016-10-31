@@ -49,7 +49,7 @@ pub fn index(users: &[User], data: &LayoutData) -> Result<Markup, error::Furrato
 
             @for user in users {
                 div class="user" {
-                    (PreEscaped(UserLink(user)))
+                    (UserLink(user))
                 }
             }
         }))
@@ -73,7 +73,7 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
 
             div.row (Column::new(html! {
                 div.user_info.clearfix {
-                    (PreEscaped(UserAvatar(&user, (250, 250))))
+                    (UserAvatar(&user, (250, 250)))
                     h1.user_name { (user.name) }
                     div.user_role {
                         strong "Role: "

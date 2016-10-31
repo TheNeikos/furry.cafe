@@ -41,7 +41,7 @@ fn convert_image(mut img: DynamicImage) -> Option<i64> {
 #[repr(i32)]
 #[derive(Copy, Clone, Eq, PartialEq)]
 pub enum Visibility {
-    Public, Friends, Private,
+    Public, Friends, Private, Unpublished
 }
 
 impl Visibility {
@@ -50,6 +50,7 @@ impl Visibility {
             0 => Ok(Visibility::Public),
             1 => Ok(Visibility::Friends),
             2 => Ok(Visibility::Private),
+            3 => Ok(Visibility::Unpublished),
             _ => Err(error::FurratoriaError::Parse(None)),
         }
     }
@@ -59,6 +60,7 @@ impl Visibility {
             0 => Visibility::Public,
             1 => Visibility::Friends,
             2 => Visibility::Private,
+            3 => Visibility::Unpublished,
             _ => panic!("Could not convert {} to visibility", i),
         }
     }
@@ -68,6 +70,16 @@ impl Visibility {
             Visibility::Public => "0",
             Visibility::Friends => "1",
             Visibility::Private => "2",
+            Visibility::Unpublished => "3",
+        }
+    }
+
+    pub fn human(&self) -> &'static str {
+        match *self {
+            Visibility::Public => "Public",
+            Visibility::Friends => "Friends Only",
+            Visibility::Private => "Private - Link Only",
+            Visibility::Unpublished => "Unpublished",
         }
     }
 }
@@ -79,7 +91,7 @@ pub struct Submission {
     pub user_id: i64,
     pub created_at: diesel::data_types::PgTimestamp,
     pub updated_at: diesel::data_types::PgTimestamp,
-    image: i64,
+    image: Option<i64>,
     pub title: String,
     pub description: String,
     pub published_at: Option<diesel::data_types::PgTimestamp>,
@@ -112,7 +124,14 @@ impl Submission {
     }
 
     pub fn get_image(&self) -> Result<Option<Image>, error::FurratoriaError> {
-        models::image::find(self.image)
+        match self.image {
+            Some(id) => models::image::find(id),
+            None => Ok(None),
+        }
+    }
+
+    pub fn has_image(&self) -> bool {
+        self.image.is_some()
     }
 
     pub fn get_submitter(&self) -> Result<User, error::FurratoriaError> {
@@ -131,93 +150,22 @@ impl Submission {
 #[derive(Clone, Debug)]
 #[derive(Insertable)]
 #[table_name="submissions"]
-pub struct NewSubmission<'a, 'b> {
+pub struct NewSubmission<'a> {
     pub user_id: i64,
     pub title: &'a str,
-    pub description: &'b str,
-    image: i64,
+    pub description: &'a str,
+    image: Option<i64>,
     visibility: i32,
 }
 
-impl<'a, 'b> NewSubmission<'a, 'b> {
-    pub fn new(user: &User, image: Option<&File>, title: Option<&'a str>, desc: Option<&'b str>, vis: Option<Visibility>)
-        -> Result<NewSubmission<'a, 'b>, (SubmissionError, NewSubmission<'a, 'b>)>
-    {
-        let mut se = SubmissionError::new();
-
-        if let Some(title) = title {
-            if title.chars().count() > 50 {
-                se.title.push("Title cannot have more than 50 characters");
-            }
-
-            if title.chars().count() == 0 {
-                se.title.push("Title cannot be empty");
-            }
-        } else {
-            se.title.push("Title cannot be empty");
-        }
-
-        if let Some(desc) = desc {
-            if desc.chars().count() > 150_000 {
-                se.description.push("Description cannot be longer than 150 000 characters");
-            }
-        }
-
-        let mut to_be_converted = None;
-
-        if let Some(image) = image {
-            if image.size > 5 * 1024 * 1024 { // 2 Megabytes
-                se.image.push("Image is too big (limit is 2MiB)");
-            }
-
-            if let Ok(mut f) = image.open() {
-                use std::io::Read;
-                let mut buffer = Vec::new();
-                if f.read_to_end(&mut buffer).is_err() {
-                    se.image.push("Image is not in a valid format");
-                } else {
-                    to_be_converted = match image::load_from_memory(&buffer) {
-                        Ok(t) => {
-                            Some(t)
-                        }
-                        Err(e) => {
-                            info!("Could not load image {}", e);
-                            se.image.push("Image is not in a valid format");
-                            None
-                        }
-                    }
-                }
-            } else {
-                se.image.push("Could not use this image, please try again")
-            }
-        };
-
-        let image = to_be_converted.and_then(convert_image);
-
-        if image.is_none() {
-            se.image.push("Could not convert image");
-        }
-
-        let ns = NewSubmission {
-            user_id: 0,
-            title: title.unwrap_or(&""),
-            description: desc.unwrap_or(&""),
-            image: 0,
-            visibility: vis.unwrap_or(Visibility::Public) as i32,
-        };
-
-        if se.has_any_errors() {
-            return Err((se, ns));
-        }
-
-        let image = image.unwrap();
-
+impl<'a> NewSubmission<'a> {
+    pub fn new(user: &User) -> Result<NewSubmission, SubmissionError> {
         Ok(NewSubmission {
             user_id: user.id,
-            title: title.unwrap(),
-            description: desc.unwrap_or(&""),
-            image: image,
-            visibility: vis.unwrap_or(Visibility::Public) as i32,
+            title: "",
+            description: "",
+            image: None,
+            visibility: Visibility::Unpublished as i32
         })
     }
 
@@ -237,8 +185,16 @@ pub struct UpdateSubmission<'a> {
 }
 
 impl<'a> UpdateSubmission<'a> {
-    pub fn new(mut image: Option<&File>, title: Option<&'a str>, desc: Option<&'a str>, vis: Option<i32>)
-        -> Result<UpdateSubmission<'a>, SubmissionError>
+    pub fn has_image(&self) -> bool {
+        self.image.is_some()
+    }
+
+    pub fn get_visibility(&self) -> Option<Visibility> {
+        self.visibility.map(|x| Visibility::from_i32(x))
+    }
+
+    pub fn new(sub: &Submission, mut image: Option<&File>, title: Option<&'a str>, desc: Option<&'a str>, vis: Option<i32>)
+        -> Result<UpdateSubmission<'a>, (UpdateSubmission<'a>, SubmissionError)>
     {
         let mut se = SubmissionError::new();
 
@@ -297,21 +253,26 @@ impl<'a> UpdateSubmission<'a> {
             } else {
                 se.image.push("Could not use this image, please try again")
             }
-        };
-
-        if se.has_any_errors() {
-            return Err(se);
+        } else if !sub.has_image() {
+            se.image.push("Image cannot be empty");
         }
 
         let image = to_be_converted.and_then(convert_image);
 
-        Ok(UpdateSubmission {
+        let us = UpdateSubmission {
             title: title,
             description: desc,
             image: image,
             published_at: None,
             visibility: vis
-        })
+        };
+
+        if se.has_any_errors() {
+            return Err((us, se));
+        }
+
+
+        Ok(us)
     }
 }
 
@@ -372,6 +333,7 @@ pub struct SubmissionFilter<'a> {
     viewer: Option<&'a User>,
     title: Option<&'a str>,
     description: Option<&'a str>,
+    unpublished: bool,
 }
 
 impl<'a> SubmissionFilter<'a> {
@@ -382,6 +344,7 @@ impl<'a> SubmissionFilter<'a> {
             submitter: None,
             title: None,
             description: None,
+            unpublished: false,
         }
     }
 
@@ -405,6 +368,11 @@ impl<'a> SubmissionFilter<'a> {
         self
     }
 
+    pub fn with_unpublished(mut self) -> SubmissionFilter<'a> {
+        self.unpublished = true;
+        self
+    }
+
     pub fn run(self) -> Result<Vec<Submission>, error::FurratoriaError> {
         use diesel::prelude::*;
         use models::schema::submissions::dsl::*;
@@ -423,7 +391,13 @@ impl<'a> SubmissionFilter<'a> {
             query = query.filter(description.like(desc));
         }
 
-        query = query.filter(visibility.eq(Visibility::Public as i32).or(user_id.eq(self.viewer.map(|x| x.id).unwrap_or(-1))));
+        query = query.filter(visibility.eq(Visibility::Public as i32)
+                                       .or(user_id.eq(self.viewer.map(|x| x.id).unwrap_or(-1))));
+                                        // Either it is public, or the user is the owner
+
+        if !self.unpublished {
+            query = query.filter(visibility.ne(Visibility::Unpublished as i32));
+        }
 
         query = query.order(created_at.desc());
 

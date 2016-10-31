@@ -1,4 +1,4 @@
-use std::fmt::{self, Display, Formatter};
+use maud::Render;
 
 #[derive(Copy, Clone)]
 pub enum ButtonType {
@@ -42,23 +42,28 @@ impl<'a> Button<'a> {
         }
     }
 
+    pub fn with_type(mut self, typ: ButtonType) -> Button<'a> {
+        self.typ = typ;
+        self
+    }
+
     pub fn with_method(mut self, meth: RequestMethod) -> Button<'a> {
         self.req_meth = meth;
         self
     }
 }
 
-impl<'a> Display for Button<'a> {
-    fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
+impl<'a> Render for Button<'a> {
+    fn render_to(&self, mut f: &mut String) {
         match self.req_meth {
             RequestMethod::Get => {
-                f.write_str(&html!(
+                f.push_str(&html!(
                     a href=(url!(self.path)) class=(format!("btn {}", self.typ.as_str())) (self.label)
                 ).into_string())
             }
             RequestMethod::Post => {
-                f.write_str(&html!(
-                    form method="POST" action=(url!(self.path)) {
+                f.push_str(&html!(
+                    form.inline method="POST" action=(url!(self.path)) {
                         input type="submit"  class=(format!("btn {}", self.typ.as_str())) value=(self.label) /
                     }
                 ).into_string())
