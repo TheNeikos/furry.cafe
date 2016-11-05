@@ -28,7 +28,7 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Op
         }
 
         div.submissions @for sub in subs {
-            div a href=(url!(format!("/submissions/{}", sub.id))) {
+            div a href=(url!(format!("/submissions/{}", sub.full_id()))) {
                 div.card {
                     @if let Some(i) = try!(sub.get_image()) {
                         (Image::new(&i).with_size((500, 500)).with_class("card-img-top"))

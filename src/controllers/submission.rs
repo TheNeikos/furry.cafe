@@ -41,7 +41,16 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn show(req: &mut Request) -> IronResult<Response> {
+    use router::Router;
     let submission = try!(find_by_id!(req, "id", submission));
+
+    if let Some(id) = req.extensions.get::<Router>().unwrap().find("id") {
+        if id != submission.full_id() {
+            return Ok(Response::with(temp_redirect!(format!("/submissions/{}", submission.full_id()))));
+        }
+    } else {
+            return Ok(Response::with(temp_redirect!("/")));
+    }
 
     let data = LayoutData::from_request(req);
     let mut resp = Response::with((status::Ok, try!(views::submission::show(&submission, &data, req))));
