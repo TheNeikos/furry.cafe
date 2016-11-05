@@ -27,6 +27,9 @@ impl Render for OpenGraph {
             }
             @if let Some(ref t) = self.image {
                 meta property="og:image" content=(t) /
+                meta name="twitter:image" content=(t) /
+                meta name="twitter:card" content="photo" /
+                link rel="image_src" href=(t) /
             }
         }.into_string());
     }
