@@ -106,8 +106,12 @@ impl NewImage {
             }
         };
 
-        let mut image = try!(NewImage::create_from_dynamic_image(&image.resize(width as u32, height as u32, image::FilterType::Lanczos3), &format!("orig_{}", img.id)[..]));
+        let mut image = try!(
+            NewImage::create_from_dynamic_image(&image.resize(width as u32, height as u32, image::FilterType::Lanczos3), &format!("orig_{}", img.id)[..])
+        );
         image.parent_id = Some(img.id);
+        image.width = width; // #FIXME: Add a new column for 'expected size' and use that
+        image.height = height;
         Ok(image)
     }
 
