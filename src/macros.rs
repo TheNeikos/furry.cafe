@@ -51,9 +51,14 @@ macro_rules! find_by_id {
 
         let id = match $req.extensions.get::<Router>().unwrap().find($name) {
             Some(t) => {
-                match t.parse::<_>() {
-                    Ok(t) => Ok(t),
-                    Err(_) => Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/")))
+                let matches : Vec<_> = t.splitn(2, '-').collect();
+                if let Some(id) = matches.get(0) {
+                    match id.parse::<_>() {
+                        Ok(t) => Ok(t),
+                        Err(_) => Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/")))
+                    }
+                } else {
+                    Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/")))
                 }
             }
             None => {

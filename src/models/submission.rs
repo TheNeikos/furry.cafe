@@ -145,6 +145,12 @@ impl Submission {
     pub fn get_visibility(&self) -> Visibility {
         Visibility::from_i32(self.visibility)
     }
+
+    pub fn full_id(&self) -> String {
+        format!("{}-{}", self.id, self.title.to_lowercase()
+                .replace(|x| !char::is_alphanumeric(x) && x != ' ', "")
+                .replace(char::is_whitespace, "-"))
+    }
 }
 
 #[derive(Clone, Debug)]

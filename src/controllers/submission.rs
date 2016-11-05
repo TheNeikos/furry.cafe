@@ -7,7 +7,7 @@ use iron_login::User as UserTrait;
 use error::{self};
 use views;
 use models;
-use views::layout::LayoutData;
+use views::layout::{LayoutData, OpenGraph};
 use models::user::User;
 use models::submission::{self, Visibility};
 
@@ -41,9 +41,23 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn show(req: &mut Request) -> IronResult<Response> {
+    use router::Router;
     let submission = try!(find_by_id!(req, "id", submission));
 
-    let data = LayoutData::from_request(req);
+    if let Some(id) = req.extensions.get::<Router>().unwrap().find("id") {
+        if id != submission.full_id() {
+            return Ok(Response::with(temp_redirect!(format!("/submissions/{}", submission.full_id()))));
+        }
+    } else {
+            return Ok(Response::with(temp_redirect!("/")));
+    }
+
+    let mut data = LayoutData::from_request(req);
+    data.meta = Some(OpenGraph {
+        title: Some(submission.title.clone()),
+        url: Some(url!(format!("/submissions/{}", submission.id))),
+        image: try!(submission.get_image()).map(|x| url!(x.get_path()))
+    });
     let mut resp = Response::with((status::Ok, try!(views::submission::show(&submission, &data, req))));
     resp.headers.set(ContentType::html());
     Ok(resp)
