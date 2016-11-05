@@ -59,7 +59,7 @@ impl<'a> Display for Navbar<'a> {
                 }
 
                 @if let &Some(ref user) = self.user {
-                    ul.nav.navbar-nav.pull-xs-right {
+                    ul.nav.navbar-nav.float-xs-right {
                         div.dropdown {
                             li.nav-item.active {
                                 a.nav-link href=(format!("/users/{}", user.id)) (user.name)
@@ -70,7 +70,7 @@ impl<'a> Display for Navbar<'a> {
                         }
                     }
                 } @else {
-                    ul.nav.navbar-nav.pull-xs-right {
+                    ul.nav.navbar-nav.float-xs-right {
                         li.nav-item.active {
                             a.nav-link href="/login" "Login"
                         }
