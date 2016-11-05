@@ -36,6 +36,8 @@ pub struct Image {
     pub width: i32,
     pub height: i32,
     pub parent_id: Option<i64>,
+    pub wanted_height: Option<i32>,
+    pub wanted_width:  Option<i32>,
 }
 
 impl Image {
@@ -79,7 +81,9 @@ pub struct NewImage {
     path: String,
     width: i32,
     height: i32,
-    parent_id: Option<i64>
+    parent_id: Option<i64>,
+    wanted_height: Option<i32>,
+    wanted_width:  Option<i32>,
 }
 
 impl NewImage {
@@ -90,6 +94,8 @@ impl NewImage {
             width: 0,
             height: 0,
             parent_id: None,
+            wanted_height: None,
+            wanted_width:  None,
         }
     }
 
@@ -106,8 +112,12 @@ impl NewImage {
             }
         };
 
-        let mut image = try!(NewImage::create_from_dynamic_image(&image.resize(width as u32, height as u32, image::FilterType::Lanczos3), &format!("orig_{}", img.id)[..]));
+        let mut image = try!(
+            NewImage::create_from_dynamic_image(&image.resize(width as u32, height as u32, image::FilterType::Lanczos3), &format!("orig_{}", img.id)[..])
+        );
         image.parent_id = Some(img.id);
+        image.wanted_height = Some(height);
+        image.wanted_width = Some(width);
         Ok(image)
     }
 
@@ -140,6 +150,8 @@ impl NewImage {
             width: dims.0 as i32,
             height: dims.1 as i32,
             parent_id: None,
+            wanted_height: None,
+            wanted_width: None,
         })
     }
 }
@@ -156,7 +168,19 @@ pub fn find_from_image(uid: i64, w: i32, h: i32) -> Result<Option<Image>, error:
     use diesel::prelude::*;
     use models::schema::images::dsl::*;
 
-    images.limit(1).filter(parent_id.eq(uid)).filter(width.eq(w).or(height.eq(h))).order(width.desc()).order(height.desc())
-         .get_result::<models::image::Image>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
+    images.limit(1)
+        .filter(parent_id.eq(uid))
+        .filter(
+            wanted_width.is_null().and(
+                width.eq(w).or(height.eq(h))
+             )
+            .or(
+                wanted_width.eq(w).or(wanted_height.eq(h))
+            )
+        )
+        .order(width.desc())
+        .order(height.desc())
+        .get_result::<models::image::Image>(&*database::connection().get().unwrap())
+        .optional().map_err(|e| e.into())
 }
 
