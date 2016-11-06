@@ -12,7 +12,7 @@ use database;
 use models;
 use error;
 
-fn convert_image(mut img: DynamicImage) -> Option<i64> {
+fn convert_image(mut img: DynamicImage, fmt: image::ImageFormat) -> Option<i64> {
     use image::FilterType;
     match img.dimensions() {
         (x, y) if x > 3000 || y > 3000 => {
@@ -21,7 +21,7 @@ fn convert_image(mut img: DynamicImage) -> Option<i64> {
         _ => (),
     }
 
-    let new_image = match NewImage::create_from_dynamic_image(&img, "submission") {
+    let new_image = match NewImage::create_from_dynamic_image(&img, "submission", fmt) {
         Ok(t) => t,
         Err(e) => {
             error!("Could not create from dynamic image {}", e);
@@ -235,8 +235,8 @@ impl<'a> UpdateSubmission<'a> {
         }
 
         if let Some(image) = image {
-            if image.size > 2 * 1024 * 1024 { // 2 Megabytes
-                se.image.push("Image is too big (limit is 2MiB)");
+            if image.size > 3 * 1024 * 1024 { // 3 Megabytes
+                se.image.push("Image is too big (limit is 3MiB)");
             }
 
             if let Ok(mut f) = image.open() {
@@ -245,13 +245,27 @@ impl<'a> UpdateSubmission<'a> {
                 if f.read_to_end(&mut buffer).is_err() {
                     se.image.push("Image is not in a valid format");
                 } else {
-                    to_be_converted = match image::load_from_memory(&buffer) {
-                        Ok(t) => {
-                            Some(t)
+                    to_be_converted = match image::guess_format(&buffer) {
+                        Ok(image::PNG) | Ok(image::JPEG) | Ok(image::GIF) => {
+                            match image::load_from_memory(&buffer) {
+                                Ok(t) => {
+                                    Some((t, image::guess_format(&buffer).unwrap()))
+                                }
+                                Err(e) => {
+                                    info!("Could not load image {}", e);
+                                    se.image.push("Image is not in a valid format");
+                                    None
+                                }
+                            }
                         }
-                        Err(e) => {
-                            info!("Could not load image {}", e);
-                            se.image.push("Image is not in a valid format");
+                        Ok(t) => {
+                            info!("Could not load image format {:?}", t);
+                            se.image.push("Image is not in a valid format, valid formats are: JPEG, PNG or GIF");
+                            None
+                        }
+                        Err(t) => {
+                            info!("Could not load image format {}", t);
+                            se.image.push("Image is not in a valid format, valid formats are: JPEG, PNG or GIF");
                             None
                         }
                     }
@@ -263,7 +277,7 @@ impl<'a> UpdateSubmission<'a> {
             se.image.push("Image cannot be empty");
         }
 
-        let image = to_be_converted.and_then(convert_image);
+        let image = to_be_converted.and_then(|(x, fmt)| convert_image(x, fmt));
 
         let us = UpdateSubmission {
             title: title,
@@ -276,8 +290,6 @@ impl<'a> UpdateSubmission<'a> {
         if se.has_any_errors() {
             return Err((us, se));
         }
-
-
         Ok(us)
     }
 }

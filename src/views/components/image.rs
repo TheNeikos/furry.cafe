@@ -43,7 +43,11 @@ impl<'a> Render for Image<'a> {
             Some((width, height)) => {
                 match self.img.get_with_size(width, height) {
                     Ok(Some(i)) => img(&i.get_path()[..]),
-                    _ => img("/not_found.png"),
+                    Ok(None) => { img("/not_found.png") }
+                    Err(e) => {
+                        error!("Could not get image resized: {:?}", e);
+                        img("/not_found.png")
+                    }
                 }
             }
             None => {

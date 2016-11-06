@@ -7,7 +7,7 @@ dependencies = [
  "diesel_codegen 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv_macros 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "image 0.10.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "image 0.10.3 (git+https://github.com/PistonDevelopers/image.git?rev=7a654d5bfb337f428264d4e78901436e6c3d25c8)",
  "iron 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "iron-login 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -324,7 +324,7 @@ dependencies = [
 [[package]]
 name = "image"
 version = "0.10.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+source = "git+https://github.com/PistonDevelopers/image.git?rev=7a654d5bfb337f428264d4e78901436e6c3d25c8#7a654d5bfb337f428264d4e78901436e6c3d25c8"
 dependencies = [
  "byteorder 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "enum_primitive 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1216,7 +1216,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum humantime 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "0e9298fffb2a54569e1fcb818e9c2ff77caa2fad68d64b6e409b9f777bdb1960"
 "checksum hyper 0.9.10 (registry+https://github.com/rust-lang/crates.io-index)" = "eb27e8a3e8f17ac43ffa41bbda9cf5ad3f9f13ef66fa4873409d4902310275f7"
 "checksum idna 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "1053236e00ce4f668aeca4a769a09b3bf5a682d802abd6f3cb39374f6b162c11"
-"checksum image 0.10.3 (registry+https://github.com/rust-lang/crates.io-index)" = "559d5ebbe9ec73111799e49c07717944b244f8accf5de33a8a8128bc3ecd2e00"
+"checksum image 0.10.3 (git+https://github.com/PistonDevelopers/image.git?rev=7a654d5bfb337f428264d4e78901436e6c3d25c8)" = "<none>"
 "checksum inflate 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "e7e0062d2dc2f17d2f13750d95316ae8a2ff909af0fda957084f5defd87c43bb"
 "checksum iron 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "9fb1b2d809f84bf347e472d5758762b5c804e0c622970235f156d82673e4d334"
 "checksum iron-login 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "627683d3aed0db4b815de31f349a113a3e540b6a3c505759eac2e68a3419affe"
