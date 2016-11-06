@@ -56,7 +56,14 @@ pub fn show(req: &mut Request) -> IronResult<Response> {
     data.meta = Some(OpenGraph {
         title: Some(submission.title.clone()),
         url: Some(url!(format!("/submissions/{}", submission.id))),
-        image: try!(submission.get_image()).map(|x| url!(x.get_path()))
+        image: {
+            let image = try!(submission.get_image());
+            if let Some(image) = image {
+                Some(url!(image.get_with_size(1000, 1000)?.get_path()))
+            } else {
+                None
+            }
+        }
     });
     let mut resp = Response::with((status::Ok, try!(views::submission::show(&submission, &data, req))));
     resp.headers.set(ContentType::html());

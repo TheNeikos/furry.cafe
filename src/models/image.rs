@@ -100,19 +100,19 @@ impl Image {
         }
     }
 
-    pub fn get_with_size(&self, width: i32, height: i32) -> Result<Option<Image>, error::FurratoriaError> {
+    pub fn get_with_size(&self, width: i32, height: i32) -> Result<Image, error::FurratoriaError> {
         if self.width > width || self.height > height {
             match find_from_image(self.id, width, height) {
-                Ok(Some(i)) => Ok(Some(i)),
+                Ok(Some(i)) => Ok(i),
                 Ok(None) => {
                     let new_image = try!(NewImage::create_from_image_with_size(self, width, height));
                     let img_id = try!(Image::create_from(new_image));
-                    find(img_id)
+                    find(img_id).map(|x| x.expect("Inserting couldn't have failed"))
                 }
                 Err(e) => Err(e),
             }
         } else {
-            Ok(Some(self.clone()))
+            Ok(self.clone())
         }
     }
 
