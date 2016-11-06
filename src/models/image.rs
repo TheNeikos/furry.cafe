@@ -2,7 +2,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use std::fs::File;
 
 use diesel;
-use image::{DynamicImage, GenericImage, ImageFormat, self};
+use image::{DynamicImage, GenericImage, self};
 use rustc_serialize::base64::{ToBase64, FromBase64, self};
 
 use models::schema::images;
@@ -26,6 +26,41 @@ impl ImageType {
     }
 }
 
+#[repr(i32)]
+#[derive(Copy, Clone, Debug)]
+pub enum ImageFormat {
+    PNG, GIF, JPEG
+}
+
+impl ImageFormat {
+    pub fn from_i32(i: i32) -> ImageFormat {
+        match i {
+            0 => ImageFormat::PNG,
+            1 => ImageFormat::GIF,
+            2 => ImageFormat::JPEG,
+            _ => panic!("tried to use out of bound image format")
+        }
+    }
+
+    // Pretty shitty name
+    pub fn from_image_format(i: image::ImageFormat) -> ImageFormat {
+        match i {
+            image::PNG  => ImageFormat::PNG,
+            image::GIF  => ImageFormat::GIF,
+            image::JPEG => ImageFormat::JPEG,
+            _ => panic!("tried to use out of bound image format")
+        }
+    }
+
+    pub fn as_image_format(&self) -> image::ImageFormat {
+        match *self {
+            ImageFormat::PNG => image::PNG,
+            ImageFormat::GIF => image::GIF,
+            ImageFormat::JPEG => image::JPEG,
+        }
+    }
+}
+
 #[derive(Queryable, Identifiable, Clone)]
 pub struct Image {
     pub id: i64,
@@ -38,6 +73,7 @@ pub struct Image {
     pub parent_id: Option<i64>,
     pub wanted_height: Option<i32>,
     pub wanted_width:  Option<i32>,
+    format: i32,
 }
 
 impl Image {
@@ -71,6 +107,10 @@ impl Image {
             Ok(Some(self.clone()))
         }
     }
+
+    pub fn get_format(&self) -> ImageFormat {
+        ImageFormat::from_i32(self.format)
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -84,6 +124,7 @@ pub struct NewImage {
     parent_id: Option<i64>,
     wanted_height: Option<i32>,
     wanted_width:  Option<i32>,
+    format: i32,
 }
 
 impl NewImage {
@@ -96,6 +137,7 @@ impl NewImage {
             parent_id: None,
             wanted_height: None,
             wanted_width:  None,
+            format: 0,
         }
     }
 
@@ -103,7 +145,10 @@ impl NewImage {
         let image = {
             match ImageType::from_i32(img.host_type) {
                 ImageType::Local => {
-                    try!(image::open(&format!(".{}", img.get_path())[..]))
+                    use std::io::BufReader;
+                    let f = try!(File::open(&format!(".{}", img.get_path())[..]));
+                    let f = BufReader::new(f);
+                    try!(image::load(f, img.get_format().as_image_format()))
                 },
                 ImageType::Base64 => {
                     let bytes = try!(img.path.from_base64());
@@ -113,7 +158,8 @@ impl NewImage {
         };
 
         let mut image = try!(
-            NewImage::create_from_dynamic_image(&image.resize(width as u32, height as u32, image::FilterType::Lanczos3), &format!("orig_{}", img.id)[..])
+            NewImage::create_from_dynamic_image(&image.resize(width as u32, height as u32, image::FilterType::Lanczos3),
+                                                &format!("orig_{}", img.id)[..], img.get_format().as_image_format())
         );
         image.parent_id = Some(img.id);
         image.wanted_height = Some(height);
@@ -121,14 +167,14 @@ impl NewImage {
         Ok(image)
     }
 
-    pub fn create_from_dynamic_image(img: &DynamicImage, suffix: &str) -> Result<NewImage, error::FurratoriaError> {
+    pub fn create_from_dynamic_image(img: &DynamicImage, suffix: &str, fmt: image::ImageFormat) -> Result<NewImage, error::FurratoriaError> {
         let dims = img.dimensions();
         let mut path;
         let typ;
 
         if dims.0 < 200 && dims.1 < 200 {
             let mut buf = Vec::new();
-            try!(img.save(&mut buf, ImageFormat::PNG));
+            try!(img.save(&mut buf, image::PNG));
             path = buf.to_base64(base64::Config {
                 char_set: base64::CharacterSet::Standard,
                 newline: base64::Newline::LF,
@@ -137,9 +183,10 @@ impl NewImage {
             });
             typ = ImageType::Base64 as i32;
         } else {
-            path = format!("./assets/uploads/{}_{}-{}-{}.png", dims.0, dims.1, SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix);
+            path = format!("./assets/uploads/{}_{}-{}-{}",
+                           dims.0, dims.1, SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix);
             let mut file = try!(File::create(&path));
-            try!(img.save(&mut file, ImageFormat::PNG));
+            try!(img.save(&mut file, fmt));
             typ = ImageType::Local as i32;
             path = String::from(&path[1..]);
         }
@@ -152,6 +199,7 @@ impl NewImage {
             parent_id: None,
             wanted_height: None,
             wanted_width: None,
+            format: ImageFormat::from_image_format(fmt) as i32,
         })
     }
 }

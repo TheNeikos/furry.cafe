@@ -8,7 +8,6 @@ bcrypt = "0.1.1"
 diesel = "0.8"
 dotenv = "0.8.0"
 dotenv_macros = "0.9.0"
-image = "0.10.3"
 iron = "0.4"
 iron-login = "0.5.0"
 lazy_static = "0.2.1"
@@ -42,3 +41,7 @@ version = "0.12"
 [dependencies.staticfile]
 features = ["cache"]
 version = "0.3.0"
+
+[dependencies.image]
+git = "https://github.com/PistonDevelopers/image.git"
+rev = "7a654d5bfb337f428264d4e78901436e6c3d25c8"

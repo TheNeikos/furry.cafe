@@ -229,7 +229,7 @@ impl<'a> UpdateUser<'a> {
             use image::FilterType;
             let img = img.resize(350, 350, FilterType::CatmullRom);
 
-            let new_image = match NewImage::create_from_dynamic_image(&img, "avatar") {
+            let new_image = match NewImage::create_from_dynamic_image(&img, "avatar", image::PNG) {
                 Ok(t) => t,
                 Err(e) => {
                     error!("Could not create from dynamic image {}", e);
