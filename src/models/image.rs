@@ -42,6 +42,14 @@ impl ImageFormat {
         }
     }
 
+    pub fn as_str(&self) -> &'static str {
+        match *self {
+            ImageFormat::PNG => "png",
+            ImageFormat::GIF => "gif",
+            ImageFormat::JPEG => "jpg",
+        }
+    }
+
     // Pretty shitty name
     pub fn from_image_format(i: image::ImageFormat) -> ImageFormat {
         match i {
@@ -183,8 +191,10 @@ impl NewImage {
             });
             typ = ImageType::Base64 as i32;
         } else {
-            path = format!("./assets/uploads/{}_{}-{}-{}",
-                           dims.0, dims.1, SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix);
+            path = format!("./assets/uploads/{}_{}-{}-{}.{}",
+                           dims.0, dims.1,
+                           SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(), suffix,
+                           ImageFormat::from_image_format(fmt).as_str());
             let mut file = try!(File::create(&path));
             try!(img.save(&mut file, fmt));
             typ = ImageType::Local as i32;
