@@ -235,8 +235,8 @@ impl<'a> UpdateSubmission<'a> {
         }
 
         if let Some(image) = image {
-            if image.size > 2 * 1024 * 1024 { // 2 Megabytes
-                se.image.push("Image is too big (limit is 2MiB)");
+            if image.size > 3 * 1024 * 1024 { // 3 Megabytes
+                se.image.push("Image is too big (limit is 3MiB)");
             }
 
             if let Ok(mut f) = image.open() {
