@@ -83,7 +83,8 @@ pub fn application(title: Cow<str>,
                     hr /
                     footer {
                         p {
-                            (PreEscaped("Furry 2016 &copy; Neikos &mdash; "))
+                            a.brand href="/"  "Furry Café "
+                            (PreEscaped(" 2016 &copy; Neikos &mdash; "))
                             small.revision (include_str!("../../../.git/refs/heads/master"))
                         }
                     }
