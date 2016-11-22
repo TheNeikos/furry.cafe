@@ -11,7 +11,7 @@ use std::fmt;
 
 quick_error! {
     #[derive(Debug)]
-    pub enum FurratoriaError {
+    pub enum FurryError {
         NotImplemented(err: String) {
             description(err)
         }
@@ -28,7 +28,7 @@ quick_error! {
         Login(err: Box<Error + Send>) {
             cause(&**err)
             description(err.description())
-            //from(e: FurratoriaError) -> (Box::new(e))
+            //from(e: FurryError) -> (Box::new(e))
         }
         Bcrypt(err: BcryptError) {
             from()
@@ -53,8 +53,8 @@ quick_error! {
     }
 }
 
-impl From<FurratoriaError> for IronError {
-    fn from(e: FurratoriaError) -> IronError {
+impl From<FurryError> for IronError {
+    fn from(e: FurryError) -> IronError {
         IronError::new(Box::new(e), status::InternalServerError)
     }
 }

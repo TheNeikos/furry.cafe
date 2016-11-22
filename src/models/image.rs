@@ -85,7 +85,7 @@ pub struct Image {
 }
 
 impl Image {
-    pub fn create_from(new: NewImage) -> Result<i64, error::FurratoriaError> {
+    pub fn create_from(new: NewImage) -> Result<i64, error::FurryError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::images::dsl::*;
@@ -100,7 +100,7 @@ impl Image {
         }
     }
 
-    pub fn get_with_size(&self, width: i32, height: i32) -> Result<Image, error::FurratoriaError> {
+    pub fn get_with_size(&self, width: i32, height: i32) -> Result<Image, error::FurryError> {
         if self.width > width || self.height > height {
             match find_from_image(self.id, width, height) {
                 Ok(Some(i)) => Ok(i),
@@ -149,7 +149,7 @@ impl NewImage {
         }
     }
 
-    pub fn create_from_image_with_size(img: &Image, width: i32, height: i32) -> Result<NewImage, error::FurratoriaError> {
+    pub fn create_from_image_with_size(img: &Image, width: i32, height: i32) -> Result<NewImage, error::FurryError> {
         let image = {
             match ImageType::from_i32(img.host_type) {
                 ImageType::Local => {
@@ -175,7 +175,7 @@ impl NewImage {
         Ok(image)
     }
 
-    pub fn create_from_dynamic_image(img: &DynamicImage, suffix: &str, fmt: image::ImageFormat) -> Result<NewImage, error::FurratoriaError> {
+    pub fn create_from_dynamic_image(img: &DynamicImage, suffix: &str, fmt: image::ImageFormat) -> Result<NewImage, error::FurryError> {
         let dims = img.dimensions();
         let mut path;
         let typ;
@@ -214,7 +214,7 @@ impl NewImage {
     }
 }
 
-pub fn find(uid: i64) -> Result<Option<Image>, error::FurratoriaError> {
+pub fn find(uid: i64) -> Result<Option<Image>, error::FurryError> {
     use diesel::prelude::*;
     use models::schema::images::dsl::*;
 
@@ -222,7 +222,7 @@ pub fn find(uid: i64) -> Result<Option<Image>, error::FurratoriaError> {
          .get_result::<models::image::Image>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn find_from_image(uid: i64, w: i32, h: i32) -> Result<Option<Image>, error::FurratoriaError> {
+pub fn find_from_image(uid: i64, w: i32, h: i32) -> Result<Option<Image>, error::FurryError> {
     use diesel::prelude::*;
     use models::schema::images::dsl::*;
 

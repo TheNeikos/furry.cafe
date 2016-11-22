@@ -19,7 +19,7 @@ pub struct Invite {
 }
 
 impl Invite {
-    pub fn create_from(nup: NewInvite) -> Result<i64, error::FurratoriaError> {
+    pub fn create_from(nup: NewInvite) -> Result<i64, error::FurryError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::invites::dsl::*;
@@ -27,7 +27,7 @@ impl Invite {
             .get_result(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn update(&self, update: &UpdateInvite) -> Result<usize, error::FurratoriaError> {
+    pub fn update(&self, update: &UpdateInvite) -> Result<usize, error::FurryError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::invites::dsl::*;
@@ -35,7 +35,7 @@ impl Invite {
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn get_user(&self) -> Result<Option<User>, error::FurratoriaError> {
+    pub fn get_user(&self) -> Result<Option<User>, error::FurryError> {
         match self.user_id {
             Some(id) => user::find(id),
             None => Ok(None)
@@ -78,7 +78,7 @@ impl UpdateInvite {
     }
 }
 
-pub fn find_by_user_id(uid: i64) -> Result<Option<Invite>, error::FurratoriaError> {
+pub fn find_by_user_id(uid: i64) -> Result<Option<Invite>, error::FurryError> {
     use diesel::prelude::*;
     use models::schema::invites::dsl::*;
 
@@ -86,7 +86,7 @@ pub fn find_by_user_id(uid: i64) -> Result<Option<Invite>, error::FurratoriaErro
          .get_result::<models::invite::Invite>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn find_by_key(key: &str) -> Result<Option<Invite>, error::FurratoriaError> {
+pub fn find_by_key(key: &str) -> Result<Option<Invite>, error::FurryError> {
     use diesel::prelude::*;
     use models::schema::invites::dsl::*;
 
@@ -94,7 +94,7 @@ pub fn find_by_key(key: &str) -> Result<Option<Invite>, error::FurratoriaError> 
          .get_result::<models::invite::Invite>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn find_by_key_free(key: &str) -> Result<Option<Invite>, error::FurratoriaError> {
+pub fn find_by_key_free(key: &str) -> Result<Option<Invite>, error::FurryError> {
     use diesel::prelude::*;
     use models::schema::invites::dsl::*;
 
@@ -103,7 +103,7 @@ pub fn find_by_key_free(key: &str) -> Result<Option<Invite>, error::FurratoriaEr
          .get_result::<models::invite::Invite>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn all() -> Result<Vec<Invite>, error::FurratoriaError> {
+pub fn all() -> Result<Vec<Invite>, error::FurryError> {
     use diesel::prelude::*;
     use models::schema::invites::dsl::*;
 

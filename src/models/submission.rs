@@ -45,13 +45,13 @@ pub enum Visibility {
 }
 
 impl Visibility {
-    pub fn try_from_i32(i: i32) -> Result<Visibility, error::FurratoriaError> {
+    pub fn try_from_i32(i: i32) -> Result<Visibility, error::FurryError> {
         match i {
             0 => Ok(Visibility::Public),
             1 => Ok(Visibility::Friends),
             2 => Ok(Visibility::Private),
             3 => Ok(Visibility::Unpublished),
-            _ => Err(error::FurratoriaError::Parse(None)),
+            _ => Err(error::FurryError::Parse(None)),
         }
     }
 
@@ -99,7 +99,7 @@ pub struct Submission {
 }
 
 impl Submission {
-    pub fn create_from(nup: NewSubmission) -> Result<i64, error::FurratoriaError> {
+    pub fn create_from(nup: NewSubmission) -> Result<i64, error::FurryError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::submissions::dsl::*;
@@ -107,7 +107,7 @@ impl Submission {
             .returning(id).get_result(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn update(&self, update: &UpdateSubmission) -> Result<usize, error::FurratoriaError> {
+    pub fn update(&self, update: &UpdateSubmission) -> Result<usize, error::FurryError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::submissions::dsl::*;
@@ -115,7 +115,7 @@ impl Submission {
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn delete(self) -> Result<usize, error::FurratoriaError> {
+    pub fn delete(self) -> Result<usize, error::FurryError> {
         use diesel;
         use diesel::prelude::*;
         use models::schema::submissions::dsl::*;
@@ -123,7 +123,7 @@ impl Submission {
             .execute(&*database::connection().get().unwrap()).map_err(|e| e.into())
     }
 
-    pub fn get_image(&self) -> Result<Option<Image>, error::FurratoriaError> {
+    pub fn get_image(&self) -> Result<Option<Image>, error::FurryError> {
         match self.image {
             Some(id) => models::image::find(id),
             None => Ok(None),
@@ -134,9 +134,9 @@ impl Submission {
         self.image.is_some()
     }
 
-    pub fn get_submitter(&self) -> Result<User, error::FurratoriaError> {
+    pub fn get_submitter(&self) -> Result<User, error::FurryError> {
         match models::user::find(self.user_id) {
-            Ok(None) => Err(error::FurratoriaError::NotFound),
+            Ok(None) => Err(error::FurryError::NotFound),
             Ok(Some(u)) => Ok(u),
             Err(e) => Err(e)
         }
@@ -320,7 +320,7 @@ impl SubmissionError {
     }
 }
 
-pub fn find(uid: i64) -> Result<Option<Submission>, error::FurratoriaError> {
+pub fn find(uid: i64) -> Result<Option<Submission>, error::FurryError> {
     use diesel::prelude::*;
     use models::schema::submissions::dsl::*;
 
@@ -328,7 +328,7 @@ pub fn find(uid: i64) -> Result<Option<Submission>, error::FurratoriaError> {
          .get_result::<models::submission::Submission>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn find_by_user_id(uid: i64) -> Result<Option<Submission>, error::FurratoriaError> {
+pub fn find_by_user_id(uid: i64) -> Result<Option<Submission>, error::FurryError> {
     use diesel::prelude::*;
     use models::schema::submissions::dsl::*;
 
@@ -336,7 +336,7 @@ pub fn find_by_user_id(uid: i64) -> Result<Option<Submission>, error::Furratoria
          .get_result::<models::submission::Submission>(&*database::connection().get().unwrap()).optional().map_err(|e| e.into())
 }
 
-pub fn last(amt: i64) -> Result<Vec<Submission>, error::FurratoriaError> {
+pub fn last(amt: i64) -> Result<Vec<Submission>, error::FurryError> {
     use diesel::prelude::*;
     use models::schema::submissions::dsl::*;
 
@@ -391,7 +391,7 @@ impl<'a> SubmissionFilter<'a> {
         self
     }
 
-    pub fn run(self) -> Result<Vec<Submission>, error::FurratoriaError> {
+    pub fn run(self) -> Result<Vec<Submission>, error::FurryError> {
         use diesel::prelude::*;
         use models::schema::submissions::dsl::*;
 
@@ -424,10 +424,10 @@ impl<'a> SubmissionFilter<'a> {
 }
 
 impl HasOwner for Submission {
-    fn get_owner(id: i64) -> Result<Option<User>, error::FurratoriaError> {
+    fn get_owner(id: i64) -> Result<Option<User>, error::FurryError> {
         match find(id) {
             Ok(Some(sub)) => models::user::find(sub.user_id),
-            Ok(None) => Err(error::FurratoriaError::NotFound),
+            Ok(None) => Err(error::FurryError::NotFound),
             Err(e) => Err(e)
         }
     }

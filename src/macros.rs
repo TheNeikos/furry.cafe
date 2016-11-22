@@ -55,14 +55,14 @@ macro_rules! find_by_id {
                 if let Some(id) = matches.get(0) {
                     match id.parse::<_>() {
                         Ok(t) => Ok(t),
-                        Err(_) => Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/")))
+                        Err(_) => Err(IronError::new(error::FurryError::BadFormatting, temp_redirect!("/")))
                     }
                 } else {
-                    Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/")))
+                    Err(IronError::new(error::FurryError::BadFormatting, temp_redirect!("/")))
                 }
             }
             None => {
-                Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/")))
+                Err(IronError::new(error::FurryError::BadFormatting, temp_redirect!("/")))
             }
         };
 
@@ -73,7 +73,7 @@ macro_rules! find_by_id {
                 },
                 Ok(Some(u)) => Ok(u),
                 Ok(None) => {
-                    Err(IronError::new(error::FurratoriaError::NotFound, status::NotFound))
+                    Err(IronError::new(error::FurryError::NotFound, status::NotFound))
                 }
             }
         })

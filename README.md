@@ -1,4 +1,4 @@
-[Furratoria.space](furratoria.space)
+[Furry Café](furry.cafe)
 =========
 
 The idea of this website is to be a playground. Just sit back and relax.

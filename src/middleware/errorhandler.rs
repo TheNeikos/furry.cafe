@@ -3,7 +3,7 @@ use iron::AfterMiddleware;
 use iron::headers::ContentType;
 use router::NoRoute;
 
-use error::FurratoriaError;
+use error::FurryError;
 
 use views;
 use views::layout::LayoutData;
@@ -15,9 +15,9 @@ impl AfterMiddleware for ErrorHandler {
         let data = LayoutData::from_request(req);
 
         error!("{}", err.error);
-        if let Some(e) = err.error.downcast::<FurratoriaError>() {
+        if let Some(e) = err.error.downcast::<FurryError>() {
             match e {
-                &FurratoriaError::Unauthorized(_) => {
+                &FurryError::Unauthorized(_) => {
                     err.response.headers.set(ContentType::html());
                     Ok(err.response.set(views::shared::unauthorized(&data).unwrap()))
                 }

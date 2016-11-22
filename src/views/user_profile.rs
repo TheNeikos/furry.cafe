@@ -10,7 +10,7 @@ use models::user::User;
 use models::user_profile::NewUserProfile;
 
 // TODO: Add profile errors
-pub fn edit(user: &User, profile: &NewUserProfile, _errors: Option<()>, data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
+pub fn edit(user: &User, profile: &NewUserProfile, _errors: Option<()>, data: &LayoutData) -> Result<Markup, error::FurryError> {
     let body = html! {
         div.row (Column::custom(6, 3, html! {
             h1 { "Edit User Profile: " (user.name) }

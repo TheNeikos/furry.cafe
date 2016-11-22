@@ -15,7 +15,7 @@ use models::submission::{Submission, SubmissionError, NewSubmission, Visibility}
 use models::user::User;
 use middleware::authorization::{self, UserAuthorization};
 
-pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Option<User>) -> Result<Markup, error::FurratoriaError> {
+pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Option<User>) -> Result<Markup, error::FurryError> {
     let body = html! {
         h1 {
             { (user.as_ref().map(|x| format!("{} ", x.name.possessive())).unwrap_or(String::new())) "Gallery" }
@@ -61,7 +61,7 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Op
     Ok(views::layout::application(Cow::Borrowed("Submissions"), body, data))
 }
 
-pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewSubmission>) -> Result<Markup, error::FurratoriaError> {
+pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewSubmission>) -> Result<Markup, error::FurryError> {
     let body = html! {
         div.row (Column::custom(6, 3, html! {
             h1 { "Upload new Submission" }
@@ -93,7 +93,7 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
     Ok(views::layout::application(Cow::Borrowed("Register"), body, data))
 }
 
-pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Markup, error::FurratoriaError> {
+pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Markup, error::FurryError> {
     let image = try!(sub.get_image());
     let user = try!(sub.get_submitter());
 
@@ -143,7 +143,7 @@ pub fn show(sub: &Submission, data: &LayoutData, req: &mut Request) -> Result<Ma
     Ok(views::layout::application(Cow::Owned(format!("{} by {}", sub.title, user.name)), body, data))
 }
 
-pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
+pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData) -> Result<Markup, error::FurryError> {
     let body = html! {
         div.row (Column::custom(6, 3, html! {
             h1 { "Update your Submission" }

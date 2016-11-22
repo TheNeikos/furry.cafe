@@ -28,7 +28,7 @@ impl NewSession {
     }
 }
 
-pub fn find(uid: i64) -> Result<Option<Session>, error::FurratoriaError> {
+pub fn find(uid: i64) -> Result<Option<Session>, error::FurryError> {
     use diesel::prelude::*;
     use models::schema::sessions::dsl::*;
 

@@ -9,7 +9,7 @@ use views::components::Column;
 pub fn root(data: &LayoutData) -> Result<Markup, ::std::fmt::Error> {
     let body = html! {
         div.row (Column::new(html! {
-            h1 "Welcome to Furratoria!"
+            h1 "Welcome to Furry!"
             p {
                 "We're a bunch of Furries cruising the unknown worlds of artistic space. "
                 "Here we share and discuss Artwork we have created or bought about our Characters."

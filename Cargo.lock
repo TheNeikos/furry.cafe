@@ -1,5 +1,5 @@
 [root]
-name = "furratoria_space"
+name = "furry_cafe"
 version = "0.1.0"
 dependencies = [
  "bcrypt 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",

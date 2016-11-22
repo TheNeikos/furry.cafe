@@ -9,7 +9,7 @@ use views::components::form::*;
 use views::components::Column;
 use models::user::UserError;
 
-pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
+pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<Markup, error::FurryError> {
     let body = html! {
         div.row (Column::custom(6, 3, html! {
             h1 "Login"
@@ -32,7 +32,7 @@ pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<Markup, err
     Ok(views::layout::application(Cow::Borrowed("Login"), body, data))
 }
 
-pub fn logout(data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
+pub fn logout(data: &LayoutData) -> Result<Markup, error::FurryError> {
     let body = html! {
         div.row (Column::custom(6, 3, html! {
             h1 "Logout"

@@ -8,7 +8,7 @@ use views::components::user::UserLink;
 use views::components::form::*;
 use models::invite::Invite;
 
-pub fn index(invites: &[Invite], data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
+pub fn index(invites: &[Invite], data: &LayoutData) -> Result<Markup, error::FurryError> {
     let body = html! {
         h1 { "Invites" }
 

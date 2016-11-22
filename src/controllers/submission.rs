@@ -106,7 +106,7 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
     };
 
     let sub_visibility = match map.get("sub_visibility") {
-        Some(&Value::String(ref vis)) => Some(try!(i32::from_str(vis).map_err(|x| error::FurratoriaError::from(x)))),
+        Some(&Value::String(ref vis)) => Some(try!(i32::from_str(vis).map_err(|x| error::FurryError::from(x)))),
         _ => None
     };
 

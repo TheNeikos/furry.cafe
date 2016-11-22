@@ -43,7 +43,7 @@ impl<'a> Display for Navbar<'a> {
 
         f.write_str(&html!(
             nav.navbar.navbar-static-top.navbar-light.bg-faded {
-                a.navbar-brand href="/" "Furratoria"
+                a.navbar-brand href="/" "Furry Café"
                 ul.nav.navbar-nav {
                     @for item in NAVBAR_ENTRIES {
                         @if self.path.starts_with(item.path) {

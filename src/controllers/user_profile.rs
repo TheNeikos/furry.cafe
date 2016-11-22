@@ -14,11 +14,11 @@ pub fn edit(req: &mut Request) -> IronResult<Response> {
         Some(t) => {
             match t.parse::<_>() {
                 Ok(t) => t,
-                Err(_) => return Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/users/")))
+                Err(_) => return Err(IronError::new(error::FurryError::BadFormatting, temp_redirect!("/users/")))
             }
         }
         None => {
-            return Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/users/")));
+            return Err(IronError::new(error::FurryError::BadFormatting, temp_redirect!("/users/")));
         }
     };
 
@@ -49,11 +49,11 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
         Some(t) => {
             match t.parse::<_>() {
                 Ok(t) => t,
-                Err(_) => return Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/users/")))
+                Err(_) => return Err(IronError::new(error::FurryError::BadFormatting, temp_redirect!("/users/")))
             }
         }
         None => {
-            return Err(IronError::new(error::FurratoriaError::BadFormatting, temp_redirect!("/users/")));
+            return Err(IronError::new(error::FurryError::BadFormatting, temp_redirect!("/users/")));
         }
     };
 

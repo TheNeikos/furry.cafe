@@ -14,7 +14,7 @@ use models::user_role::Role;
 use models::user_profile::UserProfile;
 use middleware::authorization::{self, UserAuthorization};
 
-pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>) -> Result<Markup, error::FurratoriaError> {
+pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>) -> Result<Markup, error::FurryError> {
     let body = html! {
         div.row (Column::custom(6, 3, html! {
             h1 { "Register" }
@@ -42,7 +42,7 @@ pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>)
     Ok(views::layout::application(Cow::Borrowed("Register"), body, data))
 }
 
-pub fn index(users: &[User], data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
+pub fn index(users: &[User], data: &LayoutData) -> Result<Markup, error::FurryError> {
     let body = html! {
         div.row (Column::new(html! {
             h1 { "Users" }
@@ -58,7 +58,7 @@ pub fn index(users: &[User], data: &LayoutData) -> Result<Markup, error::Furrato
     Ok(views::layout::application(Cow::Borrowed("Users"), body, data))
 }
 
-pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, req: &mut Request) -> Result<Markup, error::FurratoriaError> {
+pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, req: &mut Request) -> Result<Markup, error::FurryError> {
     let banner = try!(profile.get_banner());
 
     let body = html! {
@@ -105,7 +105,7 @@ pub fn show(user: &User, role: Role, profile: &UserProfile, data: &LayoutData, r
     Ok(views::layout::application(Cow::Owned(format!("User: {}", user.name)), body, data))
 }
 
-pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result<Markup, error::FurratoriaError> {
+pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result<Markup, error::FurryError> {
     let body = html! {
         div.row (Column::custom(6, 3, html! {
             h1 { "Edit User " (user.name) }

@@ -61,13 +61,13 @@ pub fn application(title: Cow<str>,
         (PreEscaped("<!DOCTYPE html>"))
         html {
             head {
-                title (format!("{} - Furratoria", title))
+                title (format!("{} - Furry Café", title))
                 link rel="stylesheet" href="/assets/external/css/bootstrap.min.css" /
                 link rel="stylesheet" href="/assets/application.min.css" /
                 script src="/assets/external/js/jquery-3.1.0.min.js" ""
                 script src="/assets/external/js/tether.min.js" ""
                 script src="/assets/external/js/bootstrap.min.js" ""
-                meta property="og:site_name" content="Furratoria.Space" /
+                meta property="og:site_name" content="furry.cafe" /
                 meta property="og:type" content="website" /
                 @if let Some(ref info) = layout_data.meta {
                     (info)
@@ -83,7 +83,7 @@ pub fn application(title: Cow<str>,
                     hr /
                     footer {
                         p {
-                            (PreEscaped("Furratoria 2016 &copy; Neikos &mdash; "))
+                            (PreEscaped("Furry 2016 &copy; Neikos &mdash; "))
                             small.revision (include_str!("../../../.git/refs/heads/master"))
                         }
                     }

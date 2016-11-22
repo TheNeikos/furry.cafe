@@ -1,6 +1,6 @@
 [package]
 authors = ["Marcel Müller <neikos@neikos.email>"]
-name = "furratoria_space"
+name = "furry_cafe"
 version = "0.1.0"
 
 [dependencies]

@@ -3,7 +3,7 @@ use iron::status::Status;
 use iron_login::User as U;
 use iron::BeforeMiddleware;
 
-use error::FurratoriaError;
+use error::FurryError;
 use models::user::User;
 use middleware::authorization::UserRequirement;
 
@@ -34,7 +34,7 @@ impl<T: UserRequirement + Send + Sync + 'static> BeforeMiddleware for Authorizer
         if results {
             Ok(())
         } else {
-            Err(IronError::new(FurratoriaError::Unauthorized(user), Status::Unauthorized))
+            Err(IronError::new(FurryError::Unauthorized(user), Status::Unauthorized))
         }
     }
 }
