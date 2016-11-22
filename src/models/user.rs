@@ -225,9 +225,12 @@ impl<'a> UpdateUser<'a> {
             hash(password, DEFAULT_COST).expect("Could not hash password!")
         });
 
-        let img = to_be_converted.and_then(|img| {
-            use image::FilterType;
-            let img = img.resize(350, 350, FilterType::CatmullRom);
+        let img = to_be_converted.and_then(|mut img| {
+            use image::{GenericImage, FilterType};
+            let (w, h) = img.dimensions();
+            if w > 350 || h > 350 {
+                img = img.resize(350, 350, FilterType::CatmullRom);
+            }
 
             let new_image = match NewImage::create_from_dynamic_image(&img, "avatar", image::PNG) {
                 Ok(t) => t,
