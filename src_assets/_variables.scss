@@ -4,11 +4,18 @@ $enable-rounded:            false !default;
 
 // COLORS
 
-$gray-dark:                 #373a3c !default;
-$gray:                      #55595c !default;
-$gray-light:                #818a91 !default;
-$gray-lighter:              #eceeef !default;
-$gray-lightest:             #f7f7f9 !default;
+$red: #B9121B;
+$dark-red: #4C1B1B;
+$cream: #F6E497;
+$light-cream: #FCFAE1;
+$dark-cream: #BD8D46;
+
+
+$gray-dark:                 #373737 !default;
+$gray:                      #555555 !default;
+$gray-light:                #8a8a8a !default;
+$gray-lighter:              #eeeeee !default;
+$gray-lightest:             #f7f7f7 !default;
 
 $brand-primary:             #2980B9 !default;
 $brand-success:             #ECF0F1 !default;
@@ -17,14 +24,14 @@ $brand-warning:             #67221B !default;
 $brand-danger:              #E74C3C !default;
 $brand-inverse:             $gray-dark !default;
 
-$body-color: $gray-lightest !default;
+$body-color: $gray-dark !default;
 
 
 // FONTS
 
-$font-family-sans-serif: 'Oswald' !default;
-$font-family-serif:      'Oswald' !default;
-$font-family-monospace:  'RobotoMono' !default;
+$font-family-sans-serif: 'Lato' !default;
+$font-family-serif:      'Lato' !default;
+$font-family-monospace:  'DroidSansMono' !default;
 $font-family-base:       $font-family-sans-serif !default;
 
-$headings-font-family:   'Orbitron' !default;
+$headings-font-family:   'OpenSans' !default;

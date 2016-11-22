@@ -1,21 +1,21 @@
 @font-face {
-    font-family: Oswald;
-    src: url(/assets/external/fonts/Oswald/Oswald-Regular.ttf);
+    font-family: OpenSans;
+    src: url(/assets/external/fonts/OpenSans-Regular.ttf);
 }
 
 @font-face {
-    font-family: Orbitron;
-    src: url(/assets/external/fonts/Orbitron/Orbitron-Regular.ttf);
+    font-family: Pacifico;
+    src: url(/assets/external/fonts/Pacifico.ttf);
 }
 
 @font-face {
-    font-family: OrbitronBold;
-    src: url(/assets/external/fonts/Orbitron/Orbitron-Bold.ttf);
+    font-family: Lato;
+    src: url(/assets/external/fonts/Lato-Regular.ttf);
 }
 
 @font-face {
-    font-family: RobotoMono;
-    src: url(/assets/external/fonts/RobotoMono/RobotoMono-Regular.ttf);
+    font-family: DroidSansMono;
+    src: url(/assets/external/fonts/DroidSansMono.ttf);
 }
 
 footer {
@@ -27,6 +27,10 @@ footer {
         font-variant: normal;
         color: rgb(200, 200, 200);
     }
+
+    a {
+        color: $gray-dark;
+    }
 }
 
 textarea {
@@ -34,12 +38,9 @@ textarea {
 }
 
 h1 {
-    padding: 0.5rem;
-    padding-bottom: 0;
+    padding: 1rem;
     padding-right: 5rem;
     position: relative;
-    border-left: 2px solid beige;
-    overflow: hidden;
 
     &.title {
         padding-left: 5rem;
@@ -48,18 +49,16 @@ h1 {
     &:after {
         position: absolute;
         content: '';
-        width: calc(100% - 2px);
+        width: 2px;
         left: 0px;
         z-index: -1;
     }
+
     &:after {
         height: 100%;
         bottom: 0px;
-        //border: 2px solid beige;
-        //border-width: 0px 3px 2px 0px;
-        transform: skew(-55deg);
         transform-origin: left top;
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: $dark-red;
     }
 
     .btn {
@@ -68,7 +67,7 @@ h1 {
 }
 
 body {
-    background: url(/assets/external/img/stardust/stardust.png);
+    //background: url(/assets/external/img/stardust/stardust.png);
 }
 
 .container-fluid {
@@ -85,4 +84,9 @@ form {
     &.small {
         padding: 0.1rem;
     }
+}
+
+.brand {
+    font-family: "Pacifico";
+    font-variant: none;
 }
