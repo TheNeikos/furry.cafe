@@ -21,7 +21,7 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Op
             { (user.as_ref().map(|x| format!("{} ", x.name.possessive())).unwrap_or(String::new())) "Gallery" }
 
             @if req.current_user_can(authorization::LoggedIn) && user.is_none() {
-                span.float-xs-right (Button::new("New Submission", "/submissions")
+                span.float-xs-right.hidden-sm-down (Button::new("New Submission", "/submissions")
                      .with_type(ButtonType::Primary)
                      .with_method(RequestMethod::Post))
             }
@@ -36,6 +36,12 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Op
                         img.card-img-top src="/assets/images/missing.png" alt="Missing Image" /
                     }
 
+                    @if sub.get_visibility() != Visibility::Public {
+                        div.card-block.small {
+                            (sub.get_visibility().human())
+                        }
+                    }
+
                     div.card-block {
                         h4.card-title ({
                             if &sub.title[..] == "" {
@@ -46,11 +52,6 @@ pub fn index(subs: &[Submission], data: &LayoutData, req: &mut Request, user: Op
                         div.card-subtitle.text-muted {
                             "by "
                             ({UserLink(&try!(sub.get_submitter()))})
-                        }
-                    }
-                    @if sub.get_visibility() != Visibility::Public {
-                        div.card-block.small {
-                            (sub.get_visibility().human())
                         }
                     }
                 }

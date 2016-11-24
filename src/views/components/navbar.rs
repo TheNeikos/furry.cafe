@@ -42,40 +42,48 @@ impl<'a> Display for Navbar<'a> {
     fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
 
         f.write_str(&html!(
-            nav.navbar.navbar-static-top.navbar-light.bg-faded {
-                a.navbar-brand.brand href="/" "Furry Café"
-                ul.nav.navbar-nav {
-                    @for item in NAVBAR_ENTRIES {
-                        @if self.path.starts_with(item.path) {
-                            li.nav-item.active {
-                                a.nav-link href=(item.path) (item.name)
-                            }
-                        } @else {
-                            li.nav-item {
-                                a.nav-link href=(item.path) (item.name)
-                            }
-                        }
-                    }
+            nav.navbar.navbar-muted {
+                div.clearfix {
+                    button.navbar-toggler.float-xs-right.hidden-sm-up.collapsed type="button" data-toggle="collapse" data-target="#fc-main-nav" ""
+                    a.brand.hidden-sm-up href="/" "Furry Café"
                 }
-
-                @if let &Some(ref user) = self.user {
-                    ul.nav.navbar-nav.float-xs-right {
-                        div.dropdown {
-                            li.nav-item.active {
-                                a.nav-link href=(format!("/users/{}", user.id)) (user.name)
-                            }
-                            li.nav-item {
-                                a.nav-link href="/logout" "Logout"
+                div.navbar-toggleable-xs.collapse#fc-main-nav {
+                    ul.nav.navbar-nav {
+                        li.nav-item.active.hidden-xs-down {
+                            a.nav-link.brand href="/" "Furry Café"
+                        }
+                        @for item in NAVBAR_ENTRIES {
+                            @if self.path.starts_with(item.path) {
+                                li.nav-item.active {
+                                    a.nav-link href=(item.path) (item.name)
+                                }
+                            } @else {
+                                li.nav-item {
+                                    a.nav-link href=(item.path) (item.name)
+                                }
                             }
                         }
                     }
-                } @else {
-                    ul.nav.navbar-nav.float-xs-right {
-                        li.nav-item.active {
-                            a.nav-link href="/login" "Login"
+
+                    @if let &Some(ref user) = self.user {
+                        ul.nav.navbar-nav.float-sm-up-right {
+                            div.dropdown {
+                                li.nav-item.active {
+                                    a.nav-link href=(format!("/users/{}", user.id)) (user.name)
+                                }
+                                li.nav-item {
+                                    a.nav-link href="/logout" "Logout"
+                                }
+                            }
                         }
-                        li.nav-item.active {
-                            a.nav-link href="/users/new" "Register"
+                    } @else {
+                        ul.nav.navbar-nav.float-sm-up-right {
+                            li.nav-item.active {
+                                a.nav-link href="/login" "Login"
+                            }
+                            li.nav-item.active {
+                                a.nav-link href="/users/new" "Register"
+                            }
                         }
                     }
                 }

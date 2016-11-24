@@ -2,10 +2,6 @@ $navbar-background-color: rgba($dark-cream, 0.4);
 $navbar-color: darken($light-cream, 5);
 
 .navbar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     margin-bottom: 1.5rem;
     border-radius: 0;
     box-shadow: 0px 2px 15px -4px $navbar-background-color;
@@ -15,6 +11,28 @@ $navbar-color: darken($light-cream, 5);
 
     .nav-link {
         font-family: 'OpenSans';
+        color: darken($dark-cream, 20);
+    }
+
+    .nav-item.active .nav-link {
+        color: darken($dark-cream, 70);
+    }
+
+    .navbar-toggler {
+        background-image: url("data:image/svg+xml;charset=utf8,%3Csvg \
+            viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath \
+            stroke='rgba(0, 0, 0, 0.5)' stroke-width='2' stroke-linecap='round'\
+            stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+        border-color: rgba(0,0,0,.1);
+    }
+
+    .brand {
+        float: left;
+        padding-top: .25rem;
+        padding-bottom: .25rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
     }
 }
 

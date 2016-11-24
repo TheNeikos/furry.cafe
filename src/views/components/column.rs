@@ -28,7 +28,7 @@ impl Column {
 impl Render for Column {
     fn render_to(&self, mut f: &mut String) {
         f.push_str(&html!(
-            div class=(format!("col-md-{} {}", {
+            div class=(format!("col-xs-12 col-md-{} {}", {
                 self.size
             }, {
                 if self.pull > 0 {

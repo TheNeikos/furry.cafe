@@ -39,12 +39,7 @@ textarea {
 
 h1 {
     padding: 1rem;
-    padding-right: 5rem;
     position: relative;
-
-    &.title {
-        padding-left: 5rem;
-    }
 
     &:after {
         position: absolute;
@@ -70,10 +65,6 @@ body {
     //background: url(/assets/external/img/stardust/stardust.png);
 }
 
-.container-fluid {
-    margin-top: 60px;
-}
-
 form {
     &.inline {
         margin: 0;
@@ -87,6 +78,8 @@ form {
 }
 
 .brand {
-    font-family: "Pacifico";
+    font-family: "Pacifico" !important; // We can do that here, it's  the brand name~
     font-variant: none;
+
+    color: $dark-red;
 }
