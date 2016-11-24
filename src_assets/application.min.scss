@@ -1,8 +1,10 @@
 @import 'variables';
 @import 'external/bootstrap/bootstrap';
 
+@import 'utilities';
+
 @import 'navbar';
-@import 'general';
 @import 'user';
 @import 'submission';
 
+@import 'general';

@@ -61,6 +61,9 @@ pub fn application(title: Cow<str>,
         (PreEscaped("<!DOCTYPE html>"))
         html {
             head {
+                meta charset="utf-8" /
+                meta http-equiv="X-UA-Compatible" content="IE=edge" /
+                meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /
                 title (format!("{} - Furry Café", title))
                 link rel="stylesheet" href="/assets/external/css/bootstrap.min.css" /
                 link rel="stylesheet" href="/assets/application.min.css" /
@@ -75,9 +78,8 @@ pub fn application(title: Cow<str>,
             }
 
             body {
+                (PreEscaped(Navbar::new(&layout_data)))
                 div.container-fluid {
-                    (PreEscaped(Navbar::new(&layout_data)))
-
                     (partial)
 
                     hr /
