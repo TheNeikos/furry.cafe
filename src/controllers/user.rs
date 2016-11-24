@@ -45,6 +45,8 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     use params::{Params, Value};
     use models::user::User;
 
+    let login = User::get_login(req);
+
     let data = LayoutData::from_request(req);
 
     let map = req.get_ref::<Params>().unwrap();
@@ -99,10 +101,12 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 
     let id = try!(User::create_from(new_user));
 
+    let login = login.log_in(try!(models::user::find(id)).unwrap());
+
     try!(invite.update(&models::invite::UpdateInvite::create_for(&invite, id)));
 
     // TODO: Add config for url?
-    return Ok(Response::with(temp_redirect!("/users/")))
+    return Ok(Response::with((login, temp_redirect!(format!("/users/{}", id)))))
 }
 
 pub fn show(req: &mut Request) -> IronResult<Response> {
