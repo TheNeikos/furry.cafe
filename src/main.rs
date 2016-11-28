@@ -28,6 +28,7 @@ extern crate image;
 #[macro_use] extern crate quick_error;
 extern crate rand;
 extern crate rustc_serialize;
+extern crate lettre;
 
 use std::env;
 use std::path::Path;

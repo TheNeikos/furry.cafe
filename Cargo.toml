@@ -52,3 +52,7 @@ rev = "444441a02e4703c30929d7a68358842bf55ec612"
 [dependencies.iron-login]
 git = "https://github.com/untitaker/iron-login.git"
 rev = "98e79797da3830e1cf4d00851f5e344a54d0b750"
+
+[dependencies.lettre]
+git = "https://github.com/lettre/lettre.git"
+rev = "90b00ae4ffc8828041160dc4cb579d53f4173c8e"
