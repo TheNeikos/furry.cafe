@@ -148,7 +148,7 @@ pub fn update(req: &mut Request) -> IronResult<Response> {
     };
 
     let avatar = match map.get("user_avatar") {
-        Some(&Value::File(ref file)) => Some(file),
+        Some(&Value::File(ref file)) if file.size > 0 => Some(file),
         _ => None
     };
 
