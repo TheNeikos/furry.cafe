@@ -7,7 +7,7 @@ use iron::Request;
 use mount::OriginalUrl;
 use iron_login::User as UserTrait;
 
-use views::components::Navbar;
+use views::components::{Navbar, Column};
 use models::user::User;
 
 pub struct OpenGraph {
@@ -80,6 +80,18 @@ pub fn application(title: Cow<str>,
             body {
                 (PreEscaped(Navbar::new(&layout_data)))
                 div.container-fluid {
+
+                    (Column::new(html! {
+                        div.alert.alert-warning {
+                            strong "This site is still in Alpha! "
+                            "If you have found an error or wish to make suggestions you can"
+                            " chat me up on "
+                            a href="https://telegram.me/TheNeikos" "Telegram"
+                            " or submit an issue on "
+                            a href="https://github.com/TheNeikos/furry.cafe" "Github"
+                        }
+                    }))
+
                     (partial)
 
                     hr /
