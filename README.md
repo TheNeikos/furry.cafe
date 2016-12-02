@@ -1,7 +1,8 @@
 [Furry Café](furry.cafe)
 =========
 
-The idea of this website is to be a playground. Just sit back and relax.
+The idea of this website is to be a nice place to sit back and relax, look at
+nice art, maybe commission an Artist.
 It is also very [Furry](https://en.wikipedia.org/wiki/Furry_fandom) oriented.
 
 Roadmap:
