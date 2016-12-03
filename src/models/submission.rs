@@ -84,7 +84,7 @@ impl Visibility {
     }
 }
 
-#[derive(Queryable, Identifiable, Clone)]
+#[derive(Queryable, Identifiable, Clone, Associations)]
 #[belongs_to(User)]
 pub struct Submission {
     pub id: i64,

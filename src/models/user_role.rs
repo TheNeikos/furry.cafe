@@ -35,7 +35,7 @@ impl Role {
 }
 
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Associations)]
 #[belongs_to(User)]
 pub struct UserRole {
     pub id: i64,

@@ -7,7 +7,7 @@ use database;
 use models;
 use error;
 
-#[derive(Queryable, Identifiable)]
+#[derive(Queryable, Identifiable, Associations)]
 #[belongs_to(User)]
 pub struct UserProfile {
     pub id: i64,

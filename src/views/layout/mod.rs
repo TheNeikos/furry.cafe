@@ -78,7 +78,7 @@ pub fn application(title: Cow<str>,
             }
 
             body {
-                (PreEscaped(Navbar::new(&layout_data)))
+                (Navbar::new(&layout_data))
                 div.container-fluid {
 
                     (Column::new(html! {
@@ -99,7 +99,7 @@ pub fn application(title: Cow<str>,
                         p {
                             a.brand href="/"  "Furry Café "
                             (PreEscaped(" 2016 &copy; Neikos &mdash; "))
-                            small.revision (include_str!("../../../.git/refs/heads/master"))
+                            small.revision "Pre-Alpha"
                         }
                     }
                 }

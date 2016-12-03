@@ -1,4 +1,4 @@
-use std::fmt::{self, Display, Formatter};
+use maud::Render;
 
 use models::user::User;
 use views::layout::LayoutData;
@@ -38,10 +38,10 @@ impl<'a> Navbar<'a> {
     }
 }
 
-impl<'a> Display for Navbar<'a> {
-    fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
+impl<'a> Render for Navbar<'a> {
+    fn render_to(&self, mut f: &mut String) {
 
-        f.write_str(&html!(
+        f.push_str(&html!(
             nav.navbar.navbar-muted {
                 div.clearfix {
                     button.navbar-toggler.float-xs-right.hidden-sm-up.collapsed type="button" data-toggle="collapse" data-target="#fc-main-nav" ""

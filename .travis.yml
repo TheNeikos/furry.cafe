@@ -1,0 +1,22 @@
+sudo: false
+services:
+  - postgresql
+language: rust
+rust:
+- nightly
+before_script:
+- |
+  pip install 'travis-cargo<0.2' --user &&
+  export PATH=$HOME/.local/bin:$HOME/.cargo/bin:$PATH &&
+  psql -c 'create database travis_ci_test;' -U postgres &&
+  cp .env.travis .env
+script:
+- |
+  export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt &&
+  travis-cargo install diesel_cli &&
+  diesel migration run &&
+  travis-cargo build &&
+  travis-cargo test
+env:
+  global:
+  - TRAVIS_CARGO_NIGHTLY_FEATURE=" "

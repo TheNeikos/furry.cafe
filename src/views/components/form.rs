@@ -1,17 +1,13 @@
-use std::fmt::{self, Display, Formatter};
-
-use maud::PreEscaped;
-
-static EMPTY_FIELDS: &'static[&'static (Display + Sync)] = &[];
+use maud::{Render};
 
 #[derive(Copy, Clone, Debug)]
 pub enum FormMethod {
     Get, Post
 }
 
-impl Display for FormMethod {
-    fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
-        write!(f, "{}" , match self {
+impl Render for FormMethod {
+    fn render_to(&self, mut f: &mut String) {
+        f.push_str(match self {
             &FormMethod::Get => "GET",
             &FormMethod::Post => "POST",
         })
@@ -19,41 +15,43 @@ impl Display for FormMethod {
 }
 
 #[derive(Copy, Clone)]
-pub struct Form<'a, 'b, 'c> {
+pub struct Form<'a> {
     method: FormMethod,
     path: &'a str,
-    fields: &'b[&'b (Display + Sync)],
-    encoding: &'c str,
+    fields: Option<&'a[&'a Render]>,
+    encoding: &'a str,
 }
 
-impl<'a, 'b, 'c> Form<'a, 'b, 'c> {
-    pub fn new(method: FormMethod, path: &'a str) -> Form<'a, 'b, 'c> {
+impl<'a> Form<'a> {
+    pub fn new(method: FormMethod, path: &'a str) -> Form<'a> {
         Form {
             method: method,
             path: path,
-            fields: EMPTY_FIELDS,
+            fields: None,
             encoding: ""
         }
     }
 
-    pub fn with_fields(mut self, others: &'b[&'b (Display + Sync)]) -> Form<'a, 'b, 'c> {
-        self.fields = others;
+    pub fn with_fields(mut self, others: &'a[&'a Render]) -> Form<'a> {
+        self.fields = Some(others);
         self
     }
 
-    pub fn with_encoding(mut self, others: &'c str) -> Form<'a, 'b, 'c> {
+    pub fn with_encoding(mut self, others: &'a str) -> Form<'a> {
         self.encoding = others;
         self
     }
 }
 
-impl<'a, 'b, 'c> Display for Form<'a, 'b, 'c> {
-    fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
+impl<'a> Render for Form<'a> {
+    fn render_to(&self, mut f: &mut String) {
 
-        f.write_str(&html!(
+        f.push_str(&html!(
             form method=(self.method) action=(self.path) enctype=(self.encoding) {
-                @for field in self.fields {
-                    (PreEscaped(field))
+                @if let Some(fields) = self.fields {
+                    @for field in fields {
+                        (field)
+                    }
                 }
             }
         ).into_string())
@@ -61,17 +59,17 @@ impl<'a, 'b, 'c> Display for Form<'a, 'b, 'c> {
 }
 
 #[derive(Copy, Clone)]
-pub struct Input<'a, 'b, 'c, 'd, 'e, 'f> {
+pub struct Input<'a> {
     label: &'a str,
-    name: &'b str,
-    errors: Option<&'c Vec<&'c str>>,
-    type_: &'d str,
-    class: &'e str,
-    value: &'f str,
+    name: &'a str,
+    errors: Option<&'a Vec<&'a str>>,
+    type_: &'a str,
+    class: &'a str,
+    value: &'a str,
 }
 
-impl<'a, 'b, 'c, 'd, 'e, 'f> Input<'a, 'b, 'c, 'd, 'e, 'f> {
-    pub fn new(label: &'a str, name: &'b str) -> Input<'a, 'b, 'c, 'd, 'e, 'f> {
+impl<'a> Input<'a> {
+    pub fn new(label: &'a str, name: &'a str) -> Input<'a> {
         Input {
             label: label,
             name: name,
@@ -82,31 +80,30 @@ impl<'a, 'b, 'c, 'd, 'e, 'f> Input<'a, 'b, 'c, 'd, 'e, 'f> {
         }
     }
 
-    pub fn with_errors(mut self, errors: Option<&'c Vec<&'c str>>) -> Input<'a, 'b, 'c, 'd, 'e, 'f> {
+    pub fn with_errors(mut self, errors: Option<&'a Vec<&'a str>>) -> Input<'a> {
         self.errors = errors;
         self
     }
 
-    pub fn with_type(mut self, type_: &'d str) -> Input<'a, 'b, 'c, 'd, 'e, 'f> {
+    pub fn with_type(mut self, type_: &'a str) -> Input<'a> {
         self.type_ = type_;
         self
     }
 
-    pub fn with_class(mut self, class: &'e str) -> Input<'a, 'b, 'c, 'd, 'e, 'f> {
+    pub fn with_class(mut self, class: &'a str) -> Input<'a> {
         self.class = class;
         self
     }
 
-    pub fn with_value(mut self, value: &'f str) -> Input<'a, 'b, 'c, 'd, 'e, 'f> {
+    pub fn with_value(mut self, value: &'a str) -> Input<'a> {
         self.value = value;
         self
     }
 }
 
-impl<'a, 'b, 'c, 'd, 'e, 'f> Display for Input<'a, 'b, 'c, 'd, 'e, 'f> {
-    fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
-
-        f.write_str(&html!(
+impl<'a> Render for Input<'a> {
+    fn render_to(&self, mut f: &mut String) {
+        f.push_str(&html!(
             div.form-group {
                 @if self.label != "" {
                     label for=(self.name) (self.label)
@@ -123,16 +120,16 @@ impl<'a, 'b, 'c, 'd, 'e, 'f> Display for Input<'a, 'b, 'c, 'd, 'e, 'f> {
 }
 
 #[derive(Copy, Clone)]
-pub struct Textarea<'a, 'b, 'c, 'e, 'f> {
+pub struct Textarea<'a> {
     label: &'a str,
-    name: &'b str,
-    errors: Option<&'c Vec<&'c str>>,
-    class: &'e str,
-    value: &'f str,
+    name: &'a str,
+    errors: Option<&'a Vec<&'a str>>,
+    class: &'a str,
+    value: &'a str,
 }
 
-impl<'a, 'b, 'c, 'e, 'f> Textarea<'a, 'b, 'c, 'e, 'f> {
-    pub fn new(label: &'a str, name: &'b str) -> Textarea<'a, 'b, 'c, 'e, 'f> {
+impl<'a> Textarea<'a> {
+    pub fn new(label: &'a str, name: &'a str) -> Textarea<'a> {
         Textarea {
             label: label,
             name: name,
@@ -142,26 +139,25 @@ impl<'a, 'b, 'c, 'e, 'f> Textarea<'a, 'b, 'c, 'e, 'f> {
         }
     }
 
-    pub fn with_errors(mut self, errors: Option<&'c Vec<&'c str>>) -> Textarea<'a, 'b, 'c, 'e, 'f> {
+    pub fn with_errors(mut self, errors: Option<&'a Vec<&'a str>>) -> Textarea<'a> {
         self.errors = errors;
         self
     }
 
-    pub fn with_class(mut self, class: &'e str) -> Textarea<'a, 'b, 'c, 'e, 'f> {
+    pub fn with_class(mut self, class: &'a str) -> Textarea<'a> {
         self.class = class;
         self
     }
 
-    pub fn with_value(mut self, value: &'f str) -> Textarea<'a, 'b, 'c, 'e, 'f> {
+    pub fn with_value(mut self, value: &'a str) -> Textarea<'a> {
         self.value = value;
         self
     }
 }
 
-impl<'a, 'b, 'c, 'e, 'f> Display for Textarea<'a, 'b, 'c, 'e, 'f> {
-    fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
-
-        f.write_str(&html!(
+impl<'a> Render for Textarea<'a> {
+    fn render_to(&self, mut f: &mut String) {
+        f.push_str(&html!(
             div.form-group {
                 @if self.label != "" {
                     label for=(self.name) (self.label)
@@ -179,6 +175,7 @@ impl<'a, 'b, 'c, 'e, 'f> Display for Textarea<'a, 'b, 'c, 'e, 'f> {
     }
 }
 
+#[derive(Clone)]
 pub struct Select<'a> {
     label: &'a str,
     name: &'a str,
@@ -196,20 +193,20 @@ impl<'a> Select<'a> {
         }
     }
 
-    pub fn add_option(&'a mut self, name: &'a str, val: &'a str) -> &mut Select {
+    pub fn add_option(mut self, name: &'a str, val: &'a str) -> Select<'a> {
         self.options.push((name, val));
         self
     }
 
-    pub fn with_selected(&'a mut self, selected: &'a str) -> &mut Select {
+    pub fn with_selected(mut self, selected: &'a str) -> Select<'a> {
         self.selected = selected;
         self
     }
 }
 
-impl<'a> Display for Select<'a> {
-    fn fmt(&self, mut f: &mut Formatter) -> Result<(), fmt::Error> {
-        f.write_str(&html!(
+impl<'a> Render for Select<'a> {
+    fn render_to(&self, mut f: &mut String) {
+        f.push_str(&html!(
             div.form-group {
                 @if self.label != "" {
                     label for=(self.name) (self.label)

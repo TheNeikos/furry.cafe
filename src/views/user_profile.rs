@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use maud::{Markup, PreEscaped};
+use maud::Markup;
 
 use views;
 use error;
@@ -14,7 +14,7 @@ pub fn edit(user: &User, profile: &NewUserProfile, _errors: Option<()>, data: &L
     let body = html! {
         div.row (Column::custom(6, 3, html! {
             h1 { "Edit User Profile: " (user.name) }
-            (PreEscaped(Form::new(FormMethod::Post, &format!("/users/{}/profile", user.id))
+            (Form::new(FormMethod::Post, &format!("/users/{}/profile", user.id))
               .with_fields(&[
                    &Textarea::new("Profile", "user_bio")
                         .with_value(&profile.bio)
@@ -26,7 +26,7 @@ pub fn edit(user: &User, profile: &NewUserProfile, _errors: Option<()>, data: &L
                         .with_value("Update")
                         .with_type("submit")
                         .with_class("btn btn-primary"),
-              ])))
+              ]))
         }))
     };
 

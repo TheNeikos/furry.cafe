@@ -1,5 +1,5 @@
 use std::borrow::Cow;
-use maud::{Markup, PreEscaped};
+use maud::Markup;
 
 use views;
 use error;
@@ -36,13 +36,13 @@ pub fn index(invites: &[Invite], data: &LayoutData) -> Result<Markup, error::Fur
             }
         }
 
-        (PreEscaped(Form::new(FormMethod::Post, "/admin/invites")
+        (Form::new(FormMethod::Post, "/admin/invites")
           .with_fields(&[
                &Input::new("", "")
                     .with_value("Create")
                     .with_type("submit")
                     .with_class("btn btn-primary")
-          ])))
+          ]))
     };
 
     Ok(views::layout::application(Cow::Borrowed("Invites"), body, data))
