@@ -1,7 +1,7 @@
 use iron::Request;
 
 use std::borrow::Cow;
-use maud::{Markup, PreEscaped};
+use maud::Markup;
 
 use views;
 use error;
@@ -19,7 +19,7 @@ pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>)
         div.row (Column::custom(6, 3, html! {
             h1 { "Register" }
 
-            (PreEscaped(Form::new(FormMethod::Post, "/users/")
+            (Form::new(FormMethod::Post, "/users/")
               .with_fields(&[
                    &Input::new("Name", "user_name")
                         .with_value(user.as_ref().map(|x| &x.name).unwrap_or(&""))
@@ -35,7 +35,7 @@ pub fn new(errors: Option<UserError>, data: &LayoutData, user: Option<&NewUser>)
                         .with_value("Register")
                         .with_type("submit")
                         .with_class("btn btn-primary")
-              ])))
+              ]))
         }))
     };
 
@@ -109,7 +109,7 @@ pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result
     let body = html! {
         div.row (Column::custom(6, 3, html! {
             h1 { "Edit User " (user.name) }
-            (PreEscaped(Form::new(FormMethod::Post, &format!("/users/{}", user.id))
+            (Form::new(FormMethod::Post, &format!("/users/{}", user.id))
               .with_encoding("multipart/form-data")
               .with_fields(&[
                    &Input::new("Name", "user_name")
@@ -128,7 +128,7 @@ pub fn edit(user: &User, errors: Option<UserError>, data: &LayoutData) -> Result
                         .with_value("Update")
                         .with_type("submit")
                         .with_class("btn btn-primary")
-              ])))
+              ]))
         }))
     };
 

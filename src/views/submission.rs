@@ -1,7 +1,7 @@
 use iron::Request;
 
 use std::borrow::Cow;
-use maud::{Markup, PreEscaped};
+use maud::Markup;
 
 use views;
 use error;
@@ -67,7 +67,7 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
         div.row (Column::custom(6, 3, html! {
             h1 { "Upload new Submission" }
 
-            (PreEscaped(Form::new(FormMethod::Post, "/submissions/")
+            (Form::new(FormMethod::Post, "/submissions/")
               .with_encoding("multipart/form-data")
               .with_fields(&[
                    &Input::new("Image", "sub_image")
@@ -87,7 +87,7 @@ pub fn new(errors: Option<SubmissionError>, data: &LayoutData, sub: Option<&NewS
                         .with_value("Upload")
                         .with_type("submit")
                         .with_class("btn btn-primary")
-              ])))
+              ]))
         }))
     };
 
@@ -149,7 +149,7 @@ pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData
         div.row (Column::custom(6, 3, html! {
             h1 { "Update your Submission" }
 
-            (PreEscaped(Form::new(FormMethod::Post, &format!("/submissions/{}", sub.id))
+            (Form::new(FormMethod::Post, &format!("/submissions/{}", sub.id))
               .with_encoding("multipart/form-data")
               .with_fields(&[
                    &Input::new("Image", "sub_image")
@@ -170,7 +170,7 @@ pub fn edit(sub: &Submission, errors: Option<SubmissionError>, data: &LayoutData
                         .with_value("Update")
                         .with_type("submit")
                         .with_class("btn btn-primary")
-              ])))
+              ]))
         }))
 
         div.row (Column::custom(6, 3, html! {

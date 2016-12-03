@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use maud::{Markup, PreEscaped};
+use maud::Markup;
 
 use views;
 use error;
@@ -14,7 +14,7 @@ pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<Markup, err
         div.row (Column::custom(6, 3, html! {
             h1 "Login"
 
-            (PreEscaped(Form::new(FormMethod::Post, "/login")
+            (Form::new(FormMethod::Post, "/login")
               .with_fields(&[
                    &Input::new("Email", "user_email")
                         .with_errors(errors.as_ref().map(|x| &x.email)),
@@ -25,7 +25,7 @@ pub fn login(errors: Option<UserError>, data: &LayoutData) -> Result<Markup, err
                         .with_value("Login")
                         .with_type("Submit")
                         .with_class("btn btn-primary")
-              ])))
+              ]))
         }))
     };
 
@@ -37,13 +37,13 @@ pub fn logout(data: &LayoutData) -> Result<Markup, error::FurryError> {
         div.row (Column::custom(6, 3, html! {
             h1 "Logout"
 
-            (PreEscaped(Form::new(FormMethod::Post, "/logout")
+            (Form::new(FormMethod::Post, "/logout")
               .with_fields(&[
                     &Input::new("", "")
                         .with_value("Logout")
                         .with_type("Submit")
                         .with_class("btn btn-primary")
-             ])))
+             ]))
         }))
     };
 

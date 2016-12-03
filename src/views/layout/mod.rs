@@ -78,7 +78,7 @@ pub fn application(title: Cow<str>,
             }
 
             body {
-                (PreEscaped(Navbar::new(&layout_data)))
+                (Navbar::new(&layout_data))
                 div.container-fluid {
 
                     (Column::new(html! {
