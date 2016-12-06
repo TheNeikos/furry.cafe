@@ -9,9 +9,9 @@ dependencies = [
  "dotenv_macros 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "image 0.10.3 (git+https://github.com/PistonDevelopers/image.git?rev=7a654d5bfb337f428264d4e78901436e6c3d25c8)",
  "iron 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "iron-login 0.5.0 (git+https://github.com/untitaker/iron-login.git?rev=98e79797da3830e1cf4d00851f5e344a54d0b750)",
+ "iron-login 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "lettre 0.6.1 (git+https://github.com/lettre/lettre.git?rev=90b00ae4ffc8828041160dc4cb579d53f4173c8e)",
+ "lettre 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "log4rs 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "logger 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -442,8 +442,8 @@ dependencies = [
 
 [[package]]
 name = "iron-login"
-version = "0.5.0"
-source = "git+https://github.com/untitaker/iron-login.git?rev=98e79797da3830e1cf4d00851f5e344a54d0b750#98e79797da3830e1cf4d00851f5e344a54d0b750"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "cookie 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "iron 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -492,7 +492,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "lettre"
 version = "0.6.1"
-source = "git+https://github.com/lettre/lettre.git?rev=90b00ae4ffc8828041160dc4cb579d53f4173c8e#90b00ae4ffc8828041160dc4cb579d53f4173c8e"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "bufstream 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "email 0.0.13 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1357,14 +1357,14 @@ dependencies = [
 "checksum image 0.10.3 (git+https://github.com/PistonDevelopers/image.git?rev=7a654d5bfb337f428264d4e78901436e6c3d25c8)" = "<none>"
 "checksum inflate 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "e7e0062d2dc2f17d2f13750d95316ae8a2ff909af0fda957084f5defd87c43bb"
 "checksum iron 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "9fb1b2d809f84bf347e472d5758762b5c804e0c622970235f156d82673e4d334"
-"checksum iron-login 0.5.0 (git+https://github.com/untitaker/iron-login.git?rev=98e79797da3830e1cf4d00851f5e344a54d0b750)" = "<none>"
+"checksum iron-login 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a8f1bac5cbf4d54952d17c6b8cda01bfbbb7e4c8a71d14c9707e091f0bfb985b"
 "checksum itoa 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "ae3088ea4baeceb0284ee9eea42f591226e6beaecf65373e41b38d95a1b8e7a1"
 "checksum jpeg-decoder 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)" = "4be50b418a1fc5d198588d9a4f682ef808a55db4084dce39d09bb0562525bb8c"
 "checksum kernel32-sys 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "7507624b29483431c0ba2d82aece8ca6cdba9382bff4ddd0f7490560c056098d"
 "checksum language-tags 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "a91d884b6667cd606bb5a69aa0c99ba811a115fc68915e7056ec08a46e93199a"
 "checksum lazy_static 0.1.16 (registry+https://github.com/rust-lang/crates.io-index)" = "cf186d1a8aa5f5bee5fd662bc9c1b949e0259e1bcc379d1f006847b0080c7417"
 "checksum lazy_static 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "6abe0ee2e758cd6bc8a2cd56726359007748fbf4128da998b65d0b70f881e19b"
-"checksum lettre 0.6.1 (git+https://github.com/lettre/lettre.git?rev=90b00ae4ffc8828041160dc4cb579d53f4173c8e)" = "<none>"
+"checksum lettre 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a42066745cb905ed6b062c2a68a718f1bb46c9a2750d0ca982a80559c666b8e9"
 "checksum libc 0.2.18 (registry+https://github.com/rust-lang/crates.io-index)" = "a51822fc847e7a8101514d1d44e354ba2ffa7d4c194dcab48870740e327cac70"
 "checksum libressl-pnacl-sys 2.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "cbc058951ab6a3ef35ca16462d7642c4867e6403520811f28537a4e2f2db3e71"
 "checksum linked-hash-map 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "6d262045c5b87c0861b3f004610afd0e2c851e2908d08b6c870cbb9d5f494ecd"
