@@ -149,7 +149,7 @@ fn main() {
 
     let mut password_reset_router = Router::new();
     password_reset_router.get("/",  controllers::password_reset::ask_reset, "ask_password_reset");
-    password_reset_router.post("/", controllers::password_reset::reset, "password_reset");
+    password_reset_router.post("/", controllers::password_reset::get_reset, "password_reset");
 
     let admin_chain = {
         let mut router = Router::new();

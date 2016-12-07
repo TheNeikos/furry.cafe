@@ -50,6 +50,11 @@ quick_error! {
         Unauthorized(user: Option<User>) {}
         NotFound {}
         BadFormatting {}
+        MailError(err: Box<Error + Send>) {
+            cause(&**err)
+            description(err.description())
+            from(e: ::lettre::transport::smtp::error::Error) -> (Box::new(e))
+        }
     }
 }
 

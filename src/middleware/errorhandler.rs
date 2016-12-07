@@ -15,6 +15,9 @@ impl AfterMiddleware for ErrorHandler {
         let data = LayoutData::from_request(req);
 
         error!("{}", err.error);
+        if let Some(cause) = err.error.cause() {
+            error!("    {}", cause);
+        }
         if let Some(e) = err.error.downcast::<FurryError>() {
             match e {
                 &FurryError::Unauthorized(_) => {
