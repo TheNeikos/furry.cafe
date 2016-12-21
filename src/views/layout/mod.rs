@@ -65,7 +65,6 @@ pub fn application(title: Cow<str>,
                 meta http-equiv="X-UA-Compatible" content="IE=edge" /
                 meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /
                 title (format!("{} - Furry Café", title))
-                link rel="stylesheet" href="/assets/external/css/bootstrap.min.css" /
                 link rel="stylesheet" href="/assets/application.min.css" /
                 script src="/assets/external/js/jquery-3.1.0.min.js" ""
                 script src="/assets/external/js/tether.min.js" ""
