@@ -1,4 +1,4 @@
-use maud::{Markup};
+use maud::{Markup, PreEscaped};
 
 use views;
 use std::borrow::Cow;
@@ -28,7 +28,7 @@ pub fn root(data: &LayoutData) -> Result<Markup, ::std::fmt::Error> {
             }
 
             p {
-                strong "If that sounds exciting, come and join us! "
+                strong (PreEscaped("If that sounds exciting, come and join us!&nbsp; &nbsp;"))
                 a.btn.btn-primary href="/users/new" "Sign up"
             }
         }))
