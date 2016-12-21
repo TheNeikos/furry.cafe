@@ -1,0 +1,6 @@
+@mixin nosel
+{
+  -webkit-user-select: none;
+  -moz-user-select: -moz-noe;
+  user-select: none;
+}

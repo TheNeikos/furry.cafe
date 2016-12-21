@@ -22,6 +22,7 @@ footer {
     text-align: center;
     font-variant: small-caps;
     font-size: 0.8rem;
+    @include nosel;
 
     .revision {
         font-variant: normal;
