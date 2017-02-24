@@ -28,6 +28,7 @@ extern crate image;
 #[macro_use] extern crate quick_error;
 extern crate rand;
 extern crate rustc_serialize;
+extern crate lettre;
 
 use std::env;
 use std::path::Path;
@@ -105,14 +106,6 @@ fn main() {
         router
     };
 
-    let mut login_router = Router::new();
-    login_router.get("/", controllers::login::new, "login_new");
-    login_router.post("/", controllers::login::create, "login_create");
-
-    let mut logout_router = Router::new();
-    logout_router.get("/", controllers::login::delete, "login_delete");
-    logout_router.post("/", controllers::login::destroy, "login_destroy");
-
     let sub_router = {
         let mut router = Router::new();
         router.get("/",         controllers::submission::index, "submission_index");
@@ -146,6 +139,18 @@ fn main() {
         router
     };
 
+    let mut login_router = Router::new();
+    login_router.get("/", controllers::login::new, "login_new");
+    login_router.post("/", controllers::login::create, "login_create");
+
+    let mut logout_router = Router::new();
+    logout_router.get("/", controllers::login::delete, "login_delete");
+    logout_router.post("/", controllers::login::destroy, "login_destroy");
+
+    let mut password_reset_router = Router::new();
+    password_reset_router.get("/",  controllers::password_reset::ask_reset, "ask_password_reset");
+    password_reset_router.post("/", controllers::password_reset::get_reset, "password_reset");
+
     let admin_chain = {
         let mut router = Router::new();
 
@@ -164,11 +169,12 @@ fn main() {
 
     let mut mount = Mount::new();
     mount.mount("/", index_router)
-         .mount("/admin",      admin_chain)
-         .mount("/users",       user_router)
-         .mount("/login",       login_router)
-         .mount("/logout",      logout_router)
-         .mount("/submissions", sub_router)
+         .mount("/admin",          admin_chain)
+         .mount("/users",          user_router)
+         .mount("/login",          login_router)
+         .mount("/logout",         logout_router)
+         .mount("/password_reset", password_reset_router)
+         .mount("/submissions",    sub_router)
          .mount("/assets/", staticfile::Static::new(Path::new("assets/")).cache(Duration::new(60 * 60 * 24 * 7, 0)));
 
 

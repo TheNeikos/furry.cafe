@@ -6,14 +6,16 @@ version = "0.1.0"
 [dependencies]
 bcrypt = "0.1.1"
 diesel = "0.8"
-iron = "0.4"
-lazy_static = "0.2.1"
 dotenv = "0.8.0"
 dotenv_macros = "0.9.0"
+iron = "0.4"
+iron-login = "0.5.1"
+lazy_static = "0.2.1"
+lettre = "0.6.1"
 log = "0.3.6"
-logger = "0.1"
-maud_macros = "0.14"
+logger = "0.2"
 maud-pulldown-cmark = "0.5"
+maud_macros = "0.14"
 mount = "0.2"
 params = "0.5"
 pulldown-cmark = "0.0.8"
@@ -30,6 +32,10 @@ default-features = false
 features = ["postgres", "dotenv"]
 version = "0.8"
 
+[dependencies.image]
+git = "https://github.com/PistonDevelopers/image.git"
+rev = "7a654d5bfb337f428264d4e78901436e6c3d25c8"
+
 [dependencies.log4rs]
 version = "0.5"
 
@@ -41,14 +47,8 @@ version = "0.14"
 features = ["cache"]
 version = "0.3.0"
 
-[dependencies.image]
-git = "https://github.com/PistonDevelopers/image.git"
-rev = "7a654d5bfb337f428264d4e78901436e6c3d25c8"
+[replace]
 
 [replace."dotenv_codegen:0.9.3"]
 git = "https://github.com/slapresta/rust-dotenv.git"
 rev = "444441a02e4703c30929d7a68358842bf55ec612"
-
-[dependencies.iron-login]
-git = "https://github.com/untitaker/iron-login.git"
-rev = "98e79797da3830e1cf4d00851f5e344a54d0b750"

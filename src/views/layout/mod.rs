@@ -52,11 +52,12 @@ impl LayoutData {
 }
 
 
-pub fn application(title: Cow<str>,
+pub fn application<'a,  T: Into<Cow<'a, str>>>(title: T,
                    partial: Markup,
                    layout_data: &LayoutData,
                    ) -> Markup
 {
+    let title = title.into();
     html!(
         (PreEscaped("<!DOCTYPE html>"))
         html {

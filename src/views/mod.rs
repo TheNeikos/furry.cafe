@@ -7,3 +7,4 @@ pub mod login;
 pub mod markdown;
 pub mod submission;
 pub mod invite;
+pub mod password_reset;
