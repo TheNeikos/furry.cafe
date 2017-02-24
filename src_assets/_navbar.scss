@@ -12,6 +12,7 @@ $navbar-color: darken($light-cream, 5);
     .nav-link {
         font-family: 'OpenSans';
         color: darken($dark-cream, 20);
+        @include nosel;
     }
 
     .nav-item.active .nav-link {
