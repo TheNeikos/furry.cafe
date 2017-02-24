@@ -1,6 +1,11 @@
 [Furry Café](furry.cafe)
 =========
 
+
+**This Project is abandoned and now lives [in these repositories](https://github.com/FurryCafe)**
+==============================================================
+
+
 The idea of this website is to be a nice place to sit back and relax, look at
 nice art, maybe commission an Artist.
 It is also very [Furry](https://en.wikipedia.org/wiki/Furry_fandom) oriented.
